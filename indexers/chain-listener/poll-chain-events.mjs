@@ -19,6 +19,8 @@ const rpcUrl = rpcByChain[chainKey] ?? process.env.RPC_URL;
 const confirmations = Number(process.env.INDEXER_CONFIRMATIONS ?? 12);
 const chunkSize = Number(process.env.INDEXER_BLOCK_CHUNK ?? 1_000);
 const pollIntervalMs = Number(process.env.INDEXER_POLL_INTERVAL_MS ?? 10_000);
+const rpcMaxAttempts = Number(process.env.INDEXER_RPC_MAX_ATTEMPTS ?? 4);
+const rpcRetryBaseMs = Number(process.env.INDEXER_RPC_RETRY_BASE_MS ?? 500);
 const once = process.argv.includes("--once");
 const runtimeDir = path.join(repoRoot, ".runtime", "chain-listener", chainKey);
 const checkpointPath = path.join(runtimeDir, "checkpoint.json");
@@ -34,30 +36,64 @@ const addresses = [
 if (!rpcUrl) throw new Error(`RPC URL missing for ${chainKey}`);
 if (addresses.length === 0) throw new Error("Configure FACTORY_ADDRESS or INDEXER_ROOT_ADDRESSES.");
 if (!Number.isInteger(confirmations) || confirmations < 1) throw new Error("INDEXER_CONFIRMATIONS must be positive.");
+if (!Number.isInteger(rpcMaxAttempts) || rpcMaxAttempts < 1) {
+  throw new Error("INDEXER_RPC_MAX_ATTEMPTS must be a positive integer.");
+}
+if (!Number.isFinite(rpcRetryBaseMs) || rpcRetryBaseMs < 0) {
+  throw new Error("INDEXER_RPC_RETRY_BASE_MS must be zero or positive.");
+}
 
 fs.mkdirSync(runtimeDir, { recursive: true });
 
+function sleep(delayMs) {
+  return new Promise((resolve) => setTimeout(resolve, delayMs));
+}
+
+function retryableRpcError(error) {
+  if (error?.rpcCode === -32600) return false;
+  if (error?.httpStatus === 429 || error?.httpStatus >= 500) return true;
+  if (error?.name === "TimeoutError" || error?.name === "AbortError") return true;
+  if (error instanceof TypeError) return true;
+  return /timeout|timed out|rate limit|too many|temporar|busy|connection|socket|fetch failed|network/i
+    .test(error?.message ?? "");
+}
+
 async function rpc(method, params = []) {
-  const response = await fetch(rpcUrl, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-    signal: AbortSignal.timeout(20_000),
-  });
-  const responseText = await response.text();
-  let payload;
-  try {
-    payload = JSON.parse(responseText);
-  } catch {
-    throw new Error(`RPC ${method} returned invalid JSON (HTTP ${response.status})`);
+  for (let attempt = 1; attempt <= rpcMaxAttempts; attempt++) {
+    try {
+      const response = await fetch(rpcUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        signal: AbortSignal.timeout(20_000),
+      });
+      const responseText = await response.text();
+      let payload;
+      try {
+        payload = JSON.parse(responseText);
+      } catch {
+        const error = new Error(`RPC ${method} returned invalid JSON (HTTP ${response.status})`);
+        error.httpStatus = response.status;
+        throw error;
+      }
+      if (!response.ok || payload.error) {
+        const error = new Error(payload.error?.message ?? `RPC ${method} HTTP ${response.status}`);
+        error.rpcCode = payload.error?.code;
+        error.httpStatus = response.status;
+        throw error;
+      }
+      return payload.result;
+    } catch (error) {
+      if (attempt === rpcMaxAttempts || !retryableRpcError(error)) throw error;
+      const delayMs = rpcRetryBaseMs * (2 ** (attempt - 1));
+      console.warn(
+        `RPC ${method} transient failure; retrying in ${delayMs}ms (${attempt}/${rpcMaxAttempts}).`,
+      );
+      await sleep(delayMs);
+    }
   }
-  if (!response.ok || payload.error) {
-    const error = new Error(payload.error?.message ?? `RPC ${method} HTTP ${response.status}`);
-    error.rpcCode = payload.error?.code;
-    error.httpStatus = response.status;
-    throw error;
-  }
-  return payload.result;
+
+  throw new Error(`RPC ${method} exhausted retries.`);
 }
 
 function providerLogRange(error) {
