@@ -1,0 +1,102 @@
+{
+  "artifactVersion": "1.1.0",
+  "protocolRelease": "0.2.0-security-hardened",
+  "deploymentKind": "factory",
+  "chainKey": "base-sepolia",
+  "chainId": 84532,
+  "deployedAt": "2026-07-14T08:33:29.469Z",
+  "deployedBy": "0xba136c070266D72aebFCcf26427132eb100d8E59",
+  "companyKey": null,
+  "enterpriseRoot": null,
+  "localEnterpriseId": null,
+  "contracts": [
+    {
+      "name": "DiamondCutFacet",
+      "address": "0x04f5cca2f8ef06a91561bdaa047f8486f498e3fc",
+      "txHash": "0x84d0708d686ac868dc641d4fe6ea9a57e21c470cfdde8cc296a2e4f3f331f97e"
+    },
+    {
+      "name": "DiamondLoupeFacet",
+      "address": "0x26ca00d94fab8105458f5c4443eb26c69d28e62a",
+      "txHash": "0x8e5351a246f1505e083a6e3d82f230d0275ff364728c187649f07783dd6fcf35"
+    },
+    {
+      "name": "OwnershipFacet",
+      "address": "0x4c6a6b57bc450f3b0eb868a85349a8085d42060e",
+      "txHash": "0x0114af23cac2f6323fa2adf72863e32f432e50827ff6df99df9cc04c8ef37768"
+    },
+    {
+      "name": "AccessControlFacet",
+      "address": "0xbf545aba0f2152e1a46730e9f898acdb890d90c4",
+      "txHash": "0x43481cba42f59c12b874ec1180885a076692a53c80ef345ea39fc3bfb7b3d60f"
+    },
+    {
+      "name": "EnterpriseRegistryFacet",
+      "address": "0x7a63368a158f8c52e6ce22bca867d954d1880c61",
+      "txHash": "0x11f2c6927071ba38c206d35f10a29263cac538b9ad2f6be0b19312894910071e"
+    },
+    {
+      "name": "CorporateIdentityFacet",
+      "address": "0xf5238e169e20331aaec5612c61842db99b10c856",
+      "txHash": "0xfb636e2a483ee93146368d078cedea17f96a822afdb2d6a233583e730eaa2e17"
+    },
+    {
+      "name": "EvidenceFacet",
+      "address": "0x617b2e325962d251873af7be99b96b31c5e59e59",
+      "txHash": "0xb4b5526fcaea5540afe972c07213b0d0aa8fd4225455b9e4889055da5160b16b"
+    },
+    {
+      "name": "AuditFacet",
+      "address": "0x78133044414c0d36c522bfc79a09e5fe175b07e3",
+      "txHash": "0xefb1f6e13c2816bad3cda030a4040edf50054813bb1f380c64d5dfc53e88906e"
+    },
+    {
+      "name": "ServiceEntitlementFacet",
+      "address": "0x7ad55661009ca45b02aa52225ddd579408bb798b",
+      "txHash": "0x6c6ed1eb2d7aa27852170a0d95a360f862b13b1e551b35e4b7c08274ec0421bd"
+    },
+    {
+      "name": "VotoIDFacet",
+      "address": "0x5bd09c948cf33621c0af18f54050113876872228",
+      "txHash": "0x65b1662449fcaf5103075ece82eb8fd8e0551e9b9e750c29569d074332482e71"
+    },
+    {
+      "name": "AutomationFacet",
+      "address": "0x65fbf4567c4a8c3911d6060d1021b758bd0c63da",
+      "txHash": "0x2344a9292193d9a4d431f81f23f8f3b62dcd39be84714fdc6d2d5d14fdde56cd"
+    },
+    {
+      "name": "EUDRFacet",
+      "address": "0x6f833efe38ed7d0b2e21a083ebbd941373b33c59",
+      "txHash": "0xfff1cd1374d9633e5c887d6c79dccf118e2de33b5de9916e702a60ca074ef096"
+    },
+    {
+      "name": "DiamondInit",
+      "address": "0xd65768b58363968f8877a513804a78406a690b5d",
+      "txHash": "0x573bc4e645320eeabe9e0bafc14f064cf30854d937eba1ef7fa02d1a6c1993e5"
+    },
+    {
+      "name": "EnterpriseRootFactory",
+      "address": "0x074349dbca642fcc7517968fb5548ece6f2e456a",
+      "txHash": "0x586cf95be65b7964f0331722bda12f180a995eb00e8ae963f3e604d8f71f9e07"
+    }
+  ],
+  "ownership": {
+    "protocolAdmin": "0x03F4C13ce4d0beb4BD4554fC7BBaF36cb1f66b79",
+    "upgradeAdmin": "0x6e15FB78F611C90f58017F106669c10a6ae084F4",
+    "enterpriseOwner": "0xFB689f3Ff9f27F6a7C3C5A68c95693cD8F48F6EF",
+    "factoryOwner": "0x03F4C13ce4d0beb4BD4554fC7BBaF36cb1f66b79",
+    "initialProvisioner": "0xba136c070266D72aebFCcf26427132eb100d8E59"
+  },
+  "services": [],
+  "status": "broadcasted",
+  "verification": {
+    "explorer": "pending",
+    "checkedAt": null
+  },
+  "sourceBroadcast": "broadcast\\DeployEnterpriseRootFactory.s.sol\\84532\\run-latest.json",
+  "notes": [
+    "Permissioned provisioning and two-step factory ownership enabled.",
+    "Enterprise root upgrades require upgrade-admin approval and enterprise-owner execution."
+  ]
+}
