@@ -1,6 +1,6 @@
 {
   "artifactVersion": "1.1.0",
-  "status": "broadcasted",
+  "status": "verified",
   "protocolRelease": "0.2.0-security-hardened",
   "deploymentKind": "enterprise-root",
   "chainKey": "base-sepolia",
@@ -9,8 +9,15 @@
   "factoryAddress": "0x074349dbCa642fcc7517968Fb5548ecE6f2E456a",
   "localEnterpriseId": 1,
   "verification": {
-    "explorer": "pending",
-    "checkedAt": null
+    "explorer": "verified",
+    "checkedAt": "2026-07-14T14:57:16.426Z",
+    "contracts": [
+      {
+        "name": "SymmetryEnterpriseRoot",
+        "address": "0xf6b821E379eF8061307da557Be1d32A0D9D7829a",
+        "verified": true
+      }
+    ]
   },
   "deployedAt": "2026-07-14T09:02:20.557Z",
   "companyKey": "0x6cab90a41d6d6e7f371a3420ed04492f85027ebe9a56d205fb7e079c92dcb111",

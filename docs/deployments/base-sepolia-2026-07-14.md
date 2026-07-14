@@ -4,7 +4,7 @@
 
 The `0.2.0-security-hardened` release is functionally deployed and validated on Base Sepolia (`chainId 84532`). The Factory, official Symmetry test enterprise root, and one isolated E2E root for each service are live.
 
-This is a successful testnet rehearsal, not a production approval. Explorer source publication remains pending explicit authorization, and the configured governance addresses are still EOAs rather than deployed Safe contracts.
+This is a successful and explorer-verified testnet rehearsal, not a production approval. The configured governance addresses are still EOAs rather than deployed Safe contracts.
 
 ## Release source
 
@@ -14,6 +14,7 @@ This is a successful testnet rehearsal, not a production approval. Explorer sour
 - Foundry tests: 16 passed
 - Node tests: 7 passed
 - Static readiness: 46/46 passed
+- Live testnet readiness: passed
 
 ## Core deployment
 
@@ -22,6 +23,15 @@ This is a successful testnet rehearsal, not a production approval. Explorer sour
 - Factory owner: `0x03F4C13ce4d0beb4BD4554fC7BBaF36cb1f66b79`
 - Authorized provisioner: `0xba136c070266D72aebFCcf26427132eb100d8E59`
 - Registered roots after validation: `4`
+
+## Explorer verification
+
+- Basescan/Etherscan source publication: completed
+- Shared facets, DiamondInit, and EnterpriseRootFactory: `14/14` verified
+- Official and service E2E SymmetryDiamond roots: `4/4` verified
+- Total verified addresses: `18/18`
+- Compiler: Solidity `0.8.24`
+- Optimizer runs: `200`
 
 ## Official enterprise root
 
@@ -83,13 +93,12 @@ This is a successful testnet rehearsal, not a production approval. Explorer sour
 - Canonical checkpoint and append-only JSONL event ledger: persisted locally
 - Transient RPC timeout and rate-limit handling: bounded exponential retry enabled
 
-## Remaining release gates
+## Remaining production gates
 
-1. Obtain explicit authorization to publish Solidity source and verify the Factory, shared facets, and roots on Basescan/Etherscan.
-2. Replace testnet EOAs with deployed Safe multisigs and rehearse signer thresholds and recovery.
-3. Rotate the deployer key before any production deployment because the current test key has been exposed outside a secret manager.
-4. Replace placeholder `ipfs://` references with real canonical manifests replicated to IPFS, Filecoin, and Arweave, then run live health checks.
-5. Run the confirmed event indexer, alerting, metrics, log retention, and evidence-health monitor continuously.
-6. Complete independent smart-contract audit, remediation, incident-response rehearsal, and production cutover approval.
+1. Replace testnet EOAs with deployed Safe multisigs and rehearse signer thresholds and recovery.
+2. Rotate the deployer key before any production deployment because the current test key has been exposed outside a secret manager.
+3. Replace placeholder `ipfs://` references with real canonical manifests replicated to IPFS, Filecoin, and Arweave, then run live health checks.
+4. Run the confirmed event indexer, alerting, metrics, log retention, and evidence-health monitor continuously.
+5. Complete independent smart-contract audit, remediation, incident-response rehearsal, and production cutover approval.
 
-Explorer source verification is the only remaining critical Base Sepolia live gate. The other items are production gates and do not invalidate the completed functional testnet rehearsal.
+All critical Base Sepolia live gates pass. The remaining items are production gates and do not invalidate the completed testnet rehearsal.
