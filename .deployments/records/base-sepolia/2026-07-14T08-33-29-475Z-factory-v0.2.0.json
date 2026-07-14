@@ -89,10 +89,82 @@
     "initialProvisioner": "0xba136c070266D72aebFCcf26427132eb100d8E59"
   },
   "services": [],
-  "status": "broadcasted",
+  "status": "verified",
   "verification": {
-    "explorer": "pending",
-    "checkedAt": null
+    "explorer": "verified",
+    "checkedAt": "2026-07-14T14:56:32.173Z",
+    "contracts": [
+      {
+        "name": "DiamondCutFacet",
+        "address": "0x04f5cca2f8ef06a91561bdaa047f8486f498e3fc",
+        "verified": true
+      },
+      {
+        "name": "DiamondLoupeFacet",
+        "address": "0x26ca00d94fab8105458f5c4443eb26c69d28e62a",
+        "verified": true
+      },
+      {
+        "name": "OwnershipFacet",
+        "address": "0x4c6a6b57bc450f3b0eb868a85349a8085d42060e",
+        "verified": true
+      },
+      {
+        "name": "AccessControlFacet",
+        "address": "0xbf545aba0f2152e1a46730e9f898acdb890d90c4",
+        "verified": true
+      },
+      {
+        "name": "EnterpriseRegistryFacet",
+        "address": "0x7a63368a158f8c52e6ce22bca867d954d1880c61",
+        "verified": true
+      },
+      {
+        "name": "CorporateIdentityFacet",
+        "address": "0xf5238e169e20331aaec5612c61842db99b10c856",
+        "verified": true
+      },
+      {
+        "name": "EvidenceFacet",
+        "address": "0x617b2e325962d251873af7be99b96b31c5e59e59",
+        "verified": true
+      },
+      {
+        "name": "AuditFacet",
+        "address": "0x78133044414c0d36c522bfc79a09e5fe175b07e3",
+        "verified": true
+      },
+      {
+        "name": "ServiceEntitlementFacet",
+        "address": "0x7ad55661009ca45b02aa52225ddd579408bb798b",
+        "verified": true
+      },
+      {
+        "name": "VotoIDFacet",
+        "address": "0x5bd09c948cf33621c0af18f54050113876872228",
+        "verified": true
+      },
+      {
+        "name": "AutomationFacet",
+        "address": "0x65fbf4567c4a8c3911d6060d1021b758bd0c63da",
+        "verified": true
+      },
+      {
+        "name": "EUDRFacet",
+        "address": "0x6f833efe38ed7d0b2e21a083ebbd941373b33c59",
+        "verified": true
+      },
+      {
+        "name": "DiamondInit",
+        "address": "0xd65768b58363968f8877a513804a78406a690b5d",
+        "verified": true
+      },
+      {
+        "name": "EnterpriseRootFactory",
+        "address": "0x074349dbca642fcc7517968fb5548ece6f2e456a",
+        "verified": true
+      }
+    ]
   },
   "sourceBroadcast": "broadcast\\DeployEnterpriseRootFactory.s.sol\\84532\\run-latest.json",
   "notes": [

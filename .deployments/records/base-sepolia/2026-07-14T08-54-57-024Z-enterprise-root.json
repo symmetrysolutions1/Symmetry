@@ -1,6 +1,6 @@
 {
   "artifactVersion": "1.1.0",
-  "status": "broadcasted",
+  "status": "verified",
   "protocolRelease": "0.2.0-security-hardened",
   "deploymentKind": "enterprise-root",
   "chainKey": "base-sepolia",
@@ -29,8 +29,15 @@
     "eudr"
   ],
   "verification": {
-    "explorer": "pending",
-    "checkedAt": null
+    "explorer": "verified",
+    "checkedAt": "2026-07-14T14:57:10.680Z",
+    "contracts": [
+      {
+        "name": "SymmetryEnterpriseRoot",
+        "address": "0x357eA4054Bcd387a677743A2021E9d1d45BC40F6",
+        "verified": true
+      }
+    ]
   },
   "sourceBroadcast": "broadcast\\DeployTestEnterpriseRoot.s.sol\\84532\\run-latest.json",
   "notes": [
