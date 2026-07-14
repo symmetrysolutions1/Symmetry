@@ -13,6 +13,7 @@ The production-minimum listener is `poll-chain-events.mjs`. It:
 - persists a canonical block-hash checkpoint
 - stops on checkpoint reorganization instead of silently corrupting projections
 - appends raw, replayable event envelopes to a JSONL ledger
+- retries transient RPC timeouts, rate limits, and provider failures with bounded exponential backoff
 
 Run one confirmed pass with:
 

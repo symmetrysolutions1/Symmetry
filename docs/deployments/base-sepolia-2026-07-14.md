@@ -73,6 +73,16 @@ This is a successful testnet rehearsal, not a production approval. Explorer sour
 - VotoID E2E: `33/33`
 - Total: `92/92` successful receipts
 
+## Confirmed event indexing
+
+- Listener status: healthy
+- Indexed addresses: Factory plus the four registered roots
+- Confirmed safe head reached: `44126490`
+- Raw replayable events ingested: `93`
+- Provider-compatible effective range: `10` blocks per `eth_getLogs` request
+- Canonical checkpoint and append-only JSONL event ledger: persisted locally
+- Transient RPC timeout and rate-limit handling: bounded exponential retry enabled
+
 ## Remaining release gates
 
 1. Obtain explicit authorization to publish Solidity source and verify the Factory, shared facets, and roots on Basescan/Etherscan.
