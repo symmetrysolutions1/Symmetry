@@ -1,0 +1,41 @@
+{
+  "artifactVersion": "1.1.0",
+  "status": "broadcasted",
+  "protocolRelease": "0.2.0-security-hardened",
+  "deploymentKind": "enterprise-root",
+  "chainKey": "base-sepolia",
+  "chainId": 84532,
+  "deployedAt": "2026-07-14T08:51:36.711Z",
+  "deployedBy": "0xba136c070266D72aebFCcf26427132eb100d8E59",
+  "factoryAddress": "0x074349dbCa642fcc7517968Fb5548ecE6f2E456a",
+  "companyKey": "0x91fe65197178b7293eadb629fcda5414445fe4b107bcd8ebbfbd11b5df4f999c",
+  "enterpriseRoot": "0x357eA4054Bcd387a677743A2021E9d1d45BC40F6",
+  "localEnterpriseId": 1,
+  "contracts": [
+    {
+      "name": "SymmetryEnterpriseRoot",
+      "address": "0x357eA4054Bcd387a677743A2021E9d1d45BC40F6",
+      "txHash": "0xc30b49276df7a0891aad591e10eb51cdf9f2c8fac29c4c32d0ab4cebd36fc97e"
+    }
+  ],
+  "ownership": {
+    "protocolAdmin": "0x03F4C13ce4d0beb4BD4554fC7BBaF36cb1f66b79",
+    "upgradeAdmin": "0x6e15FB78F611C90f58017F106669c10a6ae084F4",
+    "enterpriseOwner": "0xFB689f3Ff9f27F6a7C3C5A68c95693cD8F48F6EF"
+  },
+  "services": [
+    "votoid",
+    "automation",
+    "eudr"
+  ],
+  "verification": {
+    "explorer": "pending",
+    "checkedAt": null
+  },
+  "sourceBroadcast": "broadcast\\DeployTestEnterpriseRoot.s.sol\\84532\\run-latest.json",
+  "notes": [
+    "Atomic corporate identity and three-service bootstrap completed.",
+    "Enterprise administration and protocol administration handed off.",
+    "Deployer protocol-admin role revoked and confirmed by live ABI read."
+  ]
+}

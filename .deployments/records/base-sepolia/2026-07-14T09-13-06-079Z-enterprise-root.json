@@ -1,0 +1,42 @@
+{
+  "artifactVersion": "1.1.0",
+  "status": "broadcasted",
+  "protocolRelease": "0.2.0-security-hardened",
+  "deploymentKind": "enterprise-root",
+  "chainKey": "base-sepolia",
+  "chainId": 84532,
+  "deployedBy": "0xba136c070266D72aebFCcf26427132eb100d8E59",
+  "factoryAddress": "0x074349dbCa642fcc7517968Fb5548ecE6f2E456a",
+  "localEnterpriseId": 1,
+  "verification": {
+    "explorer": "pending",
+    "checkedAt": null
+  },
+  "deployedAt": "2026-07-14T09:01:11.006Z",
+  "companyKey": "0x1ad23b81ccd746d11ac57cb50bc14f30d3ed22734bde08dba4bc5499f3f68951",
+  "enterpriseRoot": "0xAA5024F9E70418447802ED54e3774Ae5db0865B1",
+  "contracts": [
+    {
+      "name": "SymmetryEnterpriseRoot",
+      "address": "0xAA5024F9E70418447802ED54e3774Ae5db0865B1",
+      "txHash": "0xcc909a556b7ef609771262367911f0e5215eac8d03a8c6247832a20fb46e153d"
+    }
+  ],
+  "ownership": {
+    "protocolAdmin": "0xba136c070266D72aebFCcf26427132eb100d8E59",
+    "upgradeAdmin": "0xba136c070266D72aebFCcf26427132eb100d8E59",
+    "enterpriseOwner": "0xba136c070266D72aebFCcf26427132eb100d8E59"
+  },
+  "services": [
+    "eudr"
+  ],
+  "sourceBroadcast": "broadcast\\RunBaseSepoliaEUDRE2E.s.sol\\84532\\run-latest.json",
+  "receiptSummary": {
+    "successful": 18,
+    "total": 18
+  },
+  "notes": [
+    "Batch 1 certified by issued certificate 1 with evidence 1 and audit record 1.",
+    "Test-only actors are controlled by deterministic E2E keys and are not production governance."
+  ]
+}
