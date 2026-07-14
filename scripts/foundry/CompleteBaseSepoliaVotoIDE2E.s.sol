@@ -17,12 +17,23 @@ contract CompleteBaseSepoliaVotoIDE2E is Script {
 
     uint256 internal constant SECRETARY_PK = 0xB0B12;
     uint256 internal constant EXECUTOR_PK = 0xC00515;
+    uint256 internal constant ACTOR_FUNDING = 0.001 ether;
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY_DEPLOYER");
         address root = vm.envAddress("VOTOID_E2E_ROOT_ADDRESS");
         uint256 enterpriseId = vm.envUint("VOTOID_E2E_ENTERPRISE_ID");
         uint256 proposalId = 1;
+        uint256 sessionId = 1;
+
+        vm.startBroadcast(deployerPrivateKey);
+        _fundActor(vm.addr(EXECUTOR_PK));
+        vm.stopBroadcast();
+
+        vm.startBroadcast(SECRETARY_PK);
+        IVotoIDFacet(root).closeProposal(enterpriseId, proposalId);
+        IVotoIDFacet(root).assignProposalExecutor(enterpriseId, proposalId, vm.addr(EXECUTOR_PK));
+        vm.stopBroadcast();
 
         vm.startBroadcast(EXECUTOR_PK);
         IVotoIDFacet(root).executeProposal(enterpriseId, proposalId);
@@ -30,6 +41,7 @@ contract CompleteBaseSepoliaVotoIDE2E is Script {
 
         vm.startBroadcast(SECRETARY_PK);
         IVotoIDFacet(root).verifyProposal(enterpriseId, proposalId);
+        IVotoIDFacet(root).closeSession(enterpriseId);
         vm.stopBroadcast();
 
         vm.startBroadcast(deployerPrivateKey);
@@ -67,7 +79,15 @@ contract CompleteBaseSepoliaVotoIDE2E is Script {
         IVotoIDFacet.ProposalView memory proposal =
             IVotoIDFacet(root).getProposal(enterpriseId, proposalId);
         require(proposal.status == 7, "proposal not verified");
+        require(
+            IVotoIDFacet(root).getSession(enterpriseId, sessionId).status == 2, "session not closed"
+        );
 
         emit VotoIDE2ECompleted(root, enterpriseId, proposalId, evidenceId, auditId);
+    }
+
+    function _fundActor(address actor) internal {
+        (bool success,) = actor.call{ value: ACTOR_FUNDING }("");
+        require(success, "actor funding failed");
     }
 }
