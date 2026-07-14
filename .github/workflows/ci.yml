@@ -28,7 +28,7 @@ jobs:
       - name: Setup Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          version: v1.4.2
 
       - name: Solidity build
         run: pnpm contracts:build
