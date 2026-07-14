@@ -1,0 +1,30 @@
+{
+  "policyVersion": "1.0.0",
+  "objective": "immutable-indestructible-durable",
+  "description": "Default evidence permanence policy for Symmetry enterprise roots.",
+  "requiredLayers": {
+    "operational": true,
+    "ipfs": true,
+    "filecoin": true,
+    "arweave": true,
+    "onChainAnchor": true
+  },
+  "minimumReplication": {
+    "ipfsPinningTargets": 2,
+    "filecoinReplicas": 2,
+    "arweaveWrites": 1,
+    "operationalCopies": 1
+  },
+  "verificationCadence": {
+    "ipfsHours": 24,
+    "filecoinHours": 24,
+    "arweaveHours": 72,
+    "onChainHours": 24
+  },
+  "repairPolicy": {
+    "rePinIpfsOnDegrade": true,
+    "renewFilecoinDealsBeforeDaysRemaining": 30,
+    "reArchiveArweaveOnUnavailable": true,
+    "reAnchorOnChainIfManifestChanges": true
+  }
+}

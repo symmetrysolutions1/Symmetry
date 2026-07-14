@@ -1,0 +1,75 @@
+{
+  "version": "1.0.0",
+  "projections": [
+    {
+      "name": "enterprise_root_projection",
+      "primaryEvents": ["EnterpriseRootDeployed", "EnterpriseOnboarded"],
+      "owner": "identity-service"
+    },
+    {
+      "name": "service_installation_projection",
+      "primaryEvents": ["EnterpriseServiceConfigured", "AuditRecordCreated"],
+      "owner": "reporting-service"
+    },
+    {
+      "name": "evidence_projection",
+      "primaryEvents": ["EvidenceAnchored", "EvidenceManifestUpdated"],
+      "owner": "audit-service"
+    },
+    {
+      "name": "audit_timeline_projection",
+      "primaryEvents": ["AuditRecordCreated"],
+      "owner": "audit-service"
+    },
+    {
+      "name": "votoid_board_projection",
+      "primaryEvents": ["BoardInitialized", "ChairpersonUpdated", "SecretaryUpdated", "BoardMemberAdded", "BoardMemberRemoved"],
+      "owner": "votoid-service"
+    },
+    {
+      "name": "votoid_session_projection",
+      "primaryEvents": ["SessionOpened", "SessionJoined", "SessionLeft", "SessionClosed"],
+      "owner": "votoid-service"
+    },
+    {
+      "name": "votoid_proposal_projection",
+      "primaryEvents": ["ProposalCreated", "ProposalDeliberationStarted", "ProposalVotingStarted", "ProposalClosed", "ProposalExecutorAssigned", "ProposalExecuted", "ProposalVerified"],
+      "owner": "votoid-service"
+    },
+    {
+      "name": "votoid_vote_tally_projection",
+      "primaryEvents": ["VoteCast", "ProposalClosed"],
+      "owner": "analytics-service"
+    },
+    {
+      "name": "automation_template_projection",
+      "primaryEvents": ["ProcessTemplateRegistered", "ProcessTemplateStatusUpdated"],
+      "owner": "automation-service"
+    },
+    {
+      "name": "automation_instance_projection",
+      "primaryEvents": ["ProcessInstantiated", "ProcessCheckpointCompleted", "ProcessOracleAttested", "ProcessAutomated", "ProcessFailed", "ProcessEscalated", "ProcessCancelled"],
+      "owner": "automation-service"
+    },
+    {
+      "name": "automation_checkpoint_projection",
+      "primaryEvents": ["ProcessCheckpointCompleted", "ProcessOracleAttested"],
+      "owner": "analytics-service"
+    },
+    {
+      "name": "eudr_actor_projection",
+      "primaryEvents": ["SupplyActorRegistered"],
+      "owner": "eudr-service"
+    },
+    {
+      "name": "eudr_traceability_projection",
+      "primaryEvents": ["ParcelRegistered", "BatchCreated", "CustodyTransferred"],
+      "owner": "eudr-service"
+    },
+    {
+      "name": "eudr_certification_projection",
+      "primaryEvents": ["DossierValidated", "CertificateIssued", "CertificateRevoked"],
+      "owner": "eudr-service"
+    }
+  ]
+}

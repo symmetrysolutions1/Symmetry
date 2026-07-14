@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "alerts": [
+    {
+      "name": "rpc_primary_unavailable",
+      "severity": "high",
+      "description": "Primary RPC endpoint is not responding."
+    },
+    {
+      "name": "evidence_replication_degraded",
+      "severity": "high",
+      "description": "Evidence health check failed on one or more permanence layers."
+    },
+    {
+      "name": "projection_lag",
+      "severity": "medium",
+      "description": "Indexing lag exceeds expected threshold."
+    },
+    {
+      "name": "service_installation_without_audit",
+      "severity": "high",
+      "description": "A service entitlement changed without a paired audit record."
+    }
+  ]
+}

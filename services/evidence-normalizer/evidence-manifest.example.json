@@ -1,0 +1,57 @@
+{
+  "manifestVersion": "1.0.0",
+  "manifestId": "manifest-0001",
+  "enterpriseRoot": "0x0000000000000000000000000000000000000000",
+  "localEnterpriseId": 1,
+  "service": "shared",
+  "subjectType": "enterprise",
+  "subjectId": "onboarding-kyb",
+  "evidenceType": "kyb-package",
+  "contentDigestKeccak256": "0x1111111111111111111111111111111111111111111111111111111111111111",
+  "payload": {
+    "canonicalFilename": "kyb-package.zip",
+    "mimeType": "application/zip",
+    "sizeBytes": 1048576,
+    "sha256": "placeholder-sha256"
+  },
+  "locations": {
+    "operationalStorageUri": "s3://symmetry-enterprise-0001/evidence/kyb-package.zip",
+    "ipfsCid": "bafyplaceholdercid",
+    "filecoinPayloadCid": "bafyplaceholderpayloadcid",
+    "filecoinDealIds": ["deal-001", "deal-002"],
+    "arweaveTxId": "placeholder-arweave-tx-id"
+  },
+  "createdBy": "symmetry-ops",
+  "createdAt": "2026-05-09T00:00:00.000Z",
+  "supersedesManifestId": null,
+  "status": "anchored",
+  "replication": {
+    "operational": {
+      "present": true,
+      "verifiedAt": "2026-05-09T00:00:00.000Z"
+    },
+    "ipfs": {
+      "present": true,
+      "pinningTargetsRequired": 2,
+      "healthyPinningTargets": 2,
+      "verifiedAt": "2026-05-09T00:00:00.000Z"
+    },
+    "filecoin": {
+      "present": true,
+      "replicasRequired": 2,
+      "activeReplicas": 2,
+      "renewBeforeDaysRemaining": 30,
+      "verifiedAt": "2026-05-09T00:00:00.000Z"
+    },
+    "arweave": {
+      "present": true,
+      "verifiedAt": "2026-05-09T00:00:00.000Z"
+    },
+    "onChainAnchor": {
+      "present": true,
+      "evidenceId": 1,
+      "txHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "verifiedAt": "2026-05-09T00:00:00.000Z"
+    }
+  }
+}

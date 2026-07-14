@@ -1,0 +1,22 @@
+{
+  "planVersion": "1.0.0",
+  "planId": "bc8732a7-195b-49ab-af7e-154cb6f3809c",
+  "createdAt": "2026-07-14T06:11:15.709Z",
+  "chainKey": "base-sepolia",
+  "chainId": 84532,
+  "strategy": "single-primary-chain-with-abstraction",
+  "rpcConfigured": true,
+  "actors": {
+    "deployer": "0xba136c070266D72aebFCcf26427132eb100d8E59",
+    "protocolAdmin": "0x03F4C13ce4d0beb4BD4554fC7BBaF36cb1f66b79",
+    "upgradeAdminOwner": "0x6e15FB78F611C90f58017F106669c10a6ae084F4",
+    "enterpriseOwner": "0xFB689f3Ff9f27F6a7C3C5A68c95693cD8F48F6EF"
+  },
+  "nextActions": [
+    "Deploy shared factory and facets",
+    "Record deployment artifact",
+    "Deploy enterprise root",
+    "Create corporate identity",
+    "Install business services"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://symmetry.enterprises/schemas/service-installation.schema.json",
+  "title": "Symmetry Service Installation",
+  "type": "object",
+  "required": [
+    "serviceKey",
+    "serviceId",
+    "enterpriseRoot",
+    "localEnterpriseId",
+    "enabled",
+    "configUri",
+    "installedBy",
+    "installedAt"
+  ],
+  "properties": {
+    "serviceKey": { "type": "string" },
+    "serviceId": { "type": "integer", "minimum": 0 },
+    "enterpriseRoot": { "type": "string" },
+    "localEnterpriseId": { "type": "integer", "minimum": 1 },
+    "enabled": { "type": "boolean" },
+    "configUri": { "type": "string" },
+    "installerEvidenceManifestUri": { "type": ["string", "null"] },
+    "installedBy": { "type": "string" },
+    "installedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": true
+}

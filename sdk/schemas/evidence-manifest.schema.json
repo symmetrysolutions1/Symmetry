@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://symmetry.enterprises/schemas/evidence-manifest.schema.json",
+  "title": "Symmetry Evidence Manifest",
+  "type": "object",
+  "required": [
+    "manifestVersion",
+    "manifestId",
+    "enterpriseRoot",
+    "localEnterpriseId",
+    "service",
+    "subjectType",
+    "subjectId",
+    "evidenceType",
+    "contentDigestKeccak256",
+    "payload",
+    "createdBy",
+    "createdAt",
+    "status",
+    "replication"
+  ],
+  "properties": {
+    "manifestVersion": {
+      "type": "string"
+    },
+    "manifestId": {
+      "type": "string"
+    },
+    "enterpriseRoot": {
+      "type": "string",
+      "description": "Root diamond address for the company."
+    },
+    "localEnterpriseId": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "service": {
+      "type": "string",
+      "enum": ["shared", "votoid", "automation", "eudr"]
+    },
+    "subjectType": {
+      "type": "string"
+    },
+    "subjectId": {
+      "type": ["string", "integer"]
+    },
+    "evidenceType": {
+      "type": "string"
+    },
+    "contentDigestKeccak256": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{64}$"
+    },
+    "anchorDigestKeccak256": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{64}$",
+      "description": "Keccak-256 of the canonical immutable anchor scope; mutable health and on-chain receipt fields are excluded."
+    },
+    "payload": {
+      "type": "object",
+      "required": ["canonicalFilename", "mimeType", "sizeBytes"],
+      "properties": {
+        "canonicalFilename": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "sizeBytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "locations": {
+      "type": "object",
+      "properties": {
+        "operationalStorageUri": { "type": "string" },
+        "ipfsCid": { "type": "string" },
+        "filecoinPayloadCid": { "type": "string" },
+        "filecoinDealIds": {
+          "type": "array",
+          "items": { "type": ["string", "integer"] }
+        },
+        "arweaveTxId": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "createdBy": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "supersedesManifestId": {
+      "type": ["string", "null"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "replicating", "anchored", "degraded", "repaired", "superseded", "revoked"]
+    },
+    "replication": {
+      "type": "object",
+      "required": ["operational", "ipfs", "filecoin", "arweave", "onChainAnchor"],
+      "properties": {
+        "operational": {
+          "type": "object",
+          "required": ["present"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "verifiedAt": { "type": ["string", "null"], "format": "date-time" }
+          },
+          "additionalProperties": true
+        },
+        "ipfs": {
+          "type": "object",
+          "required": ["present", "pinningTargetsRequired"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "pinningTargetsRequired": { "type": "integer", "minimum": 1 },
+            "healthyPinningTargets": { "type": "integer", "minimum": 0 },
+            "verifiedAt": { "type": ["string", "null"], "format": "date-time" }
+          },
+          "additionalProperties": true
+        },
+        "filecoin": {
+          "type": "object",
+          "required": ["present", "replicasRequired"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "replicasRequired": { "type": "integer", "minimum": 1 },
+            "activeReplicas": { "type": "integer", "minimum": 0 },
+            "renewBeforeDaysRemaining": { "type": "integer", "minimum": 1 },
+            "verifiedAt": { "type": ["string", "null"], "format": "date-time" }
+          },
+          "additionalProperties": true
+        },
+        "arweave": {
+          "type": "object",
+          "required": ["present"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "verifiedAt": { "type": ["string", "null"], "format": "date-time" }
+          },
+          "additionalProperties": true
+        },
+        "onChainAnchor": {
+          "type": "object",
+          "required": ["present"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "evidenceId": { "type": ["integer", "null"], "minimum": 1 },
+            "txHash": { "type": ["string", "null"] },
+            "verifiedAt": { "type": ["string", "null"], "format": "date-time" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

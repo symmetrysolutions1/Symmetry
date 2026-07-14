@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://symmetry.enterprises/schemas/deployment-artifact.schema.json",
+  "title": "Symmetry Deployment Artifact",
+  "type": "object",
+  "required": [
+    "artifactVersion",
+    "deploymentKind",
+    "chainKey",
+    "chainId",
+    "deployedAt",
+    "deployedBy",
+    "contracts",
+    "ownership",
+    "status"
+  ],
+  "properties": {
+    "artifactVersion": { "type": "string" },
+    "deploymentKind": { "type": "string", "enum": ["factory", "enterprise-root", "service-installation"] },
+    "chainKey": { "type": "string" },
+    "chainId": { "type": "integer", "minimum": 1 },
+    "deployedAt": { "type": "string", "format": "date-time" },
+    "deployedBy": { "type": "string" },
+    "companyKey": { "type": ["string", "null"] },
+    "enterpriseRoot": { "type": ["string", "null"] },
+    "localEnterpriseId": { "type": ["integer", "null"] },
+    "contracts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "address"],
+        "properties": {
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "txHash": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "ownership": {
+      "type": "object",
+      "required": ["protocolAdmin", "upgradeAdmin", "enterpriseOwner"],
+      "properties": {
+        "protocolAdmin": { "type": "string" },
+        "upgradeAdmin": { "type": "string" },
+        "enterpriseOwner": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "services": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "broadcasted", "verified", "failed"]
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

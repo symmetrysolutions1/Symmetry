@@ -1,0 +1,26 @@
+{
+  "operational": {
+    "uri": "s3://enterprise-bucket/evidence/object.bin",
+    "verifiedAt": "2026-07-14T00:00:00.000Z"
+  },
+  "ipfs": {
+    "cid": "bafy-replace-with-real-cid",
+    "pinningTargets": ["provider-a", "provider-b"],
+    "verifiedAt": "2026-07-14T00:00:00.000Z"
+  },
+  "filecoin": {
+    "payloadCid": "bafy-replace-with-real-payload-cid",
+    "deals": [{ "id": "replace-1" }, { "id": "replace-2" }],
+    "renewBeforeDaysRemaining": 30,
+    "verifiedAt": "2026-07-14T00:00:00.000Z"
+  },
+  "arweave": {
+    "txId": "replace-with-real-arweave-tx-id",
+    "verifiedAt": "2026-07-14T00:00:00.000Z"
+  },
+  "onChain": {
+    "evidenceId": 1,
+    "txHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "verifiedAt": "2026-07-14T00:00:00.000Z"
+  }
+}

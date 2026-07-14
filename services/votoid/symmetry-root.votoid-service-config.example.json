@@ -1,0 +1,16 @@
+{
+  "serviceKey": "votoid",
+  "serviceId": 0,
+  "rootProfile": "symmetry-enterprise-root",
+  "configUri": "ipfs://symmetry-votoid-service-config",
+  "boardDefaults": {
+    "quorumPercentage": 50,
+    "deliberationDurationSeconds": 86400,
+    "votingDurationSeconds": 3600
+  },
+  "evidencePolicy": {
+    "proposalManifestRequired": true,
+    "resultManifestRequired": true,
+    "auditCategory": "VOTOID_EXECUTION"
+  }
+}

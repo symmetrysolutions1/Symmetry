@@ -1,0 +1,21 @@
+{
+  "serviceKey": "automation",
+  "serviceId": 1,
+  "rootProfile": "symmetry-enterprise-root",
+  "configUri": "ipfs://symmetry-automation-service-config",
+  "defaultRoles": {
+    "processManagerRole": "PROCESS_MANAGER_ROLE",
+    "processApproverRole": "PROCESS_APPROVER_ROLE",
+    "processOracleRole": "PROCESS_ORACLE_ROLE"
+  },
+  "workflowDefaults": {
+    "requiresEvidenceByDefault": true,
+    "oracleEscalationEnabled": true,
+    "allowManualCancellation": true
+  },
+  "evidencePolicy": {
+    "instanceManifestRequired": true,
+    "executionManifestRequired": true,
+    "auditCategory": "AUTOMATION_EXECUTION"
+  }
+}

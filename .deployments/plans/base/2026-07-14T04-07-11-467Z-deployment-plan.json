@@ -1,0 +1,22 @@
+{
+  "planVersion": "1.0.0",
+  "planId": "da01779e-2f13-4123-a89c-f8eb82be5607",
+  "createdAt": "2026-07-14T04:07:11.467Z",
+  "chainKey": "base",
+  "chainId": 0,
+  "strategy": "single-primary-chain-with-abstraction",
+  "rpcConfigured": false,
+  "actors": {
+    "deployer": null,
+    "protocolAdmin": null,
+    "upgradeAdminOwner": null,
+    "enterpriseOwner": null
+  },
+  "nextActions": [
+    "Deploy shared factory and facets",
+    "Record deployment artifact",
+    "Deploy enterprise root",
+    "Create corporate identity",
+    "Install business services"
+  ]
+}

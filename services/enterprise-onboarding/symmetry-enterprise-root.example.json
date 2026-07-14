@@ -1,0 +1,25 @@
+{
+  "profile": "symmetry-enterprise-root",
+  "legalName": "Symmetry Enterprises SAS",
+  "jurisdictionCode": "CO",
+  "metadataUri": "ipfs://symmetry-enterprise-root-profile",
+  "adminWallet": "0x03F4C13ce4d0beb4BD4554fC7BBaF36cb1f66b79",
+  "multisigWallet": "0xFB689f3Ff9f27F6a7C3C5A68c95693cD8F48F6EF",
+  "enabledServices": [
+    {
+      "serviceId": 0,
+      "serviceKey": "votoid",
+      "configUri": "ipfs://symmetry-votoid-service-config"
+    },
+    {
+      "serviceId": 1,
+      "serviceKey": "automation",
+      "configUri": "ipfs://symmetry-automation-service-config"
+    },
+    {
+      "serviceId": 2,
+      "serviceKey": "eudr",
+      "configUri": "ipfs://symmetry-eudr-service-config"
+    }
+  ]
+}

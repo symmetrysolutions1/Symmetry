@@ -1,0 +1,11 @@
+{
+  "serviceKey": "votoid",
+  "serviceId": 0,
+  "enterpriseRoot": "0x0000000000000000000000000000000000000000",
+  "localEnterpriseId": 1,
+  "enabled": true,
+  "configUri": "ipfs://service-installer-votoid-config",
+  "installerEvidenceManifestUri": "ipfs://service-installer-votoid-evidence-manifest",
+  "installedBy": "symmetry-ops",
+  "installedAt": "2026-05-16T00:00:00.000Z"
+}

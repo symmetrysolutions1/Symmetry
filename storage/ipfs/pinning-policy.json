@@ -1,0 +1,15 @@
+{
+  "network": "ipfs",
+  "purpose": "content-addressed-distribution",
+  "requirements": {
+    "minimumPinningTargets": 2,
+    "requireDedicatedPinningProvider": true,
+    "requireIndependentNodePinning": true,
+    "requireGatewayRetrievalCheck": true
+  },
+  "healthChecks": {
+    "verifyCidRetrieval": true,
+    "verifyPinnedAcrossTargets": true,
+    "intervalHours": 24
+  }
+}

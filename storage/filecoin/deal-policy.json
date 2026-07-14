@@ -1,0 +1,16 @@
+{
+  "network": "filecoin",
+  "purpose": "durable-incentivized-storage",
+  "requirements": {
+    "minimumReplicas": 2,
+    "renewBeforeDaysRemaining": 30,
+    "preferVerifiedDealsWhenEligible": true,
+    "trackPayloadCid": true,
+    "trackDealIds": true
+  },
+  "healthChecks": {
+    "verifyDealsActive": true,
+    "verifyReplicationCount": true,
+    "intervalHours": 24
+  }
+}

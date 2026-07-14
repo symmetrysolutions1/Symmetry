@@ -1,0 +1,20 @@
+{
+  "serviceKey": "eudr",
+  "serviceId": 2,
+  "rootProfile": "symmetry-enterprise-root",
+  "configUri": "ipfs://symmetry-eudr-service-config",
+  "defaultRoles": {
+    "exporterRole": "EXPORTER_ROLE",
+    "producerRole": "PRODUCER_ROLE",
+    "verifierRole": "EUDR_VERIFIER_ROLE"
+  },
+  "traceabilityDefaults": {
+    "custodyTransferManifestRequired": true,
+    "parcelGeoDigestRequired": true
+  },
+  "certificationPolicy": {
+    "validationManifestRequired": true,
+    "certificateManifestRequired": true,
+    "digitalPassportRequired": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "network": "arweave",
+  "purpose": "permanent-archive",
+  "requirements": {
+    "minimumArchivalWrites": 1,
+    "trackTransactionId": true,
+    "verifyRetrievalThroughGateway": true
+  },
+  "healthChecks": {
+    "verifyTxRetrieval": true,
+    "intervalHours": 72
+  }
+}

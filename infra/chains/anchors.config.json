@@ -1,0 +1,60 @@
+{
+  "version": "1.0.0",
+  "execution": {
+    "primaryChain": "base",
+    "strategy": "single-primary-chain-with-abstraction",
+    "notes": [
+      "Symmetry primitives must remain chain-agnostic.",
+      "Base is the current canonical execution target for initial rollout.",
+      "Polygon remains a supported expansion target, not the protocol identity."
+    ]
+  },
+  "chains": {
+    "base": {
+      "chainId": 8453,
+      "role": "primary-execution",
+      "family": "evm",
+      "public": true,
+      "anchorEvidence": true,
+      "anchorAudit": true,
+      "anchorIdentity": true,
+      "anchorServiceState": true
+    },
+    "base-sepolia": {
+      "chainId": 84532,
+      "role": "testnet",
+      "family": "evm",
+      "public": true,
+      "anchorEvidence": true,
+      "anchorAudit": true,
+      "anchorIdentity": true,
+      "anchorServiceState": true
+    },
+    "polygon-pos": {
+      "chainId": 137,
+      "role": "secondary-execution",
+      "family": "evm",
+      "public": true,
+      "anchorEvidence": true,
+      "anchorAudit": true,
+      "anchorIdentity": true,
+      "anchorServiceState": true
+    },
+    "polygon-amoy": {
+      "chainId": 80002,
+      "role": "secondary-testnet",
+      "family": "evm",
+      "public": true,
+      "anchorEvidence": true,
+      "anchorAudit": true,
+      "anchorIdentity": true,
+      "anchorServiceState": true
+    }
+  },
+  "abstraction": {
+    "anchorAdapterRequired": true,
+    "evidenceModelMustBeChainIndependent": true,
+    "auditModelMustBeChainIndependent": true,
+    "serviceInstallModelMustBeChainIndependent": true
+  }
+}
