@@ -1,0 +1,51 @@
+{
+  "name": "Corredor de conservacion Alto Putumayo",
+  "enterpriseId": 1,
+  "rootAddress": "0x1111111111111111111111111111111111111111",
+  "alertThresholds": {
+    "treeCoverLossPercentagePoints": 1,
+    "ndviDrop": 0.1
+  },
+  "territory": {
+    "territoryRef": "CO-PUTUMAYO-001",
+    "name": "Territorio piloto",
+    "areaHectares": 1280,
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-76.7, 1.1],
+          [-76.6, 1.1],
+          [-76.6, 1.2],
+          [-76.7, 1.1]
+        ]
+      ]
+    },
+    "geometryDigest": "0x1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "observations": [
+    {
+      "source": "copernicus-sentinel-2",
+      "capturedAt": "2026-06-01T00:00:00.000Z",
+      "metrics": {
+        "treeCoverPercentage": 91.4,
+        "ndviMean": 0.78,
+        "cloudCoverPercentage": 8
+      },
+      "evidenceUri": "s3://symmetry-nature/pilot/baseline.json",
+      "evidenceDigest": "0x2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "source": "copernicus-sentinel-2",
+      "capturedAt": "2026-07-18T00:00:00.000Z",
+      "metrics": {
+        "treeCoverPercentage": 89.1,
+        "ndviMean": 0.54,
+        "cloudCoverPercentage": 5
+      },
+      "evidenceUri": "s3://symmetry-nature/pilot/current.json",
+      "evidenceDigest": "0x3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  ],
+  "disclaimer": "Demonstration data only. Live Copernicus ingestion is not yet connected."
+}
