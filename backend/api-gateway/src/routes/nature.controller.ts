@@ -58,6 +58,37 @@ export class NatureController {
     return this.natureService.recordObservation(workspaceId, body);
   }
 
+  @Post("workspaces/:workspaceId/territories/:territoryId/copernicus/scenes/search")
+  searchCopernicusScenes(
+    @Param("workspaceId") workspaceId: string,
+    @Param("territoryId") territoryId: string,
+    @Body()
+    body: {
+      from: string;
+      to: string;
+      maxCloudCover?: number;
+      limit?: number;
+    },
+  ) {
+    return this.natureService.searchCopernicusScenes(workspaceId, territoryId, body);
+  }
+
+  @Post("workspaces/:workspaceId/territories/:territoryId/copernicus/ndvi")
+  calculateCopernicusNdvi(
+    @Param("workspaceId") workspaceId: string,
+    @Param("territoryId") territoryId: string,
+    @Body()
+    body: {
+      from: string;
+      to: string;
+      aggregationIntervalDays?: number;
+      resolutionDegrees?: number;
+      maxCloudCoverage?: number;
+    },
+  ) {
+    return this.natureService.calculateCopernicusNdvi(workspaceId, territoryId, body);
+  }
+
   @Post("workspaces/:workspaceId/evidence-passports")
   prepareEvidencePassport(
     @Param("workspaceId") workspaceId: string,
