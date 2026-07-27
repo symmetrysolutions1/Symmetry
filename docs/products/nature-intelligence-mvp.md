@@ -32,6 +32,8 @@ The API gateway exposes:
 - `POST /nature/workspaces`
 - `GET /nature/workspaces/:workspaceId`
 - `POST /nature/workspaces/:workspaceId/territories`
+- `POST /nature/workspaces/:workspaceId/territories/:territoryId/copernicus/scenes/search`
+- `POST /nature/workspaces/:workspaceId/territories/:territoryId/copernicus/ndvi`
 - `POST /nature/workspaces/:workspaceId/observations`
 - `POST /nature/workspaces/:workspaceId/evidence-passports`
 
@@ -43,6 +45,8 @@ for a demonstration payload.
 - GeoJSON polygon validation
 - territory registry
 - source-attributed environmental observations
+- live, unauthenticated Sentinel-2 L2A scene discovery through the official Copernicus Data
+  Space Ecosystem STAC API
 - deterministic comparison of tree-cover and NDVI metrics
 - configurable alert thresholds and severity
 - evidence-passport preparation
@@ -50,7 +54,7 @@ for a demonstration payload.
 
 ## What is not implemented yet
 
-- live Copernicus Data Space authentication or imagery ingestion
+- live authenticated NDVI processing until an OAuth client is configured
 - raster processing, cloud masking, or independently validated land-cover classification
 - an interactive map and dashboard
 - durable database storage and background jobs
@@ -59,6 +63,33 @@ for a demonstration payload.
 
 These boundaries are deliberate. The MVP demonstrates the product contract and traceability
 flow without representing example data as a live environmental result.
+
+## Copernicus integration
+
+Scene discovery uses the current CDSE STAC endpoint:
+
+`https://stac.dataspace.copernicus.eu/v1`
+
+The API searches the `sentinel-2-l2a` collection with the registered territory polygon, an ISO
+date range, a maximum cloud-cover threshold, and a bounded result limit. This step is live and
+does not require credentials.
+
+Run the connectivity smoke test with:
+
+```powershell
+node scripts/nature/search-copernicus-scenes.mjs
+```
+
+NDVI is never inferred from catalogue metadata. The NDVI endpoint uses the authenticated
+Sentinel Hub Statistical API, bands B08 and B04, and excludes SCL classes 3, 8, 9, 10, and 11
+to mask cloud shadow, clouds, cirrus, and snow/ice. Configure:
+
+- `COPERNICUS_CLIENT_ID`
+- `COPERNICUS_CLIENT_SECRET`
+
+The client secret belongs in a secret manager or local untracked environment, never in source
+control. Tree-cover classification still requires a separate declared and independently
+validated methodology; NDVI alone is not proof of deforestation.
 
 ## Market narrative
 

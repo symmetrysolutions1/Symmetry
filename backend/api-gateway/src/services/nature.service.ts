@@ -1,5 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
+import {
+  CopernicusScene,
+  CopernicusStacService,
+} from "./copernicus-stac.service";
+import {
+  CopernicusNdviInterval,
+  CopernicusStatisticsService,
+} from "./copernicus-statistics.service";
 
 export type Position = [number, number];
 
@@ -124,6 +132,12 @@ const DEFAULT_THRESHOLDS: AlertThresholds = {
 export class NatureService {
   private readonly workspaces = new Map<string, NatureWorkspace>();
 
+  constructor(
+    private readonly copernicusStacService: CopernicusStacService = new CopernicusStacService(),
+    private readonly copernicusStatisticsService:
+      CopernicusStatisticsService = new CopernicusStatisticsService(),
+  ) {}
+
   createWorkspace(input: CreateWorkspaceInput): NatureWorkspace {
     if (!input.name?.trim()) {
       throw new BadRequestException("Nature workspace name is required");
@@ -243,6 +257,75 @@ export class NatureService {
     workspace.evidencePassports.push(passport);
     workspace.updatedAt = passport.createdAt;
     return passport;
+  }
+
+  async searchCopernicusScenes(
+    workspaceId: string,
+    territoryId: string,
+    input: {
+      from: string;
+      to: string;
+      maxCloudCover?: number;
+      limit?: number;
+    },
+  ): Promise<{
+    provider: "copernicus-data-space-ecosystem";
+    collection: "sentinel-2-l2a";
+    territoryId: string;
+    searchedAt: string;
+    scenes: CopernicusScene[];
+  }> {
+    const workspace = this.getWorkspace(workspaceId);
+    const territory = this.requireTerritory(workspace, territoryId);
+    const scenes = await this.copernicusStacService.searchSentinel2L2A({
+      geometry: territory.geometry,
+      ...input,
+    });
+
+    return {
+      provider: "copernicus-data-space-ecosystem",
+      collection: "sentinel-2-l2a",
+      territoryId,
+      searchedAt: new Date().toISOString(),
+      scenes,
+    };
+  }
+
+  async calculateCopernicusNdvi(
+    workspaceId: string,
+    territoryId: string,
+    input: {
+      from: string;
+      to: string;
+      aggregationIntervalDays?: number;
+      resolutionDegrees?: number;
+      maxCloudCoverage?: number;
+    },
+  ): Promise<{
+    provider: "copernicus-data-space-ecosystem";
+    processor: "sentinel-hub-statistical-api";
+    collection: "sentinel-2-l2a";
+    territoryId: string;
+    methodology: {
+      index: "NDVI";
+      bands: ["B08", "B04"];
+      excludedSceneClasses: [3, 8, 9, 10, 11];
+      aggregationInterval: string;
+      resolutionDegrees: number;
+    };
+    intervals: CopernicusNdviInterval[];
+  }> {
+    const workspace = this.getWorkspace(workspaceId);
+    const territory = this.requireTerritory(workspace, territoryId);
+    const result = await this.copernicusStatisticsService.calculateNdvi({
+      geometry: territory.geometry,
+      ...input,
+    });
+
+    return {
+      ...result,
+      territoryId,
+    };
   }
 
   private createAlertWhenThresholdExceeded(
