@@ -6,6 +6,9 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm --filter @symmetry/api-gateway dev",
+    "dev:web": "pnpm --filter @symmetry/web dev",
+    "build:web": "pnpm --filter @symmetry/web build",
+    "lint:web": "pnpm --filter @symmetry/web lint",
     "lint": "pnpm -r lint",
     "test": "node --test tests/canonical-evidence.test.mjs tests/backend-services.test.cjs",
     "test:e2e": "pnpm --filter @symmetry/api-gateway test:e2e",
