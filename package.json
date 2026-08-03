@@ -38,7 +38,7 @@
     "deploy:check-verification": "node scripts/ops/check-explorer-verification.mjs"
   },
   "devDependencies": {
-    "js-sha3": "0.8.0",
+    "js-sha3": "0.12.0",
     "solc": "^0.8.35"
   }
 }
