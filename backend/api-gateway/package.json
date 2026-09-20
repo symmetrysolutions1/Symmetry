@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "node --watch dist/main.js",
-    "start": "node dist/main.js",
+    "dev": "node --env-file-if-exists=../../.env --watch dist/main.js",
+    "start": "node --env-file-if-exists=../../.env dist/main.js",
     "lint": "tsc -p tsconfig.json --noEmit",
     "test": "node --test ../../tests/backend-services.test.cjs",
     "test:e2e": "node --test ../../tests/backend-services.test.cjs"
