@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SolutionHero } from "@/components/solution-hero";
-import { ArrowRight, CheckIcon, GlobeIcon, LeafIcon, ShieldIcon } from "@/components/icons";
+import { NaturePilotConsole } from "@/components/nature-pilot-console";
+import {
+  ArrowRight,
+  CheckIcon,
+  GlobeIcon,
+  LayersIcon,
+  LeafIcon,
+  ShieldIcon,
+} from "@/components/icons";
+import { NatureCopernicusViewer } from "@/components/nature-copernicus-viewer";
 
 export const metadata: Metadata = {
   title: "Nature Intelligence",
@@ -11,11 +20,11 @@ export const metadata: Metadata = {
 
 export default function NatureIntelligencePage() {
   return (
-    <>
+    <div className="nature-intelligence-page">
       <SolutionHero
         eyebrow="Cascade 01 / Nature Intelligence"
-        title="De la observación del territorio a una evidencia defendible."
-        copy="Conectamos Copernicus, análisis declarados, validación territorial y trazabilidad para convertir cambios ambientales en decisiones que pueden auditarse."
+        title="Nature Intelligence"
+        copy="De la observación satelital del territorio a una evidencia defendible con verificación y trazabilidad."
         signal="Territorio → observación → alerta → validación → evidencia"
         tone="nature"
       />
@@ -24,25 +33,26 @@ export default function NatureIntelligencePage() {
         <div className="shell solution-intro-grid">
           <div>
             <span className="eyebrow">Capacidad operacional</span>
-            <h2>Ver antes. Entender mejor. Demostrar después.</h2>
+            <h2>Usamos verificaciones satelitales para demostrar impacto medioambiental.</h2>
           </div>
           <div className="large-copy">
             <p>
-              Nature Intelligence no presenta una imagen satelital como verdad automática.
-              Conserva la fuente, el método, la geometría, la validación y la versión de la
-              evidencia que respaldaron cada decisión.
+              Nature Intelligence combina verificaciones Sentinel-2, geometría territorial y
+              validación humana para demostrar cambios ambientales con contexto. Conservamos la
+              fuente, el método, la observación, la geometría y la evidencia que respaldan cada
+              decisión sobre el Parque Tayrona.
             </p>
           </div>
         </div>
       </section>
 
       <section className="section feature-band feature-band-nature">
-        <div className="shell feature-grid">
+        <div className="shell feature-grid nature-feature-grid">
           {[
             {
               icon: <GlobeIcon />,
-              title: "Territorios",
-              copy: "Registro de polígonos, contexto operativo y responsables de validación.",
+              title: "Parque Tayrona",
+              copy: "Asset territorial, geometría oficial y contexto operativo para cada observación.",
             },
             {
               icon: <LeafIcon />,
@@ -53,6 +63,11 @@ export default function NatureIntelligencePage() {
               icon: <ShieldIcon />,
               title: "Evidence passports",
               copy: "Provenance, hashes, decisiones y referencias listas para auditoría.",
+            },
+            {
+              icon: <LayersIcon />,
+              title: "Alertas tipadas",
+              copy: "NDVI, vegetación, agua e incendio como señales diferenciadas y revisables.",
             },
           ].map((feature) => (
             <article className="feature-item" key={feature.title}>
@@ -76,7 +91,7 @@ export default function NatureIntelligencePage() {
               estados y eventos materiales para que el historial pueda reconstruirse.
             </p>
           </div>
-          <div className="timeline-grid">
+          <div className="timeline-grid nature-timeline-grid">
             {[
               ["01", "Registrar", "Territorio, organización, propósito y política de monitoreo."],
               ["02", "Observar", "Escenas Sentinel-2 y fuentes empresariales o de campo."],
@@ -93,6 +108,10 @@ export default function NatureIntelligencePage() {
           </div>
         </div>
       </section>
+
+      <NatureCopernicusViewer />
+
+      <NaturePilotConsole />
 
       <section className="section use-case-section">
         <div className="shell use-case-grid">
@@ -125,6 +144,6 @@ export default function NatureIntelligencePage() {
           </Link>
         </div>
       </section>
-    </>
+    </div>
   );
 }
