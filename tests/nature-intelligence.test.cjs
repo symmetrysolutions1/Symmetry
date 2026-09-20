@@ -66,6 +66,15 @@ test("Nature Intelligence turns territorial observations into alerts and evidenc
   assert.equal(current.comparison.ndviChange, -0.24);
   assert.equal(workspace.alerts.length, 1);
   assert.equal(workspace.alerts[0].severity, "high");
+  assert.deepEqual(workspace.alerts[0].types, ["vegetation_loss", "ndvi_drop"]);
+
+  const aureoPayload = service.buildAureoAlertPayload(workspace.workspaceId, workspace.alerts[0].id, {
+    manifestUri: "nature://tayrona/passport-1",
+    manifestDigest: `0x${"44".repeat(32)}`,
+  });
+  assert.equal(aureoPayload.assetRef, "CO-PUTUMAYO-001");
+  assert.deepEqual(aureoPayload.alertTypes, ["vegetation_loss", "ndvi_drop"]);
+  assert.equal(aureoPayload.evidenceDigest, `0x${"44".repeat(32)}`);
 
   const passport = service.prepareEvidencePassport(workspace.workspaceId, {
     observationId: current.id,
