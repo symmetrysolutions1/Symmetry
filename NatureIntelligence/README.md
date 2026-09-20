@@ -89,3 +89,20 @@ From the repository root:
 pnpm --filter @symmetry/api-gateway build
 node tests/nature-intelligence.test.cjs
 ```
+
+## Local configuration
+
+Copy `.env.example` to `.env` and set the Copernicus OAuth client values
+locally. The client secret must remain untracked. The API gateway loads this
+file when started with Node 22 or later:
+
+```bash
+cp .env.example .env
+pnpm --filter @symmetry/api-gateway build
+pnpm --filter @symmetry/api-gateway start
+```
+
+Set `AUREO_BRIDGE_URL` to the Áureo backend endpoint before running the
+anchoring request. Without a funded HSK deployment, the bridge can still be
+reviewed in prepared mode; a `202` response means the alert was normalized and
+stored locally, not written on-chain.
