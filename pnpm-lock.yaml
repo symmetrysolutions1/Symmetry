@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       js-sha3:
-        specifier: 0.8.0
-        version: 0.8.0
+        specifier: 0.12.0
+        version: 0.12.0
       solc:
         specifier: ^0.8.35
         version: 0.8.35
@@ -1515,6 +1515,9 @@ packages:
   iterator.prototype@1.1.5:
     resolution: {integrity: sha512-H0dkQoCa3b2VEeKQBOxFph+JAbcrQdE7KC0UkqwpLmv2EC4P41QXP+rqo9wYodACiG5/WM5s9oDApTU8utwj9g==}
     engines: {node: '>= 0.4'}
+
+  js-sha3@0.12.0:
+    resolution: {integrity: sha512-DGaUQKtsHeqChRD6ndGcESOBXUBQs5/ji4xyyoAgdqBsAu5yHsVTrzuF7MZ0VQTAa/IQFXOq0WmV2I1HNuzPtA==}
 
   js-sha3@0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
@@ -3826,6 +3829,8 @@ snapshots:
       get-proto: 1.0.1
       has-symbols: 1.1.0
       set-function-name: 2.0.2
+
+  js-sha3@0.12.0: {}
 
   js-sha3@0.8.0: {}
 
