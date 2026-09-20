@@ -4,6 +4,7 @@ import { EnterprisesController } from "../routes/enterprises.controller";
 import { AutomationController } from "../routes/automation.controller";
 import { EudrController } from "../routes/eudr.controller";
 import { NatureController } from "../routes/nature.controller";
+import { AureoNatureBridgeService } from "../services/aureo-nature-bridge.service";
 import { VotoIDController } from "../routes/votoid.controller";
 import { AutomationService } from "../services/automation.service";
 import { CopernicusStacService } from "../services/copernicus-stac.service";
@@ -30,6 +31,7 @@ import { VotoIDService } from "../services/votoid.service";
     CopernicusStacService,
     CopernicusStatisticsService,
     NatureService,
+    AureoNatureBridgeService,
   ],
 })
 export class AppModule {}
