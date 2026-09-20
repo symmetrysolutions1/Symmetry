@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://symmetrycol.vercel.app/schemas/nature/territory-asset.schema.json",
+  "title": "Nature Intelligence territory asset",
+  "type": "object",
+  "required": ["assetRef", "name", "geometry", "geometryDigest"],
+  "properties": {
+    "assetRef": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "geometry": {
+      "type": "object",
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": { "const": "Polygon" },
+        "coordinates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "array",
+              "prefixItems": [{ "type": "number" }, { "type": "number" }],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      }
+    },
+    "geometryDigest": { "type": "string", "pattern": "^0x[0-9a-fA-F]{64}$" },
+    "areaHectares": { "type": "number", "exclusiveMinimum": 0 },
+    "metadataUri": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

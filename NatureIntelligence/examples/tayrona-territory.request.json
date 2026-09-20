@@ -1,0 +1,7 @@
+{
+  "territoryRef": "CO-TAYRONA-PNN-001",
+  "name": "Parque Nacional Natural Tayrona",
+  "geometry": "Load geometry from NatureIntelligence/assets/tayrona.geojson after running fetch-tayrona-asset.mjs",
+  "geometryDigest": "Read from NatureIntelligence/assets/tayrona.asset.json",
+  "metadataUri": "nature://tayrona/asset-manifest"
+}

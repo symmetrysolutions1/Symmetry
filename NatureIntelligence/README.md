@@ -54,11 +54,31 @@ decisions.
 - API routes: [`backend/api-gateway/src/routes/nature.controller.ts`](../backend/api-gateway/src/routes/nature.controller.ts)
 - Integration documentation: [`docs/integrations/aureo-nature-alerts.md`](../docs/integrations/aureo-nature-alerts.md)
 
+## Contents of this folder
+
+- Official asset source and reproducible polygon fetcher: [`assets/`](assets/)
+- Territory and alert contracts: [`schemas/`](schemas/)
+- Tayrona request and alert examples: [`examples/`](examples/)
+- Alert taxonomy: [`docs/ALERT-TYPES.md`](docs/ALERT-TYPES.md)
+- End-to-end flow: [`docs/FLOW.md`](docs/FLOW.md)
+
+The executable services remain in the repository's shared backend so they can
+be tested and deployed as one application. This folder is the focused review
+entrypoint for the Nature Intelligence pilot.
+
 ## Tayrona asset source
 
 The pilot uses the official Parques Nacionales polygon for the `Tayrona`
 feature, in WGS84. The exact GeoJSON geometry is kept off-chain and identified
 by a digest in the territory record.
+
+To materialize the official geometry locally:
+
+```bash
+node NatureIntelligence/scripts/fetch-tayrona-asset.mjs
+```
+
+The command writes the GeoJSON and its digest under `NatureIntelligence/assets/`.
 
 ## Current status
 
