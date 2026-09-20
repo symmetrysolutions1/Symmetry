@@ -20,7 +20,17 @@ export type NatureMetrics = {
   treeCoverPercentage: number;
   ndviMean: number;
   cloudCoverPercentage: number;
+  ndwiMean?: number;
+  burnedAreaPercentage?: number;
+  builtUpPercentage?: number;
 };
+
+export type NatureAlertType =
+  | "vegetation_loss"
+  | "ndvi_drop"
+  | "water_change"
+  | "fire_signal"
+  | "human_activity";
 
 type NatureWorkspace = {
   workspaceId: string;
@@ -39,6 +49,9 @@ type NatureWorkspace = {
 type AlertThresholds = {
   treeCoverLossPercentagePoints: number;
   ndviDrop: number;
+  ndwiDrop: number;
+  burnedAreaIncreasePercentagePoints: number;
+  builtUpIncreasePercentagePoints: number;
 };
 
 type Territory = {
@@ -68,12 +81,16 @@ type ObservationComparison = {
   previousObservationId: string;
   treeCoverChangePercentagePoints: number;
   ndviChange: number;
+  ndwiChange?: number;
+  burnedAreaChangePercentagePoints?: number;
+  builtUpChangePercentagePoints?: number;
 };
 
-type NatureAlert = {
+export type NatureAlert = {
   id: string;
   territoryId: string;
   observationId: string;
+  types: NatureAlertType[];
   severity: "medium" | "high";
   status: "open" | "validated" | "dismissed";
   reasons: string[];
@@ -126,6 +143,9 @@ type PreparePassportInput = {
 const DEFAULT_THRESHOLDS: AlertThresholds = {
   treeCoverLossPercentagePoints: 1,
   ndviDrop: 0.1,
+  ndwiDrop: 0.1,
+  burnedAreaIncreasePercentagePoints: 1,
+  builtUpIncreasePercentagePoints: 1,
 };
 
 @Injectable()
@@ -174,6 +194,49 @@ export class NatureService {
     return workspace;
   }
 
+  buildAureoAlertPayload(
+    workspaceId: string,
+    alertId: string,
+    evidence: { manifestUri: string; manifestDigest: string },
+  ) {
+    const workspace = this.getWorkspace(workspaceId);
+    const alert = workspace.alerts.find((item) => item.id === alertId);
+    if (!alert) {
+      throw new NotFoundException(`Nature alert ${alertId} not found`);
+    }
+    const observation = workspace.observations.find((item) => item.id === alert.observationId);
+    if (!observation) {
+      throw new NotFoundException(`Nature observation ${alert.observationId} not found`);
+    }
+    const territory = this.requireTerritory(workspace, alert.territoryId);
+
+    if (!evidence.manifestUri?.trim() || !evidence.manifestDigest?.trim()) {
+      throw new BadRequestException("Aureo evidence manifest URI and digest are required");
+    }
+
+    return {
+      assetRef: territory.territoryRef,
+      asset: {
+        id: territory.id,
+        name: territory.name,
+        geometryDigest: territory.geometryDigest,
+      },
+      alertId: alert.id,
+      observationId: observation.id,
+      alertTypes: alert.types,
+      severity: alert.severity,
+      reasons: alert.reasons,
+      evidenceURI: evidence.manifestUri,
+      evidenceDigest: evidence.manifestDigest,
+      observation: {
+        source: observation.source,
+        capturedAt: observation.capturedAt,
+        metrics: observation.metrics,
+        comparison: observation.comparison,
+      },
+    };
+  }
+
   registerTerritory(workspaceId: string, input: RegisterTerritoryInput): Territory {
     const workspace = this.getWorkspace(workspaceId);
     this.validatePolygon(input.geometry);
@@ -218,6 +281,22 @@ export class NatureService {
               input.metrics.treeCoverPercentage - previous.metrics.treeCoverPercentage,
             ),
             ndviChange: this.round(input.metrics.ndviMean - previous.metrics.ndviMean),
+            ndwiChange:
+              input.metrics.ndwiMean !== undefined && previous.metrics.ndwiMean !== undefined
+                ? this.round(input.metrics.ndwiMean - previous.metrics.ndwiMean)
+                : undefined,
+            burnedAreaChangePercentagePoints:
+              input.metrics.burnedAreaPercentage !== undefined &&
+              previous.metrics.burnedAreaPercentage !== undefined
+                ? this.round(
+                    input.metrics.burnedAreaPercentage - previous.metrics.burnedAreaPercentage,
+                  )
+                : undefined,
+            builtUpChangePercentagePoints:
+              input.metrics.builtUpPercentage !== undefined &&
+              previous.metrics.builtUpPercentage !== undefined
+                ? this.round(input.metrics.builtUpPercentage - previous.metrics.builtUpPercentage)
+                : undefined,
           }
         : undefined,
       createdAt,
@@ -336,25 +415,53 @@ export class NatureService {
 
     const treeCoverLoss = Math.max(0, -observation.comparison.treeCoverChangePercentagePoints);
     const ndviDrop = Math.max(0, -observation.comparison.ndviChange);
+    const ndwiDrop = Math.max(0, -(observation.comparison.ndwiChange ?? 0));
+    const burnedAreaIncrease = Math.max(
+      0,
+      observation.comparison.burnedAreaChangePercentagePoints ?? 0,
+    );
+    const builtUpIncrease = Math.max(
+      0,
+      observation.comparison.builtUpChangePercentagePoints ?? 0,
+    );
+    const types: NatureAlertType[] = [];
     const reasons: string[] = [];
 
     if (treeCoverLoss >= workspace.alertThresholds.treeCoverLossPercentagePoints) {
+      types.push("vegetation_loss");
       reasons.push(`Tree cover decreased by ${treeCoverLoss} percentage points`);
     }
     if (ndviDrop >= workspace.alertThresholds.ndviDrop) {
+      types.push("ndvi_drop");
       reasons.push(`NDVI decreased by ${ndviDrop}`);
+    }
+    if (ndwiDrop >= workspace.alertThresholds.ndwiDrop) {
+      types.push("water_change");
+      reasons.push(`NDWI decreased by ${ndwiDrop}`);
+    }
+    if (burnedAreaIncrease >= workspace.alertThresholds.burnedAreaIncreasePercentagePoints) {
+      types.push("fire_signal");
+      reasons.push(`Burned-area signal increased by ${burnedAreaIncrease} percentage points`);
+    }
+    if (builtUpIncrease >= workspace.alertThresholds.builtUpIncreasePercentagePoints) {
+      types.push("human_activity");
+      reasons.push(`Built-up signal increased by ${builtUpIncrease} percentage points`);
     }
     if (reasons.length === 0) return undefined;
 
     const severity =
       treeCoverLoss >= workspace.alertThresholds.treeCoverLossPercentagePoints * 2 ||
-      ndviDrop >= workspace.alertThresholds.ndviDrop * 2
+      ndviDrop >= workspace.alertThresholds.ndviDrop * 2 ||
+      ndwiDrop >= workspace.alertThresholds.ndwiDrop * 2 ||
+      burnedAreaIncrease >= workspace.alertThresholds.burnedAreaIncreasePercentagePoints * 2 ||
+      builtUpIncrease >= workspace.alertThresholds.builtUpIncreasePercentagePoints * 2
         ? "high"
         : "medium";
     const alert: NatureAlert = {
       id: randomUUID(),
       territoryId: observation.territoryId,
       observationId: observation.id,
+      types,
       severity,
       status: "open",
       reasons,
@@ -373,7 +480,13 @@ export class NatureService {
   }
 
   private validateThresholds(thresholds: AlertThresholds): void {
-    if (thresholds.treeCoverLossPercentagePoints <= 0 || thresholds.ndviDrop <= 0) {
+    if (
+      thresholds.treeCoverLossPercentagePoints <= 0 ||
+      thresholds.ndviDrop <= 0 ||
+      thresholds.ndwiDrop <= 0 ||
+      thresholds.burnedAreaIncreasePercentagePoints <= 0 ||
+      thresholds.builtUpIncreasePercentagePoints <= 0
+    ) {
       throw new BadRequestException("Nature alert thresholds must be greater than zero");
     }
   }
@@ -385,7 +498,12 @@ export class NatureService {
       metrics.cloudCoverPercentage < 0 ||
       metrics.cloudCoverPercentage > 100 ||
       metrics.ndviMean < -1 ||
-      metrics.ndviMean > 1
+      metrics.ndviMean > 1 ||
+      (metrics.ndwiMean !== undefined && (metrics.ndwiMean < -1 || metrics.ndwiMean > 1)) ||
+      (metrics.burnedAreaPercentage !== undefined &&
+        (metrics.burnedAreaPercentage < 0 || metrics.burnedAreaPercentage > 100)) ||
+      (metrics.builtUpPercentage !== undefined &&
+        (metrics.builtUpPercentage < 0 || metrics.builtUpPercentage > 100))
     ) {
       throw new BadRequestException("Nature observation metrics are outside their valid ranges");
     }
