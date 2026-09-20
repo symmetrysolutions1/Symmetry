@@ -4,6 +4,8 @@ dist/
 coverage/
 .pnpm-store/
 .backend-build/
+apps/web/.next/
+*.tsbuildinfo
 
 # Env
 .env
