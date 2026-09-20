@@ -54,17 +54,52 @@ decisions.
 - API routes: [`backend/api-gateway/src/routes/nature.controller.ts`](../backend/api-gateway/src/routes/nature.controller.ts)
 - Integration documentation: [`docs/integrations/aureo-nature-alerts.md`](../docs/integrations/aureo-nature-alerts.md)
 
+## Contents of this folder
+
+- Official asset source and reproducible polygon fetcher: [`assets/`](assets/)
+- Territory and alert contracts: [`schemas/`](schemas/)
+- Tayrona request and alert examples: [`examples/`](examples/)
+- Alert taxonomy: [`docs/ALERT-TYPES.md`](docs/ALERT-TYPES.md)
+- End-to-end flow: [`docs/FLOW.md`](docs/FLOW.md)
+
+The executable services remain in the repository's shared backend so they can
+be tested and deployed as one application. This folder is the focused review
+entrypoint for the Nature Intelligence pilot.
+
 ## Tayrona asset source
 
 The pilot uses the official Parques Nacionales polygon for the `Tayrona`
 feature, in WGS84. The exact GeoJSON geometry is kept off-chain and identified
 by a digest in the territory record.
 
+To materialize the official geometry locally:
+
+```bash
+node NatureIntelligence/scripts/fetch-tayrona-asset.mjs
+```
+
+The command writes the GeoJSON and its digest under `NatureIntelligence/assets/`.
+
 ## Current status
 
 The Nature Intelligence and Áureo integration is a verified local MVP. The
 remaining demo step is a public HSK testnet deployment and a real
 observation-to-alert transaction with a Blockscout receipt.
+
+## Ready before wallet funding
+
+The repository-side work that does not require a wallet is complete:
+
+- Typed environmental alert categories and threshold comparison.
+- Tayrona asset boundary and evidence-manifest references kept off-chain.
+- Copernicus STAC scene discovery and NDVI statistics integration.
+- Symmetry-to-Áureo bridge payload and local prepared-mode verification.
+- Áureo contract event and deployment configuration for HSK Testnet.
+
+The remaining network gate is deliberately small: deploy `AureoCore`, point
+the backend at its address, submit one real Tayrona alert, and record the
+transaction URL from the HSK explorer. The alert is an observation signal,
+not an automatic legal or field finding.
 
 ## Verification
 
@@ -74,3 +109,20 @@ From the repository root:
 pnpm --filter @symmetry/api-gateway build
 node tests/nature-intelligence.test.cjs
 ```
+
+## Local configuration
+
+Copy `.env.example` to `.env` and set the Copernicus OAuth client values
+locally. The client secret must remain untracked. The API gateway loads this
+file when started with Node 22 or later:
+
+```bash
+cp .env.example .env
+pnpm --filter @symmetry/api-gateway build
+pnpm --filter @symmetry/api-gateway start
+```
+
+Set `AUREO_BRIDGE_URL` to the Áureo backend endpoint before running the
+anchoring request. Without a funded HSK deployment, the bridge can still be
+reviewed in prepared mode; a `202` response means the alert was normalized and
+stored locally, not written on-chain.

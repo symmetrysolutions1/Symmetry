@@ -1,0 +1,11 @@
+{
+  "assetRef": "CO-TAYRONA-PNN-001",
+  "name": "Parque Nacional Natural Tayrona",
+  "sourceUrl": "https://mapas.parquesnacionales.gov.co/arcgis/rest/services/pnn/Limites_oficiales_Poligono/FeatureServer/0/query?where=ap_nombre%3D%27Tayrona%27&outFields=*&returnGeometry=true&outSR=4326&f=geojson",
+  "authority": "Parques Nacionales Naturales de Colombia",
+  "coordinateReferenceSystem": "EPSG:4326",
+  "geometryType": "Polygon",
+  "geometryDigest": "0x2a579ab99f78703c5aa6f9ec1f33bd5079aec1b3b2d039ced477112a7d7388b4",
+  "geometryFile": "./tayrona.geojson",
+  "retrievedAt": "2026-09-20T15:56:36.605Z"
+}

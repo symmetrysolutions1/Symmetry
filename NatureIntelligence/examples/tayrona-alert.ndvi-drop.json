@@ -1,0 +1,13 @@
+{
+  "assetRef": "CO-TAYRONA-PNN-001",
+  "alertId": "tayrona-ndvi-2026-09-20-001",
+  "observationId": "sentinel-2-tayrona-2026-09-20",
+  "alertTypes": ["ndvi_drop", "vegetation_loss"],
+  "severity": "high",
+  "reasons": [
+    "NDVI decreased beyond the configured threshold against the baseline observation.",
+    "Vegetation-cover signal requires field validation before any legal or operational conclusion."
+  ],
+  "evidenceURI": "nature://tayrona/passports/sentinel-2-tayrona-2026-09-20",
+  "evidenceDigest": "0x1111111111111111111111111111111111111111111111111111111111111111"
+}

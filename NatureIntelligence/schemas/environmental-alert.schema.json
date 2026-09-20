@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://symmetrycol.vercel.app/schemas/nature/environmental-alert.schema.json",
+  "title": "Nature Intelligence environmental alert",
+  "type": "object",
+  "required": ["assetRef", "alertId", "observationId", "alertTypes", "severity", "reasons", "evidenceURI", "evidenceDigest"],
+  "properties": {
+    "assetRef": { "type": "string", "minLength": 1 },
+    "alertId": { "type": "string", "minLength": 1 },
+    "observationId": { "type": "string", "minLength": 1 },
+    "alertTypes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["vegetation_loss", "ndvi_drop", "water_change", "fire_signal", "human_activity"] }
+    },
+    "severity": { "enum": ["low", "medium", "high", "critical"] },
+    "reasons": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "evidenceURI": { "type": "string", "minLength": 1 },
+    "evidenceDigest": { "type": "string", "pattern": "^0x[0-9a-fA-F]{64}$" }
+  },
+  "additionalProperties": false
+}
