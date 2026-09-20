@@ -66,6 +66,21 @@ The Nature Intelligence and Áureo integration is a verified local MVP. The
 remaining demo step is a public HSK testnet deployment and a real
 observation-to-alert transaction with a Blockscout receipt.
 
+## Ready before wallet funding
+
+The repository-side work that does not require a wallet is complete:
+
+- Typed environmental alert categories and threshold comparison.
+- Tayrona asset boundary and evidence-manifest references kept off-chain.
+- Copernicus STAC scene discovery and NDVI statistics integration.
+- Symmetry-to-Áureo bridge payload and local prepared-mode verification.
+- Áureo contract event and deployment configuration for HSK Testnet.
+
+The remaining network gate is deliberately small: deploy `AureoCore`, point
+the backend at its address, submit one real Tayrona alert, and record the
+transaction URL from the HSK explorer. The alert is an observation signal,
+not an automatic legal or field finding.
+
 ## Verification
 
 From the repository root:
