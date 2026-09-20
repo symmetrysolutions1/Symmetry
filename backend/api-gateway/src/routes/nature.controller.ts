@@ -1,9 +1,13 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { AureoNatureBridgeService } from "../services/aureo-nature-bridge.service";
 import { NatureMetrics, NatureService, PolygonGeometry } from "../services/nature.service";
 
 @Controller("nature")
 export class NatureController {
-  constructor(private readonly natureService: NatureService) {}
+  constructor(
+    private readonly natureService: NatureService,
+    private readonly aureoBridge: AureoNatureBridgeService,
+  ) {}
 
   @Post("workspaces")
   createWorkspace(
@@ -15,6 +19,9 @@ export class NatureController {
       alertThresholds?: {
         treeCoverLossPercentagePoints?: number;
         ndviDrop?: number;
+        ndwiDrop?: number;
+        burnedAreaIncreasePercentagePoints?: number;
+        builtUpIncreasePercentagePoints?: number;
       };
     },
   ) {
@@ -101,5 +108,20 @@ export class NatureController {
     },
   ) {
     return this.natureService.prepareEvidencePassport(workspaceId, body);
+  }
+
+  @Post("workspaces/:workspaceId/alerts/:alertId/anchor-aureo")
+  anchorAlertInAureo(
+    @Param("workspaceId") workspaceId: string,
+    @Param("alertId") alertId: string,
+    @Body()
+    body: {
+      manifestUri: string;
+      manifestDigest: string;
+      aureoUrl?: string;
+    },
+  ) {
+    const payload = this.natureService.buildAureoAlertPayload(workspaceId, alertId, body);
+    return this.aureoBridge.anchorAlert(payload, body.aureoUrl);
   }
 }
