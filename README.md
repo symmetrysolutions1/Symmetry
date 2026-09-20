@@ -72,9 +72,13 @@ tree-cover or NDVI changes, and preparing evidence passports.
 
 - Product and API scope: [Nature Intelligence MVP](docs/products/nature-intelligence-mvp.md)
 - Demonstration payload: [pilot-workspace.example.json](services/nature-intelligence/pilot-workspace.example.json)
+- Áureo alert bridge: [aureo-nature-alerts.md](docs/integrations/aureo-nature-alerts.md)
 
-Live Copernicus ingestion and raster analysis are explicitly future work; the current prototype
-does not present demonstration metrics as live environmental results.
+The current prototype integrates Copernicus STAC/statistics interfaces behind
+the API and keeps demonstration metrics clearly identified as test data until
+they are produced from a captured scene. The Tayrona pilot uses a registered
+GeoJSON asset, typed change signals and an evidence manifest before any chain
+anchor is created.
 
 ### Trust and evidence flow
 
