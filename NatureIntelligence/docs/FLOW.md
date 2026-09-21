@@ -8,7 +8,8 @@
 6. Prepare an evidence passport containing the source references and digest.
 7. Send the typed alert to Áureo through `POST /integrations/nature/alerts`.
 8. After HSK deployment, verify the `EnvironmentalAlertStarted` receipt in
-   Blockscout.
+   Blockscout. The pilot receipt is recorded in
+   [`HSK-TESTNET-RECEIPT.md`](HSK-TESTNET-RECEIPT.md).
 
 The Symmetry API routes are under `/nature`; the Áureo bridge route is
 configured by `AUREO_BRIDGE_URL`. The EVM transaction stores references and
