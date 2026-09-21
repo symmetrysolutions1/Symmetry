@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const copernicusTayronaUrl =
-  "https://browser.dataspace.copernicus.eu/?zoom=7&lat=11.31848&lng=-74.04785&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX1%2Fi%2FibUJ3RMXvMEsjJXQZbmcxQ4KmGCaZTGtX7GY2nD7B4iYBIw7Yl7yA%2FAt5G09NWbWgBhQCOjAIdpHJK3ZMilBhlwqwXkgGHKuvCicDd3dJ%2BkWfCTNtUf&datasetId=S2_L2A_CDAS&fromTime=2026-09-20T00%3A00%3A00.000Z&toTime=2026-09-20T23%3A59%3A59.999Z&layerId=3_NDVI&cloudCoverage=30&dateMode=SINGLE";
+  "https://browser.dataspace.copernicus.eu/?zoom=10&lat=11.31465&lng=-74.05402&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX1%2Fi%2FibUJ3RMXvMEsjJXQZbmcxQ4KmGCaZTGtX7GY2nD7B4iYBIw7Yl7yA%2FAt5G09NWbWgBhQCOjAIdpHJK3ZMilBhlwqwXkgGHKuvCicDd3dJ%2BkWfCTNtUf&datasetId=S2_L2A_CDAS&fromTime=2026-09-20T00%3A00%3A00.000Z&toTime=2026-09-20T23%3A59%3A59.999Z&layerId=3_NDVI&cloudCoverage=30&dateMode=SINGLE";
 
 export function NatureCopernicusViewer() {
   return (

@@ -82,24 +82,26 @@ The command writes the GeoJSON and its digest under `NatureIntelligence/assets/`
 
 ## Current status
 
-The Nature Intelligence and Áureo integration is a verified local MVP. The
-remaining demo step is a public HSK testnet deployment and a real
-observation-to-alert transaction with a Blockscout receipt.
+The Nature Intelligence and Áureo integration has a verified HSK Testnet
+deployment and a real observation-to-alert transaction with a successful
+Blockscout receipt. The public receipt record is documented in
+[`docs/HSK-TESTNET-RECEIPT.md`](docs/HSK-TESTNET-RECEIPT.md).
 
-## Ready before wallet funding
+## Verified demo evidence
 
-The repository-side work that does not require a wallet is complete:
+The repository-side pilot and network evidence include:
 
 - Typed environmental alert categories and threshold comparison.
 - Tayrona asset boundary and evidence-manifest references kept off-chain.
 - Copernicus STAC scene discovery and NDVI statistics integration.
 - Symmetry-to-Áureo bridge payload and local prepared-mode verification.
-- Áureo contract event and deployment configuration for HSK Testnet.
+- `AureoCore` deployed on HSK Testnet at the recorded contract address.
+- One successful `EnvironmentalAlertStarted` receipt for the Tayrona pilot.
 
-The remaining network gate is deliberately small: deploy `AureoCore`, point
-the backend at its address, submit one real Tayrona alert, and record the
-transaction URL from the HSK explorer. The alert is an observation signal,
-not an automatic legal or field finding.
+The alert is an observation signal, not an automatic legal or field finding.
+
+The exact HSK checklist is in
+[`docs/runbooks/nature-intelligence-hsk-deploy.md`](../docs/runbooks/nature-intelligence-hsk-deploy.md).
 
 ## Verification
 

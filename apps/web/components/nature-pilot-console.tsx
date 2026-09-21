@@ -31,8 +31,13 @@ const flowSteps = [
   ["02", "Observación", "Sentinel-2 / Copernicus", "done"],
   ["03", "Alerta tipada", "Comparación por señales", "active"],
   ["04", "Evidencia", "Manifiesto + digest", "ready"],
-  ["05", "Anclaje HSK", "Esperando transaction hash", "pending"],
+  ["05", "Anclaje HSK", "Recibo Blockscout verificado", "done"],
 ] as const;
+
+const hskContractUrl =
+  "https://testnet-explorer.hskchain.net/address/0xe9B6B314C4eb21563859Fd06241516356D4d610b";
+const hskAlertTxUrl =
+  "https://testnet-explorer.hskchain.net/tx/0x0cbf359b6ef8a1503ce53385927ec37ecf517cf24f4f7700560a78ab521f3004";
 
 export function NaturePilotConsole() {
   const [selectedAlert, setSelectedAlert] = useState(alertTypes[0]);
@@ -48,7 +53,7 @@ export function NaturePilotConsole() {
           </div>
           <p>
             Esta vista conecta el asset oficial de Tayrona con la observación Sentinel-2,
-            una alerta legible y el punto exacto donde Áureo podrá anclar su digest en HSK.
+            una alerta legible y el recibo donde Áureo ancló su digest en HSK.
           </p>
         </div>
 
@@ -59,7 +64,7 @@ export function NaturePilotConsole() {
               <h3>Parque Nacional Natural Tayrona</h3>
             </div>
             <span className="nature-status-badge">
-              <i aria-hidden="true" /> Revisión preparada
+              <i aria-hidden="true" /> Recibo HSK verificado
             </span>
           </div>
 
@@ -100,6 +105,23 @@ export function NaturePilotConsole() {
               <small>
                 Señal de observación, no confirmación automática de deforestación o ilegalidad.
               </small>
+              <div className="nature-receipt-card">
+                <div>
+                  <span className="nature-receipt-label">RECIBO REAL / HSK TESTNET</span>
+                  <strong>EnvironmentalAlertStarted · Success</strong>
+                </div>
+                <small>
+                  Escena Sentinel-2 anclada como señal de revisión para el asset del Parque Tayrona.
+                </small>
+                <div className="nature-receipt-links">
+                  <Link href={hskAlertTxUrl} target="_blank" rel="noreferrer">
+                    Ver alerta <span aria-hidden="true">↗</span>
+                  </Link>
+                  <Link href={hskContractUrl} target="_blank" rel="noreferrer">
+                    Ver contrato <span aria-hidden="true">↗</span>
+                  </Link>
+                </div>
+              </div>
             </article>
           </div>
 
@@ -117,7 +139,7 @@ export function NaturePilotConsole() {
 
           <div className="nature-pilot-footer">
             <span>
-              <b>HSK Testnet</b> · El anclaje se mostrará cuando exista un recibo real de Blockscout.
+              <b>HSK Testnet</b> · Recibo de alerta verificado en Blockscout.
             </span>
             <Link href="/proof">Ver modelo de evidencia <span aria-hidden="true">↗</span></Link>
           </div>
