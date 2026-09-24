@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/solutions/eudr", destination: "/eudr", permanent: true },
+      { source: "/solutions/nature-intelligence", destination: "/nature-intelligence", permanent: true },
+      { source: "/solutions/enterprise", destination: "/enterprise", permanent: true },
+      { source: "/solutions/asset-layer", destination: "/asset-layer", permanent: true },
+    ];
+  },
   poweredByHeader: false,
   reactStrictMode: true,
   typescript: {

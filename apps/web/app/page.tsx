@@ -23,13 +23,17 @@ const capabilities = [
     title: "EUDR - ESG",
     description:
       "Debida diligencia, evidencia geoespacial y cumplimiento para exportar productos libres de deforestación.",
+    href: "/eudr",
+    accent: "#56c596",
   },
   {
     icon: GlobeIcon,
     number: "02",
     title: "Nature Intelligence System",
     description:
-      "Natura Intelligence conecta territorio, clima, biodiversidad y decisiones de alto impacto.",
+      "Nature Intelligence conecta territorio, clima, biodiversidad y decisiones de alto impacto.",
+    href: "/nature-intelligence",
+    accent: "#d7ff5f",
   },
   {
     icon: WorkflowIcon,
@@ -37,6 +41,8 @@ const capabilities = [
     title: "Automatización y verificación",
     description:
       "Reglas, permisos y procesos empresariales que dejan una historia comprobable.",
+    href: "/enterprise",
+    accent: "#ffb547",
   },
   {
     icon: ShieldIcon,
@@ -44,6 +50,8 @@ const capabilities = [
     title: "Trazabilidad end to end",
     description:
       "Del origen del producto o activo a su certificación, transferencia y auditoría.",
+    href: "/trust-layer",
+    accent: "#79a7ff",
   },
 ] as const;
 
@@ -164,7 +172,7 @@ export default function HomePage() {
             territorial para demostrar el origen de productos libres de deforestación.
           </p>
           <div className={styles.heroActions}>
-            <Link href="/solutions/eudr" className={styles.goldButton}>
+            <Link href="/services" className={styles.goldButton}>
               Conocer app <ArrowRight />
             </Link>
           </div>
@@ -209,7 +217,7 @@ export default function HomePage() {
           <div className={styles.storyCopy}>
             <span>01</span>
             <LeafIcon className={styles.storyIcon} />
-            <h2>Natura Intelligence System para clima, biodiversidad y diplomacia</h2>
+            <h2>Nature Intelligence para clima, biodiversidad y diplomacia</h2>
             <p>
               Una capa de operación territorial para gobiernos, naciones participantes en
               las COP y empresas comprometidas con objetivos ambientales.
@@ -221,7 +229,7 @@ export default function HomePage() {
           <div className={styles.storyImage}>
             <Image
               src="/brand/symmetry-enterprises-overview-v2.png"
-              alt="Natura Intelligence System y monitoreo del territorio"
+              alt="Nature Intelligence y monitoreo del territorio"
               width={980}
               height={801}
               style={{ objectPosition: "50% center" }}
@@ -282,7 +290,12 @@ export default function HomePage() {
 
           <div className={styles.solutionList}>
             {capabilities.map(({ icon: Icon, ...item }) => (
-              <article key={item.number} className={styles.solutionItem}>
+              <Link
+                href={item.href}
+                key={item.number}
+                className={styles.solutionItem}
+                style={{ ["--service-accent" as string]: item.accent }}
+              >
                 <div className={styles.solutionIcon}>
                   <Icon />
                 </div>
@@ -291,7 +304,7 @@ export default function HomePage() {
                   <p>{item.description}</p>
                 </div>
                 <ArrowRight />
-              </article>
+              </Link>
             ))}
           </div>
         </div>

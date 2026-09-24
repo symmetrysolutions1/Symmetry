@@ -29,7 +29,7 @@ export function SiteHeader() {
             <div className="sym-nav-menu sym-nav-menu-services">
               <div className="sym-nav-menu-intro">
                 <span>Servicios</span>
-                <strong>Tres frentes. Una misma capacidad de demostrar.</strong>
+                <strong>Cuatro servicios. Una misma capacidad de demostrar.</strong>
               </div>
               <div className="sym-nav-menu-links">
                 {serviceLinks.map((item, index) => (

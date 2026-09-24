@@ -1,18 +1,23 @@
 export const serviceLinks = [
   {
-    href: "/solutions/eudr",
+    href: "/eudr",
     label: "EUDR y trazabilidad",
     description: "Productos libres de deforestación para Europa.",
   },
   {
-    href: "/solutions/nature-intelligence",
-    label: "Natura Intelligence System",
+    href: "/nature-intelligence",
+    label: "Nature Intelligence",
     description: "Clima, biodiversidad y diplomacia territorial.",
   },
   {
-    href: "/solutions/enterprise",
+    href: "/enterprise",
     label: "Enterprise Operations",
     description: "Automatización, verificación y blockchain.",
+  },
+  {
+    href: "/asset-layer",
+    label: "Asset Layer",
+    description: "Activos físicos verificables y trazables.",
   },
 ];
 
