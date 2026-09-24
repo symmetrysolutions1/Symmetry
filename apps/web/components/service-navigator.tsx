@@ -11,7 +11,7 @@ const needs = [
     label: "Monitorear un territorio",
     title: "Nature Intelligence",
     copy: "Copernicus, observaciones, alertas y pasaportes de evidencia ambiental.",
-    href: "/solutions/nature-intelligence",
+    href: "/nature-intelligence",
     accent: "lime",
   },
   {
@@ -20,7 +20,7 @@ const needs = [
     label: "Demostrar origen libre de deforestación",
     title: "EUDR",
     copy: "Parcelas, lotes, custodia, debida diligencia y certificados verificables.",
-    href: "/solutions/eudr",
+    href: "/eudr",
     accent: "orange",
   },
   {
@@ -29,7 +29,7 @@ const needs = [
     label: "Validar decisiones corporativas",
     title: "VotoID",
     copy: "Juntas, propuestas, quórum, votos, ejecución y evidencia auditable.",
-    href: "/solutions/enterprise",
+    href: "/enterprise",
     accent: "blue",
   },
   {
@@ -38,7 +38,7 @@ const needs = [
     label: "Automatizar un proceso crítico",
     title: "Enterprise Automation",
     copy: "Aprobaciones, checkpoints, integraciones y trazabilidad institucional.",
-    href: "/solutions/enterprise",
+    href: "/enterprise",
     accent: "sand",
   },
 ];

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s | Symmetry",
   },
   description:
-    "Symmetry conecta EUDR, trazabilidad, Natura Intelligence y operaciones empresariales para convertir evidencia en confianza verificable.",
+    "Symmetry conecta EUDR, trazabilidad, Nature Intelligence y operaciones empresariales para convertir evidencia en confianza verificable.",
   openGraph: {
     title: "Symmetry Enterprises | La evidencia permanece",
     description:
