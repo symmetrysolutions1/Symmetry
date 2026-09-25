@@ -152,7 +152,9 @@
   align-items: center;
   text-align: left;
   padding: 22px 22px;
+  font: inherit;
   color: inherit;
+  text-decoration: none;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-left: 4px solid var(--accent, var(--ni-lime));
@@ -392,7 +394,7 @@
   gap: clamp(30px, 6vw, 78px);
 }
 .heroCopy { max-width: 640px; }
-.hero h1 { max-width: 13ch; font-size: clamp(2.8rem, 6.2vw, 5.2rem); letter-spacing: -.055em; }
+.hero h1 { max-width: 18ch; font-size: clamp(2.65rem, 5.6vw, 4.8rem); letter-spacing: -.055em; }
 .hero h1 em { color: var(--ni-lime); font-style: normal; }
 .lede { color: #b2c0b5; max-width: 53ch; }
 .heroMeta { gap: 8px; }
@@ -433,16 +435,16 @@
 .pinOne { top: 33%; left: 61%; }.pinTwo { top: 55%; left: 40%; }.pinThree { top: 68%; left: 70%; }
 .mapPlace, .mapScale { position: absolute; color: rgba(229, 239, 224, .78); font: .56rem var(--mono, monospace); letter-spacing: .1em; }
 .mapPlace { bottom: 13px; left: 14px; }.mapScale { right: 14px; bottom: 12px; text-align: right; line-height: 1.6; }
-.visualLegend { justify-content: flex-start; gap: 17px; padding: 13px 2px; color: #a9b7ab; font-size: .65rem; }
+.visualLegend { justify-content: flex-start; flex-wrap: wrap; gap: 10px 17px; padding: 13px 2px; color: #a9b7ab; font-size: .65rem; }
 .visualLegend span { display: inline-flex; align-items: center; gap: 6px; }
 .visualLegend i { width: 7px; height: 7px; border-radius: 50%; }
-.legendFire { background: #f5a15e; box-shadow: 0 0 9px #f5a15e; }.legendVegetation { background: #9bd58e; }.legendTerritory { background: #83b9eb; }
+.legendFire { background: #f5a15e; box-shadow: 0 0 9px #f5a15e; }.legendVegetation { background: #9bd58e; }.legendWater { background: #80d7ff; box-shadow: 0 0 9px #80d7ff; }
 .visualFooter { flex-wrap: wrap; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .08); color: #7f9082; font: .55rem var(--mono, monospace); }
 .stack { padding-top: clamp(64px, 8vw, 96px); }
 .stackIntro { display: grid; grid-template-columns: 1fr minmax(250px, .7fr); align-items: end; gap: 30px; margin-bottom: 34px; }
 .stackIntro h2 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -.045em; }
 .stackIntroCopy { max-width: 48ch; margin: 0 0 3px; color: var(--ni-muted); line-height: 1.65; }
-.strips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+.strips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
 .strip {
   position: relative;
   grid-template-columns: auto 1fr;
@@ -482,7 +484,7 @@
   .heroCopy { max-width: 760px; }
   .heroVisual { width: min(100%, 650px); justify-self: start; }
   .stackIntro { grid-template-columns: 1fr; gap: 12px; }
-  .strips { grid-template-columns: 1fr; }
+  .strips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .strip { min-height: 0; }
 }
 @media (max-width: 560px) {
@@ -898,9 +900,6 @@
 
 .layerMap_fire { --map-foreground: #ff7a4f; }
 .layerMap_deforestation { --map-foreground: #d7ff5f; }
-.layerMap_territory { --map-foreground: #a5f0bb; }
-.layerMap_alerts { --map-foreground: #ffb35d; }
-.layerMap_evidence { --map-foreground: #a8d8ff; }
 .layerMap_water { --map-foreground: #80d7ff; }
 
 .layerMapTopline,
@@ -925,6 +924,67 @@
 .layerMapTopline strong {
   color: var(--map-foreground);
   font-weight: 700;
+}
+
+.waterControls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  min-height: 52px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(241, 248, 241, .1);
+  background: rgba(5, 14, 18, .72);
+}
+
+.waterCheck {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #d3e4e9;
+  font-size: .77rem;
+  cursor: pointer;
+}
+
+.waterCheck input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #38bdf8;
+  cursor: pointer;
+}
+
+.atmosphericButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 34px;
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid #38bdf8;
+  border-radius: 5px;
+  color: #8bdcff;
+  background: rgba(56, 189, 248, .08);
+  font: inherit;
+  font-size: .74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+.atmosphericButton:hover,
+.atmosphericButton:focus-visible,
+.atmosphericButtonActive {
+  color: #04121a;
+  background: #38bdf8;
+  box-shadow: 0 0 18px rgba(56, 189, 248, .25);
+  outline: none;
+}
+
+.atmosphericButton span {
+  font-size: 1.15rem;
+  line-height: .7;
 }
 
 .layerMapCanvas {
@@ -957,6 +1017,9 @@
   font-size: .6rem;
   font-weight: 680;
   letter-spacing: .075em;
+  max-width: 46%;
+  padding: 5px 7px;
+  background: rgba(4, 13, 9, .78);
 }
 
 .layerMapPlace { left: 15px; bottom: 13px; }
@@ -1041,6 +1104,8 @@
   .modalStage { padding: 0 17px; }
   .modalDetails { grid-template-columns: 1fr; gap: 18px; padding: 19px 17px 22px; }
   .layerMapCanvas { height: 230px; }
+  .waterControls { align-items: flex-start; gap: 10px 14px; }
+  .atmosphericButton { margin-left: 0; }
   .layerMapLegend { align-items: flex-start; flex-direction: column; gap: 4px; padding-block: 9px; }
   .layerMapLegend span:last-child { text-align: left; }
   .liveMapStage :global(.ni-viewer-shell) { grid-template-columns: minmax(0, 1fr); }
@@ -1070,6 +1135,11 @@
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+@media (max-width: 560px) {
+  .strips { grid-template-columns: 1fr; }
+  .hero h1 { max-width: 15ch; }
 }
 
 /* Keep all data treatments flat after the legacy responsive rules. */
@@ -1108,5 +1178,218 @@
     border-top: 1px solid rgba(177, 215, 171, 0.24);
     border-left: 0;
     padding-top: 8px;
+  }
+}
+
+/* Keep the Nature Intelligence eyebrow clear of the mobile site header. */
+.heroCopy {
+  position: relative;
+  z-index: 2;
+}
+
+.heroCopy > .eyebrow {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.heroMeta::-webkit-scrollbar {
+  display: none;
+}
+
+.heroMeta span,
+.heroMeta span:first-child {
+  flex: 0 0 auto;
+  padding: 0;
+  font-size: clamp(.48rem, 1.2vw, .78rem);
+}
+
+.heroMeta span + span {
+  border: 0;
+}
+
+.heroMeta span + span::before {
+  margin-inline: clamp(4px, .8vw, 10px);
+  color: var(--ni-lime);
+  content: "|";
+}
+
+@media (max-width: 560px) {
+  .hero {
+    padding: 94px 16px 46px;
+  }
+
+  .heroCopy > .eyebrow {
+    margin-bottom: 12px;
+    font-size: .59rem;
+    letter-spacing: .09em;
+  }
+
+  .heroMeta {
+    display: flex;
+    gap: 0;
+  }
+
+  .heroMeta span,
+  .heroMeta span:first-child {
+    font-size: clamp(.48rem, 2.05vw, .66rem);
+  }
+}
+
+/* Tighten the journey from the global viewer into the three decision layers. */
+.hero {
+  min-height: min(820px, calc(100svh - 78px));
+  display: grid;
+  align-items: center;
+  padding: clamp(48px, 7vw, 86px) 24px clamp(24px, 4vw, 42px);
+}
+
+.stack {
+  padding-top: clamp(30px, 4vw, 46px);
+}
+
+.stackIntro {
+  display: block;
+  margin-bottom: 22px;
+}
+
+.stackIntro .eyebrow {
+  margin-bottom: 8px;
+}
+
+.stackIntroCopy {
+  max-width: 88ch;
+  margin: 0;
+}
+
+.visualFooter {
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding-top: 7px;
+  text-align: center;
+}
+
+.visualLegend {
+  justify-content: center;
+  padding-block: 6px;
+  color: var(--orange, #ff6b3d);
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.visualTopline {
+  display: block;
+  padding: 3px 2px 8px;
+  text-align: center;
+}
+
+.visualTopline b {
+  display: block;
+  color: #c4d3c6;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.heroMeta {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.heroLayerButton {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 11px;
+  border: 1px solid color-mix(in srgb, var(--layer-accent) 55%, transparent);
+  border-radius: 999px;
+  color: var(--layer-accent);
+  background: color-mix(in srgb, var(--layer-accent) 9%, rgba(255, 255, 255, .03));
+  font: 650 .72rem/1.2 var(--sym-body, "Aptos", "Segoe UI Variable", sans-serif);
+  letter-spacing: .015em;
+  text-shadow:
+    0 0 5px color-mix(in srgb, var(--layer-accent) 74%, transparent),
+    0 0 13px color-mix(in srgb, var(--layer-accent) 46%, transparent);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.heroLayerButton:hover {
+  border-color: var(--layer-accent);
+  color: var(--layer-accent);
+  background: color-mix(in srgb, var(--layer-accent) 20%, rgba(5, 10, 8, .86));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--layer-accent) 22%, transparent);
+  text-shadow:
+    0 0 6px color-mix(in srgb, var(--layer-accent) 90%, transparent),
+    0 0 16px color-mix(in srgb, var(--layer-accent) 64%, transparent);
+  transform: translateY(-1px);
+}
+
+.heroLayerButton:focus-visible {
+  border-color: var(--layer-accent);
+  outline: 2px solid color-mix(in srgb, var(--layer-accent) 58%, transparent);
+  outline-offset: 3px;
+}
+
+.lede { margin-top: 12px; }
+
+.visualMap { height: clamp(340px, 34vw, 460px); }
+
+.visualFooter span {
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .hero {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero {
+    padding: 94px 16px 24px;
+  }
+
+  .heroMeta {
+    gap: 6px;
+  }
+
+  .heroLayerButton {
+    min-height: 30px;
+    padding-inline: 9px;
+    font-size: .65rem;
+  }
+
+  .visualLegend { font-size: .63rem; }
+  .visualMap { height: 340px; }
+
+  .stack {
+    padding-top: 28px;
+  }
+
+  .stackIntro {
+    margin-bottom: 18px;
   }
 }

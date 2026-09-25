@@ -1,0 +1,279 @@
+.frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0a1712;
+  isolation: isolate;
+}
+
+.mapCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(74, 125, 78, .22), transparent 45%),
+    linear-gradient(145deg, #14251b, #07100b 62%, #1a2818);
+}
+
+.frame :global(.maplibregl-canvas) {
+  outline: none;
+}
+
+.frame :global(.maplibregl-ctrl-top-right) {
+  top: 50px;
+  right: 8px;
+}
+
+.frame :global(.maplibregl-ctrl-bottom-right) {
+  right: 5px;
+  bottom: 4px;
+}
+
+.frame :global(.maplibregl-ctrl-group) {
+  overflow: hidden;
+  border: 1px solid rgba(226, 245, 226, .38);
+  border-radius: 6px;
+  background: rgba(5, 15, 11, .84);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .24);
+}
+
+.frame :global(.maplibregl-ctrl-group button) {
+  filter: invert(1);
+}
+
+.frame :global(.maplibregl-ctrl-attrib) {
+  color: #eff7ed;
+  background: rgba(4, 11, 8, .72);
+  font: 9px/1.4 var(--sym-body, "Segoe UI", sans-serif);
+}
+
+.frame :global(.maplibregl-ctrl-attrib a) {
+  color: #d7ffb3;
+}
+
+.search {
+  position: absolute;
+  z-index: 4;
+  top: 10px;
+  left: 10px;
+  width: min(255px, calc(100% - 58px));
+  padding: 8px;
+  border: 1px solid rgba(228, 244, 228, .28);
+  background: rgba(5, 13, 10, .86);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .25);
+  backdrop-filter: blur(12px);
+}
+
+.searchLabel {
+  display: block;
+  margin: 0 0 5px 2px;
+  color: #c9e8bf;
+  font: 700 .52rem/1.2 var(--sym-body, "Segoe UI", sans-serif);
+  letter-spacing: .12em;
+}
+
+.searchRow {
+  display: flex;
+  align-items: stretch;
+  gap: 5px;
+}
+
+.searchRow input {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid rgba(226, 245, 226, .2);
+  border-radius: 3px;
+  color: #f5faf3;
+  background: rgba(255, 255, 255, .07);
+  font: 500 .67rem var(--sym-body, "Segoe UI", sans-serif);
+}
+
+.searchRow input::placeholder {
+  color: #9baea0;
+}
+
+.searchRow input:focus-visible {
+  border-color: #b7e6a6;
+  outline: 2px solid rgba(183, 230, 166, .25);
+  outline-offset: 1px;
+}
+
+.searchRow button {
+  width: 34px;
+  flex: 0 0 34px;
+  border: 1px solid #b7e6a6;
+  border-radius: 3px;
+  color: #08130c;
+  background: #b7e6a6;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.searchRow button:hover,
+.searchRow button:focus-visible {
+  background: #d7ffb3;
+  outline: 2px solid rgba(215, 255, 179, .42);
+  outline-offset: 2px;
+}
+
+.scanLine {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  pointer-events: none;
+  background: #b6ef9b;
+  opacity: .75;
+  box-shadow: 0 0 16px 3px rgba(166, 221, 142, .58);
+  animation: global-scan 7s linear infinite;
+}
+
+@keyframes global-scan {
+  to { transform: translateY(calc(clamp(260px, 31vw, 375px) - 2px)); }
+}
+
+.cityMarker {
+  --marker-color: #b8ef9d;
+  position: relative;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.cityBrussels { --marker-color: #b8ef9d; }
+.cityNewYork { --marker-color: #ffb16f; }
+.cityBogota { --marker-color: #80d7ff; }
+
+.cityRings,
+.cityDot,
+.cityLabel {
+  position: absolute;
+}
+
+.cityRings {
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  border: 1px solid color-mix(in srgb, var(--marker-color) 70%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--marker-color) 7%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--marker-color) 22%, transparent), inset 0 0 18px color-mix(in srgb, var(--marker-color) 12%, transparent);
+  transform: translate(-50%, -50%);
+}
+
+.cityRings::before,
+.cityRings::after {
+  position: absolute;
+  inset: -11px;
+  border: 1px solid color-mix(in srgb, var(--marker-color) 43%, transparent);
+  border-radius: 50%;
+  content: "";
+}
+
+.cityRings::after { inset: -22px; opacity: .58; }
+
+.cityDot {
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #f7fff3;
+  border-radius: 50%;
+  background: var(--marker-color);
+  box-shadow: 0 0 14px 4px color-mix(in srgb, var(--marker-color) 68%, transparent);
+  transform: translate(-50%, -50%);
+}
+
+.cityLabel {
+  top: 31px;
+  left: 50%;
+  padding: 3px 6px;
+  border: 1px solid color-mix(in srgb, var(--marker-color) 45%, transparent);
+  border-radius: 2px;
+  color: #f5fbf2;
+  background: rgba(4, 12, 8, .78);
+  font: 700 9px/1.2 var(--sym-body, "Segoe UI", sans-serif);
+  letter-spacing: .04em;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px #000;
+  transform: translateX(-50%);
+}
+
+.mapStatus {
+  position: absolute;
+  z-index: 3;
+  right: 94px;
+  bottom: 8px;
+  left: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #edf7e9;
+  font: 700 .48rem/1.25 var(--sym-body, "Segoe UI", sans-serif);
+  letter-spacing: .08em;
+  pointer-events: none;
+  text-shadow: 0 1px 4px #000;
+}
+
+.mapStatus span:last-child {
+  color: #d4e5cd;
+  text-align: right;
+}
+
+.mapNotice,
+.mapError {
+  position: absolute;
+  z-index: 5;
+  top: 69px;
+  left: 10px;
+  max-width: min(300px, calc(100% - 20px));
+  margin: 0;
+  padding: 5px 7px;
+  color: #f1f7ee;
+  background: rgba(4, 12, 8, .82);
+  font: 600 .58rem/1.4 var(--sym-body, "Segoe UI", sans-serif);
+}
+
+.mapError {
+  top: auto;
+  bottom: 37px;
+  color: #ffd7c8;
+  border-left: 2px solid #ff7a4f;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 560px) {
+  .search {
+    top: 8px;
+    left: 8px;
+    width: min(238px, calc(100% - 54px));
+    padding: 7px;
+  }
+
+  .frame :global(.maplibregl-ctrl-top-right) { top: 8px; right: 7px; }
+  .mapStatus { right: 86px; bottom: 7px; left: 8px; font-size: .43rem; }
+  .cityRings { width: 38px; height: 38px; }
+  .cityRings::before { inset: -9px; }
+  .cityRings::after { inset: -17px; }
+  .cityLabel { top: 25px; font-size: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanLine { animation-duration: 20s; }
+}

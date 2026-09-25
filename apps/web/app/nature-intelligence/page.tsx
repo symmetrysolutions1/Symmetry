@@ -5,7 +5,7 @@ import "./nature-viewer.css";
 export const metadata: Metadata = {
   title: "Nature Intelligence",
   description:
-    "Hub de capas satelitales Symmetry: fire/thermal FIRMS, deforestación Copernicus, territorio, alertas y evidencia verificable.",
+    "Información satelital para la preservación de la naturaleza: Fire Risk alert, Deforestation Lines y WaterFlow.",
 };
 
 export default function NatureIntelligencePage() {

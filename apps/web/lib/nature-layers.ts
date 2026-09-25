@@ -1,9 +1,6 @@
 export type NatureLayerId =
   | "fire"
   | "deforestation"
-  | "territory"
-  | "alerts"
-  | "evidence"
   | "water";
 
 export type NatureLayer = {
@@ -41,103 +38,52 @@ export const natureLayers: NatureLayer[] = [
   {
     id: "fire",
     index: "01",
-    title: "Señales térmicas y focos de calor",
-    subtitle: "Observación satelital para orientar una revisión temprana",
-    sensors: ["GOES-East", "VIIRS", "MODIS"],
-    latency: "GOES: minutos · VIIRS / MODIS: horas",
+    title: "Fire Risk alert",
+    subtitle: "Señales térmicas para priorizar la verificación territorial",
+    sensors: ["GOES-East", "VIIRS", "MODIS", "NASA FIRMS"],
+    latency: "Observación térmica",
     status: "live",
     accent: "#ff3b2f",
     summary:
-      "Consulta focos térmicos de NASA FIRMS sobre el área de Cali. La señal ayuda a priorizar una revisión; por sí sola no confirma un incendio.",
+      "Visualiza focos térmicos y la capa de riesgo sobre el área de consulta. Estas señales ayudan a priorizar una revisión; por sí solas no confirman un incendio.",
     bullets: [
-      "Fuentes GOES, VIIRS y MODIS por separado",
-      "Señales orientativas con nivel de atención",
-      "Revisión humana antes de registrar una respuesta",
+      "GOES, VIIRS y MODIS en capas independientes",
+      "Temperatura superficial y focos visibles en el visor",
+      "La alerta orienta la decisión; requiere verificación humana",
     ],
   },
   {
     id: "deforestation",
     index: "02",
-    title: "Vegetación y cambio de cobertura",
-    subtitle: "Imágenes ópticas Sentinel-2 para dar contexto al territorio",
-    sensors: ["Sentinel-2", "Copernicus"],
-    latency: "Revisita óptica: varios días",
+    title: "Deforestation Lines",
+    subtitle: "Parques nacionales definidos para la preservación del territorio",
+    sensors: ["Parques nacionales", "Áreas protegidas", "Preservación"],
+    latency: "Esquema de capa",
     status: "pilot",
     accent: "#d7ff5f",
     summary:
-      "Explora indicadores de vegetación y cambios de cobertura en una experiencia piloto con imágenes Sentinel-2 y Copernicus.",
+      "Esta vista organizará los parques nacionales definidos para preservación. Por ahora es un esquema de diseño: aún falta integrar y validar las geometrías oficiales de las áreas protegidas.",
     bullets: [
-      "Contexto óptico para el análisis del territorio",
-      "Piloto geográfico en Tayrona",
-      "Puente de evidencia hacia la debida diligencia EUDR",
-    ],
-  },
-  {
-    id: "territory",
-    index: "03",
-    title: "Territorios bajo monitoreo",
-    subtitle: "Áreas de interés con geometría y responsables definidos",
-    sensors: ["GeoJSON", "Workspace Nature"],
-    latency: "Alcance según territorio registrado",
-    status: "pilot",
-    accent: "#7dd3a0",
-    summary:
-      "Define el área que da contexto a cada observación y quién está autorizado para revisar sus señales.",
-    bullets: [
-      "Geometrías del territorio de interés",
-      "Responsables y contexto de revisión",
-      "Alcance espacial para las capas conectadas",
-    ],
-  },
-  {
-    id: "alerts",
-    index: "04",
-    title: "Alertas con revisión humana",
-    subtitle: "Una cola de señales para revisar, validar o descartar",
-    sensors: ["fire_signal", "ndvi_drop", "vegetation_loss"],
-    latency: "Según eventos recibidos",
-    status: "pilot",
-    accent: "#ff9f43",
-    summary:
-      "Reúne señales de distintas capas para que un operador documente su revisión y el siguiente paso.",
-    bullets: [
-      "Nivel de atención y motivo de la señal",
-      "Validación o descarte con actor y nota",
-      "Decisiones enlazadas a su evidencia",
-    ],
-  },
-  {
-    id: "evidence",
-    index: "05",
-    title: "Pasaportes de evidencia",
-    subtitle: "El registro del origen, método y revisión de cada observación",
-    sensors: ["HSK", "hashes", "Base Sepolia"],
-    latency: "Anclaje sujeto a configuración",
-    status: "pilot",
-    accent: "#a8d8ff",
-    summary:
-      "Organiza los metadatos y decisiones que permiten reconstruir cómo se obtuvo y revisó una observación.",
-    bullets: [
-      "Fuente, método y resumen verificable",
-      "Historial de revisión reconstruible",
-      "Datos sensibles fuera de la cadena",
+      "Enfoque de esta capa: parques nacionales y sus límites de preservación",
+      "Las geometrías oficiales y la fuente institucional quedan por definir e integrar",
+      "Los contornos mostrados son esquemáticos; no representan parques reales",
     ],
   },
   {
     id: "water",
-    index: "06",
-    title: "Agua e hidrología",
-    subtitle: "Una futura lectura de cambios hídricos territoriales",
-    sensors: ["Sentinel-2 SWIR", "roadmap"],
+    index: "03",
+    title: "WaterFlow",
+    subtitle: "Ríos terrestres y corredores de humedad atmosférica",
+    sensors: ["Ríos superficiales", "Ríos atmosféricos"],
     latency: "En exploración",
     status: "roadmap",
     accent: "#38bdf8",
     summary:
-      "Una línea prevista para explorar cambios hídricos con fuentes satelitales dentro del mismo flujo territorial.",
+      "Un esquema de lectura hidrológica con visores seleccionables para ríos terrestres y cuerpos de agua, más un control independiente para mostrar ríos atmosféricos. La integración de fuentes y datos reales queda pendiente.",
     bullets: [
-      "Diseño de señales hídricas",
-      "Integración futura con revisión territorial",
-      "Disponibilidad sujeta a desarrollo",
+      "Activa o desactiva las capas terrestres desde sus casillas",
+      "El botón Ríos atmosféricos muestra u oculta esa lectura conceptual",
+      "Geometrías y fuentes reales aún por definir; la vista es esquemática",
     ],
   },
 ];
