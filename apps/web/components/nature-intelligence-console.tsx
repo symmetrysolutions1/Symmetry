@@ -16,7 +16,10 @@ export function NatureIntelligenceConsole() {
   const [apiUrl, setApiUrl] = useState(defaultApi); const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [selectedId, setSelectedId] = useState(""); const [loading, setLoading] = useState(false); const [error, setError] = useState("");
   const load = useCallback(async () => { setLoading(true); setError(""); try { const response = await fetch(`${apiUrl.replace(/\/$/, "")}/nature/workspaces`, { cache: "no-store" }); if (!response.ok) throw new Error(`API ${response.status}`); const data = await response.json() as Workspace[]; setWorkspaces(data); setSelectedId((current) => current || data[0]?.workspaceId || ""); } catch (cause) { setError(cause instanceof Error ? cause.message : "No fue posible consultar Nature Intelligence"); } finally { setLoading(false); } }, [apiUrl]);
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void load(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [load]);
   const workspace = workspaces.find((item) => item.workspaceId === selectedId);
   const latest = useMemo(() => [...(workspace?.observations ?? [])].sort((a, b) => Date.parse(b.capturedAt) - Date.parse(a.capturedAt))[0], [workspace]);
   async function resolveAlert(alertId: string, status: "validated" | "dismissed") { if (!workspace) return; const response = await fetch(`${apiUrl.replace(/\/$/, "")}/nature/workspaces/${workspace.workspaceId}/alerts/${alertId}/resolve`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ status, actor: "nature-console-operator", note: `Resolución registrada desde la consola: ${status}` }) }); if (!response.ok) { setError(`No fue posible resolver la alerta (${response.status})`); return; } await load(); }

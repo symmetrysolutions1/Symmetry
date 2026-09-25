@@ -1,16 +1,11 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { loadMapLibre } from "@/components/nature-viewers/fire-map";
+import { loadMapLibre, type MapLibreMap } from "@/components/nature-viewers/fire-map";
 import styles from "./world-satellite-map.module.css";
 
 type Place = { label: string; aliases: string[]; center: [number, number]; zoom: number };
-type MapHandle = {
-  addControl: (control: unknown, position: string) => void;
-  once: (event: "load", listener: () => void) => void;
-  flyTo: (options: { center: [number, number]; zoom: number; duration: number }) => void;
-  remove: () => void;
-};
+type MapHandle = MapLibreMap;
 const PLACES: Place[] = [
   { label: "Santiago de Cali", aliases: ["cali", "santiago de cali"], center: [-76.53, 3.45], zoom: 9 },
   { label: "Bogotá", aliases: ["bogota", "bogotá"], center: [-74.08, 4.65], zoom: 7 },
@@ -48,7 +43,7 @@ export function WorldSatelliteMap() {
         const maplibregl = await loadMapLibre();
         if (cancelled || !mapElement.current) return;
 
-        instance = new maplibregl.Map({
+        const map = new maplibregl.Map({
           container: mapElement.current,
           style: {
             version: 8,
@@ -69,11 +64,12 @@ export function WorldSatelliteMap() {
           maxZoom: 18,
           renderWorldCopies: true,
           attributionControl: false,
-        }) as MapHandle;
+        });
+        instance = map;
 
-        instance.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
-        instance.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
-        instance.once("load", () => {
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+        map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+        map.once("load", () => {
           if (cancelled) return;
           setMapError(false);
 
@@ -97,11 +93,11 @@ export function WorldSatelliteMap() {
             element.append(rings, dot, label);
             const marker = new maplibregl.Marker({ element, anchor: "center" })
               .setLngLat(city.center)
-              .addTo(instance as never);
+              .addTo(map);
             markers.push(marker);
           }
         });
-        mapRef.current = instance;
+        mapRef.current = map;
       } catch {
         if (!cancelled) setMapError(true);
       }
