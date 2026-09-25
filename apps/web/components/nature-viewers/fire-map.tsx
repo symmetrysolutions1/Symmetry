@@ -25,7 +25,7 @@ declare global {
   }
 }
 
-function loadMapLibre(): Promise<any> {
+export function loadMapLibre(): Promise<any> {
   if (typeof window === "undefined") return Promise.reject(new Error("ssr"));
   if (window.maplibregl) return Promise.resolve(window.maplibregl);
   return new Promise((resolve, reject) => {
