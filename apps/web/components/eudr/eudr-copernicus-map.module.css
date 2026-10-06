@@ -1,0 +1,36 @@
+.frame { --map-height:clamp(340px,34vw,460px); position:relative; width:100%; height:var(--map-height); overflow:hidden; border:1px solid rgba(143,177,255,.24); background:#0e1728; isolation:isolate; }
+.mapCanvas { position:absolute; inset:0; width:100%; height:100%; background:radial-gradient(ellipse at 50% 48%,rgba(207,50,29,.2),transparent 45%),linear-gradient(145deg,#2a1618,#0d0a0d 62%,#241216); }
+.frame :global(.maplibregl-canvas) { outline:none; }
+.frame :global(.maplibregl-ctrl-top-right) { top:50px; right:8px; }
+.frame :global(.maplibregl-ctrl-bottom-right) { right:5px; bottom:4px; }
+.frame :global(.maplibregl-ctrl-group) { overflow:hidden; border:1px solid rgba(255,229,216,.38); border-radius:6px; background:rgba(14,7,8,.84); box-shadow:0 5px 18px rgba(0,0,0,.24); }
+.frame :global(.maplibregl-ctrl-group button) { filter:invert(1); }
+.frame :global(.maplibregl-ctrl-attrib) { color:#fff0e9; background:rgba(14,7,8,.72); font:9px/1.4 var(--sym-body,"Segoe UI",sans-serif); }
+.frame :global(.maplibregl-ctrl-attrib a) { color:#ffc3a3; }
+.search { position:absolute; z-index:4; top:10px; left:10px; width:min(270px,calc(100% - 58px)); padding:8px; border:1px solid rgba(255,229,216,.28); background:rgba(20,8,9,.86); box-shadow:0 8px 26px rgba(0,0,0,.25); backdrop-filter:blur(12px); }
+.searchLabel { display:block; margin:0 0 5px 2px; color:#ffd2bd; font:700 .52rem/1.2 var(--sym-body,"Segoe UI",sans-serif); letter-spacing:.12em; }
+.searchRow { display:flex; align-items:stretch; gap:5px; }
+.searchRow input { width:100%; min-width:0; height:30px; padding:0 8px; border:1px solid rgba(255,229,216,.2); border-radius:3px; color:#fff8f4; background:rgba(255,255,255,.07); font:500 .67rem var(--sym-body,"Segoe UI",sans-serif); }
+.searchRow input::placeholder { color:#bca29a; }
+.searchRow input:focus-visible { border-color:#ff9d71; outline:2px solid rgba(255,157,113,.25); outline-offset:1px; }
+.searchRow button { width:34px; flex:0 0 34px; border:1px solid #ff9d71; border-radius:3px; color:#1b0c0b; background:#ff9d71; font-size:1.1rem; line-height:1; cursor:pointer; }
+.searchRow button:hover,.searchRow button:focus-visible { background:#ffc1a3; outline:2px solid rgba(255,193,163,.42); outline-offset:2px; }
+.scanLine { position:absolute; z-index:2; top:0; left:0; width:100%; height:2px; pointer-events:none; background:#ff7a3d; opacity:.75; box-shadow:0 0 16px 3px rgba(255,83,46,.58); animation:global-scan 7s linear infinite; }
+@keyframes global-scan { to { transform:translateY(calc(var(--map-height) - 2px)); } }
+.centreMarker { --marker-color:#003399; --wave-color:#8bd7ff; position:relative; z-index:5; width:1px; height:1px; pointer-events:none; }
+.centreOperational,.centreMirror,.centreDevelopment,.centrePlanned { --marker-color:#003399; --wave-color:#8bd7ff; }
+.centreRings,.centreDot,.centreLabel { position:absolute; }
+.centreRings { top:50%; left:50%; width:48px; height:48px; border:1px solid color-mix(in srgb,var(--wave-color) 78%,transparent); border-radius:50%; background:color-mix(in srgb,var(--wave-color) 10%,transparent); box-shadow:0 0 22px color-mix(in srgb,var(--wave-color) 28%,transparent),inset 0 0 18px color-mix(in srgb,var(--wave-color) 16%,transparent); transform:translate(-50%,-50%); }
+.centreRings::before,.centreRings::after { position:absolute; inset:-11px; border:1px solid color-mix(in srgb,var(--wave-color) 58%,transparent); border-radius:50%; content:""; }
+.centreRings::after { inset:-22px; opacity:.58; }
+.centreDot { top:50%; left:50%; width:8px; height:8px; border:1px solid #f4f8ff; border-radius:50%; background:var(--marker-color); box-shadow:0 0 14px 4px color-mix(in srgb,var(--marker-color) 68%,transparent); transform:translate(-50%,-50%); }
+.centreLabel { top:31px; left:50%; z-index:6; padding:3px 6px; border:1px solid var(--marker-color); border-radius:2px; color:var(--marker-color); background:rgba(207,224,255,.94); font:700 9px/1.2 var(--sym-body,"Segoe UI",sans-serif); letter-spacing:.04em; white-space:nowrap; box-shadow:0 2px 8px rgba(0,20,80,.28); transform:translateX(-50%); }
+.centreLabelAbove { top:auto; bottom:31px; }
+.portMarker { position:relative; z-index:4; display:block; width:5px; height:5px; border:1px dashed #ff914d; border-radius:50%; background:transparent; box-shadow:0 0 0 1px rgba(4,28,52,.78); cursor:help; }
+.mapStatus { position:absolute; z-index:3; right:94px; bottom:8px; left:10px; display:flex; justify-content:space-between; gap:8px; color:#fff0e9; font:700 .48rem/1.25 var(--sym-body,"Segoe UI",sans-serif); letter-spacing:.08em; pointer-events:none; text-shadow:0 1px 4px #000; }
+.mapStatus span:last-child { color:#f2d3c8; text-align:right; }
+.mapCaption { position:absolute; z-index:3; right:auto; bottom:24px; left:10px; top:auto; padding:4px 6px; color:#ffe0d1; background:rgba(20,8,9,.82); font:700 .48rem/1.2 var(--sym-body,"Segoe UI",sans-serif); letter-spacing:.06em; text-transform:uppercase; }
+.mapNotice,.mapError { position:absolute; z-index:5; top:69px; left:10px; max-width:min(340px,calc(100% - 20px)); margin:0; padding:5px 7px; color:#fff2eb; background:rgba(20,8,9,.82); font:600 .65rem/1.35 var(--sym-body,"Segoe UI",sans-serif); }
+.mapError { top:auto; right:10px; bottom:28px; left:auto; color:#ffd0bf; }
+.srOnly { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media (max-width:640px) { .frame { --map-height:390px; } .mapCaption { right:auto; bottom:24px; left:10px; max-width:calc(100% - 20px); font-size:.43rem; } .centreRings { width:38px; height:38px; } .centreRings::before { inset:-9px; } .centreRings::after { inset:-17px; } .centreLabel { top:25px; font-size:8px; } .centreLabelAbove { top:auto; bottom:25px; } .mapStatus { right:10px; bottom:8px; } .mapStatus span:last-child { display:none; } }
