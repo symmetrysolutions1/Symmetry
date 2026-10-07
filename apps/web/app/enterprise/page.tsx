@@ -1,117 +1,116 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowRight } from "@/components/icons";
 import { SolutionHero } from "@/components/solution-hero";
-import { ArrowRight, CheckIcon, ShieldIcon, VoteIcon, WorkflowIcon } from "@/components/icons";
+import { EnterprisePortfolioCarousel } from "./portfolio-carousel";
+import { EnterpriseAssetFeature } from "./asset-layer-feature";
 
 export const metadata: Metadata = {
   title: "Enterprise Operations",
   description:
-    "Gobernanza, automatización y compliance verificables para operaciones empresariales.",
+    "Roots empresariales independientes que conectan Asset Layer, gobernanza, automatización, EUDR y agentes operativos con identidad y evidencia verificable.",
 };
+
+const cases = [
+  {
+    number: "01",
+    label: "Primer root empresarial / Asset Layer",
+    title: "LazosTech · ciclo de vida de materiales",
+    copy: "Un entorno controlado para registrar activos, verificar existencia y peso, seguir custodia, aplicar balance de masa y conservar la evidencia del material transformado.",
+    status: "Piloto controlado · Base Sepolia",
+    href: "https://www.lazostech.com/we",
+    action: "Visitar LazosTech",
+  },
+  {
+    number: "02",
+    label: "Caso de estudio independiente",
+    title: "Auditoría Popular / E14",
+    copy: "Ingesta de formularios, extracción asistida por OCR, revisión humana, detección de inconsistencias, manifests canónicos y anclaje de evidencia.",
+    status: "Prueba de operación · no es un servicio Symmetry",
+    href: "https://presidencia2026.vercel.app/",
+    action: "Abrir Auditoría Popular",
+  },
+  {
+    number: "03",
+    label: "Flujos empresariales verificables",
+    title: "VotoID · Automation · EUDR",
+    copy: "Flujos E2E locales y de testnet que muestran cómo identidad, permisos, estados de servicio, evidencia y auditoría conviven por empresa.",
+    status: "Implementado y probado · producción sujeta a gates",
+    href: "/proof",
+    action: "Revisar infraestructura",
+  },
+];
 
 export default function EnterprisePage() {
   return (
     <>
       <SolutionHero
-        eyebrow="Cascade 02 / Enterprise Operations"
-        title="Procesos críticos que conservan quién decidió, por qué y bajo qué autoridad."
-        copy="VotoID y Automation convierten decisiones, aprobaciones y controles en una historia operacional verificable. EUDR añade compliance cuando la cadena de suministro lo requiere."
-        signal="Identidad → autoridad → proceso → decisión → auditoría"
+        eyebrow="Cascade 03 / Enterprise Operations"
+        title="Automatización y trazabilidad en blockchain para empresas."
+        copy="Enterprise Operations conecta activos, evidencia, procesos y decisiones en una infraestructura empresarial con identidad, permisos y trazabilidad verificable."
+        signal="Activo · evidencia · proceso · decisión"
         tone="enterprise"
+        showActions={false}
+        showSignalGraph={false}
+        compactSignal
       />
 
-      <section className="section solution-intro">
-        <div className="shell solution-intro-grid">
-          <div>
-            <span className="eyebrow">Infraestructura por empresa</span>
-            <h2>Un root independiente. Solo los servicios contratados.</h2>
-          </div>
-          <div className="large-copy">
+      <EnterpriseAssetFeature />
+
+      <section className="section enterprise-portfolio">
+        <div className="shell">
+          <div className="enterprise-portfolio-heading">
+            <div>
+              <span className="eyebrow">El portafolio Enterprise Operations</span>
+              <h2>Roots empresariales independientes sobre servicios y soluciones.</h2>
+            </div>
             <p>
-              Cada compañía recibe su propia infraestructura institucional, con identidad,
-              multisig, permisos, evidencia y auditoría. Symmetry opera la Factory, pero la
-              empresa no comparte estado on-chain con otros clientes.
+              Cada empresa conserva un root propio; desde ahí conecta servicios y soluciones con
+              su identidad, permisos y evidencia, sin mezclar operaciones entre organizaciones.
             </p>
           </div>
+          <EnterprisePortfolioCarousel />
         </div>
       </section>
 
-      <section className="section enterprise-products">
-        <div className="shell product-stack">
-          <article className="product-row">
-            <div className="product-number">01</div>
-            <div className="product-icon">
-              <VoteIcon />
-            </div>
-            <div>
-              <span className="eyebrow">VotoID</span>
-              <h3>Gobernanza corporativa verificable.</h3>
-              <p>
-                Juntas, miembros, propuestas, quórum, snapshots, votos, ejecución y evidencia
-                con reglas que pueden inspeccionarse.
-              </p>
-            </div>
-          </article>
-          <article className="product-row">
-            <div className="product-number">02</div>
-            <div className="product-icon">
-              <WorkflowIcon />
-            </div>
-            <div>
-              <span className="eyebrow">Automation</span>
-              <h3>Procesos que no pierden su trazabilidad.</h3>
-              <p>
-                Plantillas, checkpoints, aprobaciones, attestations, escalamiento y cierre
-                conectados con sistemas empresariales.
-              </p>
-            </div>
-          </article>
-          <article className="product-row">
-            <div className="product-number">03</div>
-            <div className="product-icon">
-              <ShieldIcon />
-            </div>
-            <div>
-              <span className="eyebrow">Resolve integration</span>
-              <h3>Un agente operativo con límites institucionales.</h3>
-              <p>
-                Resolve puede recibir y ejecutar tickets autorizados mediante Automation, sin
-                adquirir roles administrativos ni autoridad de upgrade.
-              </p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section className="section use-case-section enterprise-use-cases">
-        <div className="shell use-case-grid">
-          <div className="use-case-lead">
-            <span className="eyebrow eyebrow-light">Diseñado para control real</span>
-            <h2>La automatización no reemplaza autoridad. La hace explícita.</h2>
+      <section className="section enterprise-cases">
+        <div className="shell">
+          <div className="enterprise-cases-heading">
+            <span className="eyebrow eyebrow-light">Casos y evidencia de operación</span>
+            <h2>Lo que ya hemos construido alrededor de la misma capa de confianza.</h2>
           </div>
-          <div className="check-list">
-            {[
-              "Juntas directivas y decisiones reguladas",
-              "Aprobaciones financieras y documentales",
-              "Controles de proveedores y compliance EUDR",
-              "Integraciones ERP con checkpoints verificables",
-              "Agentes operativos con permisos mínimos",
-            ].map((item) => (
-              <div key={item}>
-                <CheckIcon />
-                <span>{item}</span>
-              </div>
+          <div className="enterprise-case-list">
+            {cases.map(({ number, label, title, copy, status, href, action }) => (
+              <article className="enterprise-case-row" key={number}>
+                <span className="enterprise-case-number">{number}</span>
+                <div className="enterprise-case-main">
+                  <span className="case-label">{label}</span>
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
+                </div>
+                <div className="enterprise-case-meta">
+                  <span>{status}</span>
+                  <Link
+                    href={href}
+                    target={href.startsWith("https://") ? "_blank" : undefined}
+                    rel={href.startsWith("https://") ? "noreferrer" : undefined}
+                  >
+                    {action} <ArrowRight />
+                  </Link>
+                </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section next-solution">
-        <div className="shell next-solution-inner">
-          <span>Explora el servicio regulatorio compartido</span>
-          <Link href="/eudr">
-            EUDR para Enterprise <ArrowRight />
-          </Link>
+      <section className="section enterprise-system-cta">
+        <div className="shell enterprise-system-cta-inner">
+          <div>
+            <span className="eyebrow">Del portafolio al sistema</span>
+            <h2>Revisa la arquitectura, la evidencia y el estado actual de nuestra infraestructura.</h2>
+          </div>
+          <Link className="button button-accent" href="/proof">Ver nuestro sistema <ArrowRight /></Link>
         </div>
       </section>
     </>

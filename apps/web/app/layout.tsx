@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
+import "./enterprise/enterprise.css";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
