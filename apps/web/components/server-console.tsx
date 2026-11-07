@@ -29,17 +29,21 @@ export function ServerConsole() {
   const layerDragRef = useRef({ active: false, startX: 0, scrollLeft: 0 });
 
   useEffect(() => {
-    const saved = JSON.parse(window.localStorage.getItem("symmetry-eudr-parcels") || "[]") as Array<{
-      points?: Array<{ lat: number; lon: number }>;
-      location?: { lat: number; lon: number } | null;
-      accuracy?: number | null;
-    }>;
-    const latest = saved[saved.length - 1];
-    if (!latest) return;
-    setPoints(latest.points || []);
-    setUserLocation(latest.location || null);
-    setAccuracy(latest.accuracy || null);
-    setScanStatus("idle");
+    const restoreTimer = window.setTimeout(() => {
+      const saved = JSON.parse(window.localStorage.getItem("symmetry-eudr-parcels") || "[]") as Array<{
+        points?: Array<{ lat: number; lon: number }>;
+        location?: { lat: number; lon: number } | null;
+        accuracy?: number | null;
+      }>;
+      const latest = saved[saved.length - 1];
+      if (!latest) return;
+      setPoints(latest.points || []);
+      setUserLocation(latest.location || null);
+      setAccuracy(latest.accuracy || null);
+      setScanStatus("idle");
+    }, 0);
+
+    return () => window.clearTimeout(restoreTimer);
   }, []);
 
   const announce = (message: string) => {
@@ -176,7 +180,7 @@ export function ServerConsole() {
   };
 
   return (
-    <div className={styles.page} data-server-page>
+    <div className={styles.page} data-server-page data-location-status={locationStatus}>
       <section className={styles.device} aria-label="Symmetry EUDR field visor">
         <header className={styles.deviceHeader}>
           <div className={styles.station}><span>GEOVISOR V2.4</span><strong>STATION: SYMMETRY-EUDR</strong></div>
