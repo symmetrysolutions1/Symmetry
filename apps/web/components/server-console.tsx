@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState, type PointerEvent } from "react";
+import { FormEvent, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { ArrowRight, CheckIcon, CloseIcon } from "@/components/icons";
+import { loadMapLibre, type MapLibreMap } from "@/components/nature-viewers/fire-map";
 import styles from "./server-console.module.css";
 
 type Modal = "survey" | "harvest" | null;
@@ -25,8 +26,12 @@ export function ServerConsole() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationStatus, setLocationStatus] = useState<"idle" | "requesting" | "ready" | "denied">("idle");
   const [scanStatus, setScanStatus] = useState<"idle" | "capturing" | "closed">("idle");
+  const [mapReady, setMapReady] = useState(false);
+  const [mapError, setMapError] = useState(false);
+  const mapElementRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
   const layersStripRef = useRef<HTMLDivElement>(null);
-  const layerDragRef = useRef({ active: false, startX: 0, scrollLeft: 0 });
+  const layerDragRef = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
 
   useEffect(() => {
     const restoreTimer = window.setTimeout(() => {
@@ -46,6 +51,57 @@ export function ServerConsole() {
     return () => window.clearTimeout(restoreTimer);
   }, []);
 
+  useEffect(() => {
+    if (!mapElementRef.current || mapRef.current) return;
+    let cancelled = false;
+    let instance: MapLibreMap | null = null;
+
+    void (async () => {
+      try {
+        const maplibregl = await loadMapLibre();
+        if (cancelled || !mapElementRef.current) return;
+        const map = new maplibregl.Map({
+          container: mapElementRef.current,
+          style: {
+            version: 8,
+            sources: {
+              "server-satellite": {
+                type: "raster",
+                tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+                tileSize: 256,
+                maxzoom: 19,
+                attribution: "Tiles © Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+              },
+            },
+            layers: [{ id: "server-satellite", type: "raster", source: "server-satellite" }],
+          },
+          center: [-74.08, 4.65],
+          zoom: 6,
+          minZoom: 2,
+          maxZoom: 18,
+          renderWorldCopies: true,
+          attributionControl: false,
+        });
+        instance = map;
+        map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+        map.once("load", () => {
+          if (cancelled) return;
+          setMapReady(true);
+          setMapError(false);
+        });
+        mapRef.current = map;
+      } catch {
+        if (!cancelled) setMapError(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      instance?.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
   const announce = (message: string) => {
     setToast(message);
     window.setTimeout(() => setToast(""), 3000);
@@ -58,20 +114,32 @@ export function ServerConsole() {
   const startLayerDrag = (event: PointerEvent<HTMLDivElement>) => {
     const strip = layersStripRef.current;
     if (!strip) return;
-    layerDragRef.current = { active: true, startX: event.clientX, scrollLeft: strip.scrollLeft };
-    strip.setPointerCapture?.(event.pointerId);
+    layerDragRef.current = { active: true, startX: event.clientX, scrollLeft: strip.scrollLeft, moved: false };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
   };
 
   const moveLayerDrag = (event: PointerEvent<HTMLDivElement>) => {
     const strip = layersStripRef.current;
     if (!strip || !layerDragRef.current.active) return;
-    strip.scrollLeft = layerDragRef.current.scrollLeft - (event.clientX - layerDragRef.current.startX);
+    const delta = event.clientX - layerDragRef.current.startX;
+    if (Math.abs(delta) > 4) layerDragRef.current.moved = true;
+    strip.scrollLeft = layerDragRef.current.scrollLeft - (delta * 1.1);
+    event.preventDefault();
   };
 
   const endLayerDrag = (event?: PointerEvent<HTMLDivElement>) => {
     const strip = layersStripRef.current;
     if (event && strip?.hasPointerCapture?.(event.pointerId)) strip.releasePointerCapture(event.pointerId);
     layerDragRef.current.active = false;
+  };
+
+  const toggleLayerFromPointer = (event: MouseEvent<HTMLButtonElement>, layer: Layer) => {
+    if (layerDragRef.current.moved) {
+      event.preventDefault();
+      layerDragRef.current.moved = false;
+      return;
+    }
+    toggleLayer(layer);
   };
 
   const addPoint = (lat: number, lon: number, pointAccuracy: number | null) => {
@@ -188,14 +256,10 @@ export function ServerConsole() {
         </header>
 
         <main className={styles.mapViewport}>
-          <div className={styles.alertBar}>
-            <span className={styles.alertIcon}>△</span>
-            <div><small>EXTREME WIND: 85 KT</small><span>May affect field capture</span></div>
-            <button type="button" onClick={() => announce("Alert acknowledged")}>Accept</button>
-          </div>
-
           <div className={`${styles.mapCanvas} ${scanStatus === "capturing" ? styles.scanningMap : ""}`}>
-            <div className={styles.satelliteTexture} aria-label="Symmetry satellite layer preview" />
+            <div ref={mapElementRef} className={styles.satelliteMap} role="application" aria-label="Mapa satelital global de Symmetry" />
+            {!mapReady && <div className={styles.satelliteTexture} aria-hidden="true" />}
+            {mapError && <div className={styles.mapLoadNotice}>SATELLITE LINK / FALLBACK TERRAIN</div>}
             <div className={styles.mapGrid} aria-hidden="true" />
             <div className={styles.mapContours} aria-hidden="true" />
             {scanStatus === "capturing" && <div className={styles.scanGridOverlay} aria-hidden="true" />}
@@ -210,7 +274,7 @@ export function ServerConsole() {
           </div>
 
           <div className={styles.coordinates}><span>LAT: <b>82.8028° S</b></span><span>LON: <b>135.0000° E</b></span><span>ALT: <b>2,835M</b></span></div>
-          <div className={styles.layers}><small>ACTIVE LAYERS</small><div ref={layersStripRef} onPointerDown={startLayerDrag} onPointerMove={moveLayerDrag} onPointerUp={endLayerDrag} onPointerCancel={() => endLayerDrag()} onPointerLeave={() => endLayerDrag()}>{(Object.keys(layerLabels) as Layer[]).map((layer) => <button className={activeLayers.includes(layer) ? styles.layerActive : ""} type="button" key={layer} onClick={() => toggleLayer(layer)}><i /> {layerLabels[layer]}</button>)}</div></div>
+          <div className={styles.layers}><small>ACTIVE LAYERS</small><div ref={layersStripRef} onPointerDown={startLayerDrag} onPointerMove={moveLayerDrag} onPointerUp={endLayerDrag} onPointerCancel={() => endLayerDrag()}>{(Object.keys(layerLabels) as Layer[]).map((layer) => <button className={activeLayers.includes(layer) ? styles.layerActive : ""} type="button" key={layer} onClick={(event) => toggleLayerFromPointer(event, layer)}><i /> {layerLabels[layer]}</button>)}</div></div>
           <div className={styles.actionDock}><button className={`${styles.scanButton} ${scanStatus !== "idle" ? styles.scanActive : ""}`} type="button" onClick={scanStatus === "idle" ? startScan : finishScan}><span>◎</span> {scanStatus === "idle" ? "INITIATE SCAN" : "CLOSE SCAN"}</button><button className={styles.harvestButton} type="button" aria-label="Add harvest record" onClick={() => setModal("harvest")}><span /><span /><span /><span /></button></div>
         </main>
       </section>

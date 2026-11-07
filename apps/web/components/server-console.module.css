@@ -94,3 +94,93 @@
 .modal input:focus { border-color: var(--orange); box-shadow: 0 0 0 1px rgba(255,78,32,.2); }
 .saveButton { color: #fff; background: var(--orange); }
 .cancelButton { border-color: rgba(255,78,32,.34); }
+
+/* The server console is an application surface, so it fills the viewport on
+   phones and desktops instead of rendering as a device mockup inside it. */
+.page {
+  width: 100vw;
+  min-height: 100dvh;
+  place-items: stretch;
+  background: var(--black);
+}
+
+.device {
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.device::before,
+.device::after {
+  display: none;
+}
+
+.satelliteMap {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  background: #182a22;
+}
+
+.satelliteMap :global(.maplibregl-canvas) {
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+.satelliteMap :global(.maplibregl-ctrl-bottom-right) {
+  right: 7px;
+  bottom: 5px;
+}
+
+.satelliteMap :global(.maplibregl-ctrl-attrib) {
+  color: #f1f4e9;
+  background: rgba(8, 14, 12, .72);
+  font: 7px/1.2 var(--future, monospace);
+}
+
+.satelliteMap :global(.maplibregl-ctrl-attrib a) {
+  color: #d8f9bd;
+}
+
+.mapLoadNotice {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  left: 8px;
+  padding: 4px 6px;
+  color: #ffe0d3;
+  border-left: 2px solid var(--orange);
+  background: rgba(8, 14, 12, .76);
+  font: 7px var(--future, monospace);
+  letter-spacing: .08em;
+}
+
+.mapGrid,
+.mapContours,
+.satelliteBadge,
+.mapWatermark,
+.polygonSvg,
+.userLocation,
+.vertex {
+  pointer-events: none;
+}
+
+.layers > div {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  will-change: scroll-position;
+}
+
+@media (max-width: 320px) {
+  .device {
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
+    border-radius: 0;
+  }
+}
