@@ -1,0 +1,96 @@
+@font-face { font-family: "Spaceman"; src: url("/fonts/SPACEMAN.TTF") format("truetype"); font-display: swap; }
+
+.page {
+  --black: #080a0a;
+  --screen: #6c655c;
+  --orange: #ff4e20;
+  --lime: #c9ff3f;
+  --blue: #7cdcff;
+  --white: #f4f3ed;
+  --line: rgba(255,255,255,.2);
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--white);
+  background: #20262a;
+  font-family: var(--sym-mono, "Courier New", monospace);
+}
+
+.device {
+  position: relative;
+  width: min(282px, calc(100vw - 24px));
+  height: min(560px, calc(100svh - 24px));
+  overflow: hidden;
+  border: 2px solid #3e4447;
+  border-radius: 19px;
+  background: var(--black);
+  box-shadow: 0 0 0 1px #101314, 0 18px 45px rgba(0,0,0,.45), inset 0 0 0 2px #101111;
+}
+
+.device::before, .device::after { position: absolute; z-index: 3; width: 3px; height: 34px; border-radius: 2px; background: #464d51; content: ""; }
+.device::before { top: 100px; left: -3px; }
+.device::after { top: 122px; right: -3px; height: 52px; }
+.deviceHeader { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 7px 10px 8px; border-bottom: 1px solid #414646; background: #070909; }
+.station { display: grid; gap: 7px; min-width: 0; }
+.station span { color: var(--orange); font: 6px var(--sym-mono, monospace); letter-spacing: .08em; text-align: center; }
+.station strong { overflow: hidden; color: var(--white); font: 9px var(--sym-mono, monospace); letter-spacing: .02em; white-space: nowrap; }
+.uplink { display: flex; align-items: center; gap: 5px; align-self: start; padding: 6px 5px; color: #62d84e; border-left: 1px solid #29312d; font: 7px var(--sym-mono, monospace); white-space: nowrap; }
+.uplink i { width: 4px; height: 4px; border-radius: 50%; background: #62d84e; box-shadow: 0 0 8px #62d84e; }
+.mapViewport { position: absolute; inset: 54px 0 0; display: flex; flex-direction: column; overflow: hidden; background: var(--black); }
+.alertBar { position: absolute; z-index: 4; top: 8px; left: 8px; right: 8px; display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 6px; color: #2b2c29; border: 1px solid #80817a; background: #f1f0ed; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+.alertIcon { display: grid; place-items: center; width: 17px; height: 17px; color: white; background: var(--orange); font: 10px Arial; }
+.alertBar div { display: grid; flex: 1; gap: 2px; }.alertBar small { color: #e44627; font: 7px var(--sym-mono, monospace); }.alertBar span { font: 8px Arial, sans-serif; }.alertBar button { color: #438bc1; border: 0; background: transparent; cursor: pointer; font: 8px Arial, sans-serif; }
+.mapCanvas { position: relative; flex: 1; min-height: 0; overflow: hidden; background: var(--screen); }
+.satelliteTexture { position: absolute; z-index: 0; inset: 0; opacity: .64; background: radial-gradient(ellipse at 34% 26%, rgba(177,196,141,.62), transparent 24%), radial-gradient(ellipse at 73% 68%, rgba(74,105,94,.55), transparent 27%), linear-gradient(132deg, rgba(39,66,58,.72), rgba(151,143,119,.6) 44%, rgba(55,82,79,.68)); filter: saturate(.78) contrast(.98); }
+.scanningMap .satelliteTexture { filter: grayscale(1) brightness(.78) contrast(.94); opacity: .58; }
+.scanGridOverlay { position: absolute; z-index: 2; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(215,224,219,.13) 0 1px, transparent 1px 18px), repeating-linear-gradient(90deg, rgba(215,224,219,.13) 0 1px, transparent 1px 18px); mix-blend-mode: screen; }
+.mapGrid { position: absolute; z-index: 1; inset: -22%; opacity: .18; background-image: linear-gradient(rgba(28,28,26,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(28,28,26,.6) 1px, transparent 1px); background-size: 77px 77px; transform: rotate(-11deg); }
+.mapContours { position: absolute; z-index: 1; top: 18%; left: 13%; width: 74%; height: 51%; border: 1px solid rgba(235,229,211,.22); border-radius: 48% 42% 54% 39%; transform: rotate(-20deg); box-shadow: 25px 20px 0 rgba(238,231,210,.13), -28px 48px 0 rgba(85,94,88,.2), 69px -15px 0 rgba(71,91,87,.17); }
+.mapCanvas::before { position: absolute; top: -12%; right: 11%; width: 20%; height: 120%; border-left: 13px solid rgba(72,103,105,.2); border-radius: 50%; content: ""; transform: rotate(11deg); }
+.satelliteBadge { position: absolute; z-index: 2; top: 7px; right: 8px; padding: 4px 5px; color: #e3f6cd; border: 1px solid rgba(201,255,63,.35); background: rgba(8,22,15,.7); font: 6px var(--sym-mono, monospace); letter-spacing: .08em; }
+.polygonSvg { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; overflow: visible; }.polygonSvg polyline { fill: rgba(255,78,32,.15); stroke: var(--orange); stroke-width: .8; vector-effect: non-scaling-stroke; }.polygonSvg .polygonClosed { fill: rgba(201,255,63,.12); stroke: var(--lime); stroke-dasharray: 2 1; }
+.userLocation { position: absolute; z-index: 3; display: grid; place-items: center; width: 13px; height: 13px; border: 2px solid #fff; border-radius: 50%; background: #2792ff; box-shadow: 0 0 0 4px rgba(39,146,255,.25), 0 0 12px rgba(39,146,255,.9); transform: translate(-50%, -50%); }.userLocation i { width: 3px; height: 3px; border-radius: 50%; background: #fff; }.userLocation small { position: absolute; top: 15px; padding: 2px 3px; color: #fff; background: rgba(8,10,10,.85); font: 6px var(--sym-mono, monospace); }
+.mapWatermark { position: absolute; z-index: 2; top: 48%; left: -4%; width: 108%; color: rgba(240,236,221,.42); font: 8px Arial, sans-serif; text-align: center; white-space: nowrap; }
+.zoomControls { position: absolute; top: 44%; left: 50%; display: grid; gap: 5px; transform: translateX(-50%); }.zoomControls button { width: 32px; height: 32px; color: #101211; border: 1px solid #3f403c; border-radius: 4px; background: #f5f5f2; box-shadow: 0 2px 7px rgba(0,0,0,.24); cursor: pointer; font: 20px Arial; line-height: 1; }.zoomControls span { width: 110px; height: 1px; margin: 2px 0; background: rgba(22,23,22,.58); transform: translateX(-39px); }
+.compass { position: absolute; top: 66%; left: 50%; display: grid; place-items: center; width: 34px; height: 34px; color: var(--orange); border: 1px solid #3f403c; border-radius: 5px; background: #111313; box-shadow: 0 2px 7px rgba(0,0,0,.24); cursor: pointer; transform: translateX(-50%); }.compass span { font: 18px Arial; transform: rotate(-35deg); }
+.vertex { position: absolute; z-index: 1; display: grid; place-items: center; width: 16px; height: 16px; color: #111; border: 1px solid var(--orange); border-radius: 50%; background: var(--lime); font: 8px var(--sym-mono, monospace); transform: translate(-50%, -50%); }
+.coordinates { display: flex; flex: 0 0 35px; align-items: center; gap: 7px; margin: 0 9px; padding: 0 8px; border: 1px solid #343837; background: #101212; color: #bec2b9; font: 7px var(--sym-mono, monospace); white-space: nowrap; }.coordinates b { color: #f0f0e8; font-weight: 500; }.coordinates span:last-child b { color: var(--orange); }
+.layers { flex: 0 0 59px; padding: 8px 9px 5px; }.layers > small { display: block; margin-bottom: 7px; color: #bbc0b8; font: 7px var(--sym-mono, monospace); }.layers > div { display: flex; gap: 5px; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; scroll-snap-type: x proximity; overscroll-behavior-inline: contain; touch-action: pan-x; scrollbar-width: thin; scrollbar-color: var(--blue) #202523; }.layers > div::-webkit-scrollbar { display: block; height: 3px; }.layers > div::-webkit-scrollbar-track { background: #202523; }.layers > div::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 3px; }.layers button { flex: 0 0 auto; min-width: 82px; padding: 9px 10px; color: #d4d5cf; border: 1px solid #1d2321; background: #252b29; cursor: pointer; font: 8px var(--sym-mono, monospace); white-space: nowrap; scroll-snap-align: start; }.layers button i { display: inline-block; width: 5px; height: 5px; border: 1px solid currentColor; border-radius: 50%; }.layers .layerActive { color: #fff; border-color: var(--orange); background: var(--orange); }.layers .layerActive i { border-color: #fff; }
+.actionDock { display: flex; gap: 9px; flex: 0 0 62px; padding: 5px 9px 12px; }.scanButton { display: flex; flex: 1; align-items: center; justify-content: center; gap: 6px; color: #fff; border: 0; background: var(--orange); cursor: pointer; font: 8px var(--sym-mono, monospace); font-weight: 700; letter-spacing: .02em; }.scanButton span { font-size: 15px; }.harvestButton { display: flex; align-items: center; justify-content: center; gap: 4px; width: 43px; border: 1px solid #454a47; background: #111414; cursor: pointer; }.harvestButton span { width: 4px; height: 21px; border-radius: 2px; background: #f1f0e8; }.harvestButton span:nth-child(2), .harvestButton span:nth-child(4) { height: 26px; }
+.scanActive { color: #061216; border-color: var(--blue); background: var(--blue); }.scanDock { position: absolute; z-index: 8; right: 9px; bottom: 10px; left: 9px; padding: 8px; border: 1px solid rgba(201,255,63,.42); background: rgba(10,15,13,.91); box-shadow: 0 7px 18px rgba(0,0,0,.3); }.scanDockMeta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; color: #96a096; font: 7px var(--sym-mono, monospace); letter-spacing: .07em; }.scanDockMeta strong { color: var(--lime); font-weight: 500; }.scanDockActions { display: flex; gap: 5px; }.scanDock button { min-height: 31px; }.scanDock .fixButton { flex: 3; color: #061216; border-color: var(--blue); background: var(--blue); }.scanDock .previewButton { flex: 1; min-width: 0; padding-inline: 4px; color: var(--blue); border: 1px solid rgba(124,220,255,.5); background: rgba(124,220,255,.08); cursor: pointer; font: 7px var(--sym-mono, monospace); }.scanDock .previewButton:disabled { color: #5d6968; border-color: var(--line); cursor: not-allowed; }.scanDock .closeButton { flex: 1; justify-content: center; min-width: 0; min-height: 31px; padding-inline: 4px; font-size: 7px; }.scanDock .closeButton svg { display: none; }
+.toast { position: fixed; z-index: 20; right: 18px; bottom: 18px; display: flex; align-items: center; gap: 7px; max-width: min(360px, calc(100vw - 36px)); padding: 10px 12px; color: #111; background: var(--lime); font: 9px var(--sym-mono, monospace); }.toast svg { width: 13px; }
+.modalBackdrop { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 16px; background: rgba(0,0,0,.72); backdrop-filter: blur(6px); }.modal { width: min(100%, 430px); padding: 20px; color: var(--white); border: 1px solid rgba(201,255,63,.3); background: #111514; box-shadow: 0 22px 60px rgba(0,0,0,.5); }.modalHeader { display: flex; align-items: start; justify-content: space-between; }.modalHeader small { color: var(--orange); font: 8px var(--sym-mono, monospace); letter-spacing: .1em; }.modalHeader h2 { margin: 6px 0 0; font: 28px var(--sym-display, Arial); letter-spacing: -.06em; }.modalHeader h2 i { color: var(--lime); font-family: Georgia, serif; font-weight: 400; }.modalHeader button { color: #c3cbc2; border: 0; background: none; cursor: pointer; }.modalHeader svg { width: 18px; }.modal > p { margin: 15px 0 18px; color: #8d998f; font: 11px/1.45 var(--sym-display, Arial); }.gpsPreview { position: relative; height: 155px; overflow: hidden; border: 1px solid rgba(201,255,63,.22); background: #14241b; }.gpsGrid { position: absolute; inset: -20%; opacity: .3; background-image: linear-gradient(rgba(201,255,63,.22) 1px, transparent 1px), linear-gradient(90deg, rgba(201,255,63,.22) 1px, transparent 1px); background-size: 30px 30px; transform: rotate(-10deg); }.gpsCenter { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 70px; height: 70px; border: 1px solid var(--lime); border-radius: 50%; background: rgba(8,24,16,.7); transform: translate(-50%, -50%); }.gpsCenter strong { color: var(--lime); font: 25px var(--sym-mono, monospace); }.gpsCenter small { color: #7d927d; font: 7px/1.3 var(--sym-mono, monospace); text-align: center; }.gpsPreview > span { position: absolute; z-index: 1; display: grid; place-items: center; width: 20px; height: 20px; color: #121; border: 2px solid var(--orange); border-radius: 50%; background: var(--lime); font: 8px var(--sym-mono, monospace); transform: translate(-50%, -50%); }.gpsStats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-top: 0; }.gpsStats div { padding: 9px; border-right: 1px solid var(--line); }.gpsStats div:last-child { border-right: 0; }.gpsStats small { display: block; margin-bottom: 4px; color: #6f7d70; font: 7px var(--sym-mono, monospace); }.gpsStats strong { color: var(--lime); font: 10px var(--sym-mono, monospace); }.modalActions { display: flex; gap: 8px; margin-top: 16px; }.fixButton, .closeButton, .cancelButton, .saveButton { min-height: 40px; padding: 0 11px; cursor: pointer; font: 8px var(--sym-mono, monospace); }.fixButton { flex: 1; color: #111; border: 0; background: var(--orange); font-weight: 700; }.fixButton:disabled { opacity: .65; cursor: wait; }.closeButton { display: inline-flex; align-items: center; gap: 5px; color: var(--lime); border: 1px solid rgba(201,255,63,.35); background: rgba(201,255,63,.08); }.closeButton:disabled { color: #5e695f; border-color: var(--line); cursor: not-allowed; }.closeButton svg, .saveButton svg { width: 13px; }.modal label { display: grid; gap: 6px; margin-top: 13px; color: #89968b; font: 8px var(--sym-mono, monospace); letter-spacing: .08em; text-transform: uppercase; }.modal input { width: 100%; padding: 10px; color: #f4f3ed; outline: none; border: 1px solid var(--line); background: #090b0b; font: 12px var(--sym-display, Arial); }.modal input:focus { border-color: var(--lime); }.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }.cancelButton { color: #9da89d; border: 1px solid var(--line); background: transparent; }.saveButton { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: #111; border: 0; background: var(--lime); font-weight: 700; }
+
+@media (max-width: 320px) { .device { width: calc(100vw - 10px); height: calc(100svh - 10px); border-radius: 14px; }.deviceHeader { padding-inline: 8px; }.station strong { font-size: 8px; }.coordinates { gap: 4px; margin-inline: 6px; padding-inline: 5px; font-size: 6px; }.layers { padding-inline: 6px; }.layers button { padding-inline: 6px; font-size: 6px; }.actionDock { padding-inline: 6px; }.alertBar { left: 6px; right: 6px; } }
+
+/* Final readability pass: a more technical display face without losing the
+   field-console character of the georeferencing surface. */
+.page { --future: "Spaceman", "Bahnschrift SemiCondensed", "Arial Narrow", "Segoe UI", sans-serif; }
+.device { font-family: var(--future); }
+.station span { font-size: 7px; font-weight: 700; letter-spacing: .12em; }
+.station strong { font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+.uplink { font-size: 8px; font-weight: 700; letter-spacing: .04em; }
+.alertBar small { font-size: 8px; font-weight: 700; letter-spacing: .04em; }
+.alertBar span, .alertBar button { font-size: 9px; }
+.mapWatermark { font-size: 9px; letter-spacing: .02em; }
+.coordinates { font-size: 8px; letter-spacing: .02em; }
+.layers { flex-basis: 64px; }
+.layers > small { font-size: 8px; font-weight: 700; letter-spacing: .12em; }
+.layers > div { padding-bottom: 0; scrollbar-width: none; -ms-overflow-style: none; touch-action: none; -webkit-overflow-scrolling: touch; cursor: grab; user-select: none; }
+.layers > div:active { cursor: grabbing; }
+.layers > div::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.layers button { min-width: 86px; height: 36px; min-height: 36px; padding: 10px 11px; font-size: 9px; font-weight: 700; letter-spacing: .02em; }
+.scanButton { font-size: 9px; font-weight: 800; letter-spacing: .05em; }
+.harvestButton { min-height: 42px; }
+.scanDockMeta { font-size: 8px; font-weight: 700; letter-spacing: .1em; }
+.scanDockMeta strong { font-size: 9px; }
+.scanDock button { min-height: 32px; font-size: 8px; font-weight: 800; letter-spacing: .02em; }
+
+/* Forms use the same orange action language as the field console. */
+.modal { border-color: rgba(255,78,32,.58); background: linear-gradient(145deg, rgba(255,78,32,.08), transparent 42%), #111514; }
+.modalHeader h2 i { color: var(--orange); }
+.modal input:focus { border-color: var(--orange); box-shadow: 0 0 0 1px rgba(255,78,32,.2); }
+.saveButton { color: #fff; background: var(--orange); }
+.cancelButton { border-color: rgba(255,78,32,.34); }

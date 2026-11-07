@@ -49,6 +49,18 @@
       "anchorAudit": true,
       "anchorIdentity": true,
       "anchorServiceState": true
+    },
+    "hsk-testnet": {
+      "chainId": 133,
+      "role": "testnet",
+      "family": "evm",
+      "public": true,
+      "rpcEnv": "RPC_URL_HSK_TESTNET",
+      "explorerUrl": "https://testnet-explorer.hskchain.net",
+      "anchorEvidence": true,
+      "anchorAudit": true,
+      "anchorIdentity": true,
+      "anchorServiceState": true
     }
   },
   "abstraction": {

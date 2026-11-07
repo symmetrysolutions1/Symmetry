@@ -13,15 +13,15 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Symmetry Enterprises | La evidencia permanece",
+    default: "Symmetry Enterprises | Blockchain infraestructure for Satellites",
     template: "%s | Symmetry",
   },
   description:
-    "Symmetry conecta EUDR, trazabilidad, Nature Intelligence y operaciones empresariales para convertir evidencia en confianza verificable.",
+    "Geospatial information for decision-making in foreign trade and diplomacy.",
   openGraph: {
-    title: "Symmetry Enterprises | La evidencia permanece",
+    title: "Symmetry Enterprises | Blockchain infraestructure for Satellites",
     description:
-      "Tres frentes operativos y una capa de confianza para proteger el valor de lo que ocurre.",
+      "Geospatial information for decision-making in foreign trade and diplomacy.",
     type: "website",
     locale: "es_CO",
   },

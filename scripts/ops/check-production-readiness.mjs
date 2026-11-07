@@ -59,6 +59,7 @@ const rpcEnvByChain = {
   base: "RPC_URL_BASE",
   "polygon-amoy": "RPC_URL_POLYGON_AMOY",
   "polygon-pos": "RPC_URL_POLYGON_POS",
+  "hsk-testnet": "RPC_URL_HSK_TESTNET",
   local: "RPC_URL",
 };
 
