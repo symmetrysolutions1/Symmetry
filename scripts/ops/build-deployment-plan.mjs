@@ -24,6 +24,7 @@ const rpcByChainKey = {
   base: process.env.RPC_URL_BASE,
   "polygon-amoy": process.env.RPC_URL_POLYGON_AMOY,
   "polygon-pos": process.env.RPC_URL_POLYGON_POS,
+  "hsk-testnet": process.env.RPC_URL_HSK_TESTNET,
   local: process.env.RPC_URL,
 };
 
