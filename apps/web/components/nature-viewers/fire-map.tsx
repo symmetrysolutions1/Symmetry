@@ -75,33 +75,52 @@ export function loadMapLibre(): Promise<MapLibreNamespace> {
   if (typeof window === "undefined") return Promise.reject(new Error("ssr"));
   if (window.maplibregl) return Promise.resolve(window.maplibregl);
   return new Promise((resolve, reject) => {
+    const sources = [
+      { css: "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css", js: "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js" },
+      { css: "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css", js: "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" },
+    ];
     const cssId = "maplibre-css";
     if (!document.getElementById(cssId)) {
       const link = document.createElement("link");
       link.id = cssId;
       link.rel = "stylesheet";
-      link.href = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css";
+      link.href = sources[0].css;
       document.head.appendChild(link);
     }
-    const existing = document.querySelector("script[data-maplibre]");
-    if (existing) {
-      existing.addEventListener("load", () => {
+
+    const loadScript = (sourceIndex: number) => {
+      const existing = document.querySelector("script[data-maplibre]");
+      if (existing) {
+        existing.addEventListener("load", () => window.maplibregl ? resolve(window.maplibregl) : reject(new Error("maplibre load failed")), { once: true });
+        existing.addEventListener("error", () => {
+          existing.remove();
+          if (sourceIndex + 1 < sources.length) loadScript(sourceIndex + 1);
+          else reject(new Error("maplibre load failed"));
+        }, { once: true });
+        return;
+      }
+
+      const source = sources[sourceIndex];
+      const script = document.createElement("script");
+      script.src = source.js;
+      script.async = true;
+      script.dataset.maplibre = "1";
+      script.onload = () => {
         if (window.maplibregl) resolve(window.maplibregl);
+        else if (sourceIndex + 1 < sources.length) {
+          script.remove();
+          loadScript(sourceIndex + 1);
+        } else reject(new Error("maplibre load failed"));
+      };
+      script.onerror = () => {
+        script.remove();
+        if (sourceIndex + 1 < sources.length) loadScript(sourceIndex + 1);
         else reject(new Error("maplibre load failed"));
-      });
-      existing.addEventListener("error", () => reject(new Error("maplibre load failed")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";
-    script.async = true;
-    script.dataset.maplibre = "1";
-    script.onload = () => {
-      if (window.maplibregl) resolve(window.maplibregl);
-      else reject(new Error("maplibre load failed"));
+      };
+      document.body.appendChild(script);
     };
-    script.onerror = () => reject(new Error("maplibre load failed"));
-    document.body.appendChild(script);
+
+    loadScript(0);
   });
 }
 
