@@ -16,7 +16,7 @@ export const serviceLinks = [
   },
   {
     href: "/asset-layer",
-    label: "Asset Layer",
+    label: "Asset Layer - Radian",
     description: "Activos físicos verificables y trazables.",
   },
 ];
@@ -31,7 +31,7 @@ export const trustLinks = [
 
 // Kept for the existing immersion pages while their new narratives are designed.
 export const navigation = [
-  { href: "/services", label: "Servicios Symmetry" },
+  { href: "/server", label: "EUDR Server" },
   { href: "/trust-layer", label: "Trust Layer" },
   { href: "/proof", label: "Casos de éxito" },
 ];

@@ -23,13 +23,13 @@ export function SiteHeader() {
         <Brand />
         <nav className="sym-desktop-nav" aria-label="Navegación principal">
           <div className="sym-nav-group">
-            <Link className="sym-nav-trigger" href="/services">
-              Servicios Symmetry <Chevron />
+            <Link className="sym-nav-trigger" href="/server">
+              EUDR Server <Chevron />
             </Link>
             <div className="sym-nav-menu sym-nav-menu-services">
               <div className="sym-nav-menu-intro">
-                <span>Servicios</span>
-                <strong>Cuatro servicios. Una misma capacidad de demostrar.</strong>
+                <span>Servicio EUDR</span>
+                <strong>La aplicación para operar con evidencia verificable.</strong>
               </div>
               <div className="sym-nav-menu-links">
                 {serviceLinks.map((item, index) => (
@@ -60,6 +60,9 @@ export function SiteHeader() {
               ))}
             </div>
           </div>
+          <Link className="sym-nav-direct" href="/proof">
+            Casos de éxito
+          </Link>
         </nav>
         <Link className="sym-header-cta" href="/contact">
           Hablemos <ArrowUpRight />
@@ -76,8 +79,8 @@ export function SiteHeader() {
       </div>
       <div className={`sym-mobile-panel ${open ? "is-open" : ""}`}>
         <div className="sym-shell">
-          <Link className="sym-mobile-parent" href="/services" onClick={() => setOpen(false)}>
-            Servicios Symmetry
+          <Link className="sym-mobile-parent" href="/server" onClick={() => setOpen(false)}>
+            EUDR Server
           </Link>
           {serviceLinks.map((item, index) => (
             <Link
@@ -100,6 +103,9 @@ export function SiteHeader() {
           >
             <span>01</span>
             Nuestra tecnología
+          </Link>
+          <Link className="sym-mobile-parent" href="/proof" onClick={() => setOpen(false)}>
+            Casos de éxito
           </Link>
           <Link className="sym-mobile-contact" href="/contact" onClick={() => setOpen(false)}>
             Iniciar conversación <ArrowUpRight />

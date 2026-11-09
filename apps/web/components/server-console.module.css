@@ -1,5 +1,3 @@
-@font-face { font-family: "Spaceman"; src: url("/fonts/SPACEMAN.TTF") format("truetype"); font-display: swap; }
-
 .page {
   --black: #080a0a;
   --screen: #6c655c;
@@ -39,22 +37,17 @@
 .uplink { display: flex; align-items: center; gap: 5px; align-self: start; padding: 6px 5px; color: #62d84e; border-left: 1px solid #29312d; font: 7px var(--sym-mono, monospace); white-space: nowrap; }
 .uplink i { width: 4px; height: 4px; border-radius: 50%; background: #62d84e; box-shadow: 0 0 8px #62d84e; }
 .mapViewport { position: absolute; inset: 54px 0 0; display: flex; flex-direction: column; overflow: hidden; background: var(--black); }
-.alertBar { position: absolute; z-index: 4; top: 8px; left: 8px; right: 8px; display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 6px; color: #2b2c29; border: 1px solid #80817a; background: #f1f0ed; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
-.alertIcon { display: grid; place-items: center; width: 17px; height: 17px; color: white; background: var(--orange); font: 10px Arial; }
-.alertBar div { display: grid; flex: 1; gap: 2px; }.alertBar small { color: #e44627; font: 7px var(--sym-mono, monospace); }.alertBar span { font: 8px Arial, sans-serif; }.alertBar button { color: #438bc1; border: 0; background: transparent; cursor: pointer; font: 8px Arial, sans-serif; }
 .mapCanvas { position: relative; flex: 1; min-height: 0; overflow: hidden; background: var(--screen); }
 .satelliteTexture { position: absolute; z-index: 0; inset: 0; opacity: .64; background: radial-gradient(ellipse at 34% 26%, rgba(177,196,141,.62), transparent 24%), radial-gradient(ellipse at 73% 68%, rgba(74,105,94,.55), transparent 27%), linear-gradient(132deg, rgba(39,66,58,.72), rgba(151,143,119,.6) 44%, rgba(55,82,79,.68)); filter: saturate(.78) contrast(.98); }
 .scanningMap .satelliteTexture { filter: grayscale(1) brightness(.78) contrast(.94); opacity: .58; }
 .scanGridOverlay { position: absolute; z-index: 2; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(215,224,219,.13) 0 1px, transparent 1px 18px), repeating-linear-gradient(90deg, rgba(215,224,219,.13) 0 1px, transparent 1px 18px); mix-blend-mode: screen; }
-.mapGrid { position: absolute; z-index: 1; inset: -22%; opacity: .18; background-image: linear-gradient(rgba(28,28,26,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(28,28,26,.6) 1px, transparent 1px); background-size: 77px 77px; transform: rotate(-11deg); }
-.mapContours { position: absolute; z-index: 1; top: 18%; left: 13%; width: 74%; height: 51%; border: 1px solid rgba(235,229,211,.22); border-radius: 48% 42% 54% 39%; transform: rotate(-20deg); box-shadow: 25px 20px 0 rgba(238,231,210,.13), -28px 48px 0 rgba(85,94,88,.2), 69px -15px 0 rgba(71,91,87,.17); }
-.mapCanvas::before { position: absolute; top: -12%; right: 11%; width: 20%; height: 120%; border-left: 13px solid rgba(72,103,105,.2); border-radius: 50%; content: ""; transform: rotate(11deg); }
+.mapGrid, .mapContours, .mapCanvas::before { display: none; }
 .satelliteBadge { position: absolute; z-index: 2; top: 7px; right: 8px; padding: 4px 5px; color: #e3f6cd; border: 1px solid rgba(201,255,63,.35); background: rgba(8,22,15,.7); font: 6px var(--sym-mono, monospace); letter-spacing: .08em; }
 .polygonSvg { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; overflow: visible; }.polygonSvg polyline { fill: rgba(255,78,32,.15); stroke: var(--orange); stroke-width: .8; vector-effect: non-scaling-stroke; }.polygonSvg .polygonClosed { fill: rgba(201,255,63,.12); stroke: var(--lime); stroke-dasharray: 2 1; }
-.userLocation { position: absolute; z-index: 3; display: grid; place-items: center; width: 13px; height: 13px; border: 2px solid #fff; border-radius: 50%; background: #2792ff; box-shadow: 0 0 0 4px rgba(39,146,255,.25), 0 0 12px rgba(39,146,255,.9); transform: translate(-50%, -50%); }.userLocation i { width: 3px; height: 3px; border-radius: 50%; background: #fff; }.userLocation small { position: absolute; top: 15px; padding: 2px 3px; color: #fff; background: rgba(8,10,10,.85); font: 6px var(--sym-mono, monospace); }
+.gpsFocus { position: absolute; z-index: 5; top: 50%; left: 50%; display: grid; place-items: center; width: 17px; height: 17px; border: 2px solid #fff; border-radius: 50%; background: #2792ff; box-shadow: 0 0 0 5px rgba(39,146,255,.25), 0 0 18px rgba(39,146,255,.95); transform: translate(-50%, -50%); pointer-events: none; }.gpsFocus i { width: 4px; height: 4px; border-radius: 50%; background: #fff; }.gpsFocus small { position: absolute; top: 21px; padding: 3px 4px; color: #fff; border: 1px solid rgba(39,146,255,.5); background: rgba(8,10,10,.85); font: 7px var(--telemetry, monospace); letter-spacing: .08em; white-space: nowrap; }
 .mapWatermark { position: absolute; z-index: 2; top: 48%; left: -4%; width: 108%; color: rgba(240,236,221,.42); font: 8px Arial, sans-serif; text-align: center; white-space: nowrap; }
-.zoomControls { position: absolute; top: 44%; left: 50%; display: grid; gap: 5px; transform: translateX(-50%); }.zoomControls button { width: 32px; height: 32px; color: #101211; border: 1px solid #3f403c; border-radius: 4px; background: #f5f5f2; box-shadow: 0 2px 7px rgba(0,0,0,.24); cursor: pointer; font: 20px Arial; line-height: 1; }.zoomControls span { width: 110px; height: 1px; margin: 2px 0; background: rgba(22,23,22,.58); transform: translateX(-39px); }
-.compass { position: absolute; top: 66%; left: 50%; display: grid; place-items: center; width: 34px; height: 34px; color: var(--orange); border: 1px solid #3f403c; border-radius: 5px; background: #111313; box-shadow: 0 2px 7px rgba(0,0,0,.24); cursor: pointer; transform: translateX(-50%); }.compass span { font: 18px Arial; transform: rotate(-35deg); }
+.zoomControls { position: absolute; z-index: 4; top: 48px; right: 10px; display: grid; gap: 5px; }.zoomControls button { width: 32px; height: 32px; color: #101211; border: 1px solid #3f403c; border-radius: 4px; background: #f5f5f2; box-shadow: 0 2px 7px rgba(0,0,0,.24); cursor: pointer; font: 20px Arial; line-height: 1; }.zoomControls span { display: none; }
+.compass { position: absolute; z-index: 4; top: 86px; left: 10px; display: grid; place-items: center; width: 32px; height: 32px; color: var(--orange); border: 1px solid #3f403c; border-radius: 5px; background: #111313; box-shadow: 0 2px 7px rgba(0,0,0,.24); cursor: pointer; }.compass span { font: 18px Arial; transform: rotate(-35deg); }
 .vertex { position: absolute; z-index: 1; display: grid; place-items: center; width: 16px; height: 16px; color: #111; border: 1px solid var(--orange); border-radius: 50%; background: var(--lime); font: 8px var(--sym-mono, monospace); transform: translate(-50%, -50%); }
 .coordinates { display: flex; flex: 0 0 35px; align-items: center; gap: 7px; margin: 0 9px; padding: 0 8px; border: 1px solid #343837; background: #101212; color: #bec2b9; font: 7px var(--sym-mono, monospace); white-space: nowrap; }.coordinates b { color: #f0f0e8; font-weight: 500; }.coordinates span:last-child b { color: var(--orange); }
 .layers { flex: 0 0 59px; padding: 8px 9px 5px; }.layers > small { display: block; margin-bottom: 7px; color: #bbc0b8; font: 7px var(--sym-mono, monospace); }.layers > div { display: flex; gap: 5px; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; scroll-snap-type: x proximity; overscroll-behavior-inline: contain; touch-action: pan-x; scrollbar-width: thin; scrollbar-color: var(--blue) #202523; }.layers > div::-webkit-scrollbar { display: block; height: 3px; }.layers > div::-webkit-scrollbar-track { background: #202523; }.layers > div::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 3px; }.layers button { flex: 0 0 auto; min-width: 82px; padding: 9px 10px; color: #d4d5cf; border: 1px solid #1d2321; background: #252b29; cursor: pointer; font: 8px var(--sym-mono, monospace); white-space: nowrap; scroll-snap-align: start; }.layers button i { display: inline-block; width: 5px; height: 5px; border: 1px solid currentColor; border-radius: 50%; }.layers .layerActive { color: #fff; border-color: var(--orange); background: var(--orange); }.layers .layerActive i { border-color: #fff; }
@@ -63,17 +56,15 @@
 .toast { position: fixed; z-index: 20; right: 18px; bottom: 18px; display: flex; align-items: center; gap: 7px; max-width: min(360px, calc(100vw - 36px)); padding: 10px 12px; color: #111; background: var(--lime); font: 9px var(--sym-mono, monospace); }.toast svg { width: 13px; }
 .modalBackdrop { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 16px; background: rgba(0,0,0,.72); backdrop-filter: blur(6px); }.modal { width: min(100%, 430px); padding: 20px; color: var(--white); border: 1px solid rgba(201,255,63,.3); background: #111514; box-shadow: 0 22px 60px rgba(0,0,0,.5); }.modalHeader { display: flex; align-items: start; justify-content: space-between; }.modalHeader small { color: var(--orange); font: 8px var(--sym-mono, monospace); letter-spacing: .1em; }.modalHeader h2 { margin: 6px 0 0; font: 28px var(--sym-display, Arial); letter-spacing: -.06em; }.modalHeader h2 i { color: var(--lime); font-family: Georgia, serif; font-weight: 400; }.modalHeader button { color: #c3cbc2; border: 0; background: none; cursor: pointer; }.modalHeader svg { width: 18px; }.modal > p { margin: 15px 0 18px; color: #8d998f; font: 11px/1.45 var(--sym-display, Arial); }.gpsPreview { position: relative; height: 155px; overflow: hidden; border: 1px solid rgba(201,255,63,.22); background: #14241b; }.gpsGrid { position: absolute; inset: -20%; opacity: .3; background-image: linear-gradient(rgba(201,255,63,.22) 1px, transparent 1px), linear-gradient(90deg, rgba(201,255,63,.22) 1px, transparent 1px); background-size: 30px 30px; transform: rotate(-10deg); }.gpsCenter { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 70px; height: 70px; border: 1px solid var(--lime); border-radius: 50%; background: rgba(8,24,16,.7); transform: translate(-50%, -50%); }.gpsCenter strong { color: var(--lime); font: 25px var(--sym-mono, monospace); }.gpsCenter small { color: #7d927d; font: 7px/1.3 var(--sym-mono, monospace); text-align: center; }.gpsPreview > span { position: absolute; z-index: 1; display: grid; place-items: center; width: 20px; height: 20px; color: #121; border: 2px solid var(--orange); border-radius: 50%; background: var(--lime); font: 8px var(--sym-mono, monospace); transform: translate(-50%, -50%); }.gpsStats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-top: 0; }.gpsStats div { padding: 9px; border-right: 1px solid var(--line); }.gpsStats div:last-child { border-right: 0; }.gpsStats small { display: block; margin-bottom: 4px; color: #6f7d70; font: 7px var(--sym-mono, monospace); }.gpsStats strong { color: var(--lime); font: 10px var(--sym-mono, monospace); }.modalActions { display: flex; gap: 8px; margin-top: 16px; }.fixButton, .closeButton, .cancelButton, .saveButton { min-height: 40px; padding: 0 11px; cursor: pointer; font: 8px var(--sym-mono, monospace); }.fixButton { flex: 1; color: #111; border: 0; background: var(--orange); font-weight: 700; }.fixButton:disabled { opacity: .65; cursor: wait; }.closeButton { display: inline-flex; align-items: center; gap: 5px; color: var(--lime); border: 1px solid rgba(201,255,63,.35); background: rgba(201,255,63,.08); }.closeButton:disabled { color: #5e695f; border-color: var(--line); cursor: not-allowed; }.closeButton svg, .saveButton svg { width: 13px; }.modal label { display: grid; gap: 6px; margin-top: 13px; color: #89968b; font: 8px var(--sym-mono, monospace); letter-spacing: .08em; text-transform: uppercase; }.modal input { width: 100%; padding: 10px; color: #f4f3ed; outline: none; border: 1px solid var(--line); background: #090b0b; font: 12px var(--sym-display, Arial); }.modal input:focus { border-color: var(--lime); }.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }.cancelButton { color: #9da89d; border: 1px solid var(--line); background: transparent; }.saveButton { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: #111; border: 0; background: var(--lime); font-weight: 700; }
 
-@media (max-width: 320px) { .device { width: calc(100vw - 10px); height: calc(100svh - 10px); border-radius: 14px; }.deviceHeader { padding-inline: 8px; }.station strong { font-size: 8px; }.coordinates { gap: 4px; margin-inline: 6px; padding-inline: 5px; font-size: 6px; }.layers { padding-inline: 6px; }.layers button { padding-inline: 6px; font-size: 6px; }.actionDock { padding-inline: 6px; }.alertBar { left: 6px; right: 6px; } }
+@media (max-width: 320px) { .device { width: calc(100vw - 10px); height: calc(100svh - 10px); border-radius: 14px; }.deviceHeader { padding-inline: 8px; }.station strong { font-size: 8px; }.coordinates { gap: 4px; margin-inline: 6px; padding-inline: 5px; font-size: 6px; }.layers { padding-inline: 6px; }.layers button { padding-inline: 6px; font-size: 6px; }.actionDock { padding-inline: 6px; } }
 
-/* Final readability pass: a more technical display face without losing the
-   field-console character of the georeferencing surface. */
-.page { --future: "Spaceman", "Bahnschrift SemiCondensed", "Arial Narrow", "Segoe UI", sans-serif; }
+/* Space Grotesk keeps the console futuristic and geometric without becoming
+   decorative. IBM Plex Mono is reserved for coordinates and telemetry. */
+.page { --future: "Space Grotesk", "Bahnschrift SemiCondensed", "Arial Narrow", "Segoe UI", sans-serif; --telemetry: "IBM Plex Mono", "Cascadia Code", Consolas, monospace; }
 .device { font-family: var(--future); }
 .station span { font-size: 7px; font-weight: 700; letter-spacing: .12em; }
 .station strong { font-size: 10px; font-weight: 700; letter-spacing: .04em; }
 .uplink { font-size: 8px; font-weight: 700; letter-spacing: .04em; }
-.alertBar small { font-size: 8px; font-weight: 700; letter-spacing: .04em; }
-.alertBar span, .alertBar button { font-size: 9px; }
 .mapWatermark { font-size: 9px; letter-spacing: .02em; }
 .coordinates { font-size: 8px; letter-spacing: .02em; }
 .layers { flex-basis: 64px; }
@@ -81,12 +72,36 @@
 .layers > div { padding-bottom: 0; scrollbar-width: none; -ms-overflow-style: none; touch-action: none; -webkit-overflow-scrolling: touch; cursor: grab; user-select: none; }
 .layers > div:active { cursor: grabbing; }
 .layers > div::-webkit-scrollbar { display: none; width: 0; height: 0; }
-.layers button { min-width: 86px; height: 36px; min-height: 36px; padding: 10px 11px; font-size: 9px; font-weight: 700; letter-spacing: .02em; }
-.scanButton { font-size: 9px; font-weight: 800; letter-spacing: .05em; }
+.layers button { min-width: 86px; height: 36px; min-height: 36px; padding: 10px 11px; font-size: 9px; font-weight: 400; letter-spacing: .02em; }
+.scanButton { font-size: 10px; font-weight: 400; letter-spacing: .05em; }
+.scanButtonStrong { font-weight: 800; }
 .harvestButton { min-height: 42px; }
 .scanDockMeta { font-size: 8px; font-weight: 700; letter-spacing: .1em; }
 .scanDockMeta strong { font-size: 9px; }
 .scanDock button { min-height: 32px; font-size: 8px; font-weight: 800; letter-spacing: .02em; }
+
+/* Apply the selected display face to the whole console. Several legacy
+   declarations set a mono fallback directly, so inheritance alone is not
+   enough to switch the visible UI to Spaceman. */
+.device,
+.device :where(*) {
+  font-family: var(--future) !important;
+}
+
+.coordinates,
+.coordinates b,
+.satelliteBadge,
+.mapLoadNotice,
+.uplink,
+.layers > small,
+.layers button,
+.scanDockMeta,
+.scanDock button,
+.toast,
+.modalHeader small,
+.modal label {
+  font-family: var(--telemetry) !important;
+}
 
 /* Forms use the same orange action language as the field console. */
 .modal { border-color: rgba(255,78,32,.58); background: linear-gradient(145deg, rgba(255,78,32,.08), transparent 42%), #111514; }
@@ -165,7 +180,7 @@
 .satelliteBadge,
 .mapWatermark,
 .polygonSvg,
-.userLocation,
+.gpsFocus,
 .vertex {
   pointer-events: none;
 }
@@ -184,3 +199,256 @@
     border-radius: 0;
   }
 }
+
+.historyModal { max-height: min(620px, calc(100dvh - 32px)); overflow: auto; }
+.historyPills { display: flex; gap: 6px; overflow-x: auto; padding: 3px 0 8px; scrollbar-width: none; }
+.historyPills::-webkit-scrollbar { display: none; }
+.historyPill, .historyPillActive { flex: 0 0 auto; min-height: 34px; padding: 0 10px; color: #aab4a9; border: 1px solid rgba(255,78,32,.35); border-radius: 999px; background: rgba(255,78,32,.05); cursor: pointer; font: 8px var(--telemetry, monospace); letter-spacing: .04em; white-space: nowrap; }
+.historyPillActive { color: #fff; border-color: var(--orange); background: var(--orange); }
+.historyList { display: grid; gap: 7px; max-height: 300px; overflow-y: auto; padding-top: 7px; }
+.historyCard { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 11px 12px; border: 1px solid rgba(255,78,32,.25); background: rgba(255,78,32,.06); }
+.historyCard strong { display: block; color: var(--orange); font: 11px var(--telemetry, monospace); letter-spacing: .06em; }
+.historyCard small { display: block; margin-top: 4px; color: #b2beb1; font: 8px var(--telemetry, monospace); letter-spacing: .03em; }
+.historyCard b { align-self: center; color: var(--white); font: 9px var(--future, sans-serif); font-weight: 500; text-align: right; }
+.historyCard time { grid-column: 1 / -1; color: #758276; font: 8px var(--telemetry, monospace); }
+.historyEmpty { padding: 30px 15px; color: #d9e1d4; border: 1px dashed rgba(255,78,32,.35); background: rgba(255,78,32,.04); font: 10px/1.5 var(--future, sans-serif); text-align: center; }
+.historyEmpty span, .historyPanel p { color: #8f9d91; font-size: 9px; }
+.historyPanel { display: grid; gap: 7px; padding: 18px 12px; color: #b8c4b8; border: 1px solid rgba(255,78,32,.25); background: rgba(255,78,32,.05); font: 10px var(--future, sans-serif); }
+.historyPanel > strong { color: var(--orange); font: 32px var(--telemetry, monospace); }
+.historyPanel > span { color: #d2dbd0; }
+.historyTags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.historyTags em { padding: 6px 8px; color: #fff; border: 1px solid rgba(255,78,32,.55); border-radius: 999px; background: rgba(255,78,32,.12); font: 9px var(--future, sans-serif); font-style: normal; }
+
+/* Contrast pass for survey copy and archive pills. */
+.modal > p,
+.modal label,
+.modal .gpsStats small,
+.historyPill,
+.historyPillActive,
+.historyPanel,
+.historyPanel > span {
+  color: #fff !important;
+}
+
+/* Capture actions are compact and exist only inside the active scan dock. */
+.scanDock button { min-height: 24px !important; font-size: 6px !important; }
+.scanDock .closeButton { min-height: 24px !important; }
+
+/* Enlarge the label while keeping its right edge anchored. */
+.station span { font-size: 9px !important; line-height: 1; text-align: right; }
+
+/* The station title sits immediately to the right of the minimal menu mark. */
+.station span { text-align: left !important; padding-left: 22px; box-sizing: border-box; }
+
+/* Active layers use a subdued orange field; the switch glyph is intentionally
+   removed while the button state remains available through aria-pressed. */
+.layers button { gap: 0; }
+.layers .layerActive { color: #fff !important; border-color: rgba(255,78,32,.56) !important; background: linear-gradient(180deg, rgba(255,78,32,.28), rgba(32,24,21,.88)) !important; box-shadow: inset 0 0 0 1px rgba(255,78,32,.12); }
+
+/* Vertex markers remain consistent across the temporary scan geometry. */
+.vertex { width: 16px !important; height: 16px !important; font-size: 8px !important; }
+
+/* Coordinates remain a compact left-aligned telemetry row. */
+.coordinates { display: flex; align-items: center; justify-content: flex-start; gap: 9px; }
+.coordinates span { flex: 0 0 auto; }
+
+/* The pills fit the modal width and stay fixed while only the history list
+   scrolls beneath them. */
+.historyModal { overflow: hidden; }
+.historyPills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; overflow: visible; padding-bottom: 8px; }
+.historyPill, .historyPillActive { width: 100%; min-width: 0; min-height: 22px; height: 22px; padding: 0 4px; font-size: 6.5px; line-height: 1.05; white-space: normal; }
+.historyList { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; padding-bottom: 14px; scroll-padding-bottom: 14px; scrollbar-width: none; }
+.historyList::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.historyCard { width: 100%; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.historyCard:hover { border-color: rgba(255,78,32,.65); background: rgba(255,78,32,.12); }
+
+/* Passport view for a selected plot. */
+.passportCard { display: grid; gap: 10px; max-height: min(430px, calc(100dvh - 190px)); overflow-y: auto; scrollbar-width: none; }
+.passportCard::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.passportHeader { display: flex; align-items: start; justify-content: space-between; padding: 10px 11px; border: 1px solid rgba(255,78,32,.45); background: rgba(255,78,32,.08); }
+.passportHeader small, .passportGeo > small, .passportVertices > small { display: block; color: var(--orange); font: 7px var(--telemetry, monospace); letter-spacing: .08em; }
+.passportHeader h3 { margin: 5px 0 0; color: #fff; font: 18px var(--telemetry, monospace); }
+.passportHeader button { color: #fff; border: 1px solid rgba(255,255,255,.3); background: transparent; cursor: pointer; font: 7px var(--telemetry, monospace); }
+.passportGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.12); }
+.passportGrid div { display: grid; gap: 4px; min-height: 48px; padding: 8px; background: #101514; }
+.passportGrid small { color: #fff; font: 6px var(--telemetry, monospace); letter-spacing: .06em; }
+.passportGrid strong { overflow-wrap: anywhere; color: #fff; font: 10px var(--future, sans-serif); font-weight: 500; }
+.passportGeo, .passportVertices { display: grid; gap: 5px; padding: 10px; border: 1px solid rgba(124,220,255,.28); background: rgba(124,220,255,.06); }
+.passportGeo strong { color: #fff; font: 10px var(--telemetry, monospace); }
+.passportGeo span { color: #fff; font: 8px var(--telemetry, monospace); }
+.passportVertices { border-color: rgba(201,255,63,.25); background: rgba(201,255,63,.05); }
+.passportVertices > div { display: grid; gap: 3px; max-height: 116px; overflow-y: auto; scrollbar-width: none; }
+.passportVertices > div::-webkit-scrollbar { display: none; }
+.passportVertices span { color: #fff; font: 8px var(--telemetry, monospace); }
+.passportDate { color: #fff; font: 7px var(--telemetry, monospace); letter-spacing: .04em; }
+
+/* The lot passport is a true secondary popup layered inside Polygon Records. */
+.historyModal { position: relative; }
+.passportOverlay { position: absolute; z-index: 5; inset: 10px; display: grid; place-items: center; padding: 8px; background: rgba(0,0,0,.42); }
+.passportOverlay .passportCard { width: 100%; max-height: min(430px, calc(100dvh - 190px)); padding: 10px; color: #111; border: 1px solid #f0f0eb; background: #b9b8b1; box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+.passportOverlay .passportHeader { border-color: #3c3c39; background: #c9c8c0; }
+.passportOverlay .passportHeader small,
+.passportOverlay .passportGeo > small,
+.passportOverlay .passportVertices > small { color: #20201e; }
+.passportOverlay .passportHeader h3,
+.passportOverlay .passportGrid small,
+.passportOverlay .passportGrid strong,
+.passportOverlay .passportGeo strong,
+.passportOverlay .passportGeo span,
+.passportOverlay .passportVertices span,
+.passportOverlay .passportDate { color: #111; }
+.passportOverlay .passportHeader button { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; color: #111; border: 1px solid #333; border-radius: 50%; background: #d9d8d0; cursor: pointer; }
+.passportOverlay .passportHeader button svg { width: 12px; }
+.passportOverlay .passportGrid { border-color: #555; background: #555; }
+.passportOverlay .passportGrid div { background: #c9c8c0; }
+.passportOverlay .passportGeo { border-color: #444; background: #aaa9a2; }
+.passportOverlay .passportVertices { border-color: #555; background: #aaa9a2; }
+
+/* Larger archive tabs and a taller, single-screen passport card. */
+.historyPill, .historyPillActive { min-height: 26px; height: 26px; font-size: 8px; font-weight: 500; letter-spacing: .02em; }
+.historyModal { height: min(620px, calc(100dvh - 24px)); display: flex; flex-direction: column; }
+.passportOverlay { inset: 8px; padding: 7px; }
+.passportOverlay .passportCard { height: 100%; max-height: none; overflow: hidden; border-radius: 14px; }
+.passportOverlay .passportHeader { border-radius: 9px; }
+.passportOverlay .passportHeader h3 { font-weight: 700; }
+.passportOverlay .passportGrid { border-radius: 9px; overflow: hidden; }
+.passportOverlay .passportGrid div { min-width: 0; box-sizing: border-box; }
+.passportOverlay .passportGrid { column-gap: 0; row-gap: 1px; }
+.passportOverlay .passportGrid div { overflow: hidden; align-content: center; }
+.passportOverlay .passportGrid small { font-size: 7px; line-height: 1.1; overflow-wrap: anywhere; }
+.passportOverlay .passportGrid strong { font-size: 11px; line-height: 1.12; overflow-wrap: anywhere; word-break: break-word; }
+.passportOverlay .passportGrid small { font-weight: 400; }
+.passportOverlay .passportGrid strong { font-weight: 700; }
+.passportOverlay .passportGeo { border-radius: 9px; }
+.passportOverlay .passportGeo strong { font-weight: 700; }
+.passportOverlay .passportGeo span { font-weight: 400; }
+.passportOverlay .passportVertices { border-radius: 9px; }
+.passportOverlay .passportVertices > div { max-height: none; overflow: visible; }
+.passportOverlay .passportVertices span { font-weight: 500; }
+.passportOverlay .passportDate { font-weight: 400; }
+
+/* Give the passport more vertical room while tightening the geographic block. */
+.historyModal { height: min(680px, calc(100dvh - 14px)); }
+.passportOverlay .passportCard { gap: 6px; height: calc(100% - 10px); }
+.passportOverlay .passportGeo { gap: 1px; padding-block: 8px; }
+.historyModal .modalHeader small { color: #9aa09a; font-weight: 700; }
+.historyModal > p { margin-bottom: 8px; text-align: right; }
+.historyModal .historyPill,
+.historyModal .historyPillActive {
+  color: #fff;
+  border-color: rgba(255,78,32,.56);
+  background: linear-gradient(180deg, rgba(255,78,32,.28), rgba(32,24,21,.88));
+  box-shadow: inset 0 0 0 1px rgba(255,78,32,.12);
+}
+.historyModal .historyPillActive {
+  border-color: var(--orange);
+  box-shadow: inset 0 0 0 1px var(--orange);
+}
+.historyModal .historyPill {
+  color: #aab4a9;
+  border-color: rgba(255,78,32,.35);
+  background: rgba(255,78,32,.05);
+  box-shadow: none;
+}
+
+/* Compact the six-field passport block and reserve a clean lower inset. */
+.passportOverlay .passportGrid {
+  box-sizing: border-box;
+  row-gap: 0;
+  padding-block: 1px;
+}
+.passportOverlay .passportGrid div {
+  gap: 0;
+  padding: 1px 8px;
+  min-height: 0;
+  align-content: start;
+}
+.passportOverlay .passportGrid small { font-size: 7px; line-height: 1; }
+.passportOverlay .passportGrid strong {
+  font-size: 14px;
+  line-height: .95;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.passportOverlay .passportGeo strong { font-size: 12px; line-height: 1.05; }
+.passportOverlay .passportGeo span { font-size: 9px; line-height: 1.05; }
+.coordinates b { font-weight: 700; }
+.passportOverlay .passportVertices > div {
+  max-height: 112px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.passportOverlay .passportVertices > div::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* Map orientation controls stay anchored to the visor corner. */
+.zoomControls { top: 10px !important; left: 10px !important; right: auto !important; transform: none !important; }
+.compass { top: auto !important; right: auto !important; bottom: 12px !important; left: 10px !important; transform: none !important; color: var(--orange); }
+.scanningMap .compass { bottom: 116px !important; }
+
+/* Keep live map coordinates readable and aligned with the viewport width. */
+.coordinates { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(62px, .7fr); gap: 6px; overflow: hidden; }
+.coordinates span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* Layer cards behave as compact on/off switches. */
+.layers button { display: inline-flex; align-items: center; gap: 7px; font-weight: 400 !important; }
+.layers button i { position: relative; width: 23px; height: 13px; flex: 0 0 23px; border: 0; border-radius: 999px; background: #59645d; }
+.layers button i::after { position: absolute; top: 3px; left: 3px; width: 7px; height: 7px; border-radius: 50%; background: #dce4dc; content: ""; transition: transform .18s ease, background .18s ease; }
+.layers .layerActive i { background: rgba(255,255,255,.42); }
+.layers .layerActive i::after { background: #fff; transform: translateX(10px); }
+
+/* The menu is added in the unused header space, leaving the station labels in
+   their existing position. */
+.menuButton { position: absolute; z-index: 4; top: 8px; left: 8px; display: grid; align-content: center; gap: 2px; width: 20px; height: 11px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.menuButton span { display: block; width: 18px; height: 1px; border-radius: 1px; background: var(--orange); }
+.sidebarScrim { position: fixed; z-index: 14; inset: 0; border: 0; background: rgba(0,0,0,.44); cursor: pointer; }
+.sidebar { position: fixed; z-index: 15; inset: 0 auto 0 0; display: flex; flex-direction: column; width: min(286px, calc(100vw - 34px)); padding: 18px 15px; color: var(--white); border-right: 1px solid rgba(255,78,32,.65); background: #0d1211; box-shadow: 18px 0 42px rgba(0,0,0,.44); }
+.sidebarHeader { display: flex; align-items: start; justify-content: space-between; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.sidebarHeader small { display: block; color: var(--orange); font: 8px var(--telemetry, monospace); letter-spacing: .1em; }
+.sidebarHeader strong { display: block; margin-top: 6px; color: #eef4e9; font: 18px var(--future, sans-serif); letter-spacing: .02em; }
+.sidebarHeader button { color: #d6ded5; border: 0; background: none; cursor: pointer; }
+.sidebarHeader svg { width: 17px; }
+.sidebarNav { display: grid; gap: 6px; padding-top: 20px; }
+.sidebarNav button { display: flex; align-items: center; justify-content: space-between; min-height: 42px; padding: 0 11px; color: #b9c6b9; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.035); cursor: pointer; font: 9px var(--telemetry, monospace); text-align: left; }
+.sidebarNav button span { color: var(--orange); font-size: 8px; }
+.sidebarNav .sidebarNavActive { color: #fff; border-color: var(--orange); background: rgba(255,78,32,.16); }
+.sidebarStatus { display: grid; gap: 8px; margin-top: auto; padding: 13px 11px; border: 1px solid rgba(124,220,255,.28); background: rgba(124,220,255,.06); }
+.sidebarStatus small { color: var(--blue); font: 8px var(--telemetry, monospace); letter-spacing: .08em; }
+.sidebarStatus strong { color: #fff; font: 11px var(--telemetry, monospace); }
+.sidebarStatus span { color: #8f9e93; font: 10px/1.4 var(--future, sans-serif); }
+.sidebarSignOut { width: max-content; padding: 7px 9px; color: #dfffa0; border: 1px solid rgba(201,255,63,.42); background: rgba(201,255,63,.08); cursor: pointer; font: 8px var(--telemetry, monospace); letter-spacing: .08em; }
+
+
+
+
+.authPage { position: fixed; inset: 0; z-index: 50; width: 100%; height: 100dvh; min-height: 0; display: grid; place-items: center; overflow: hidden; padding: 12px clamp(18px, 4vw, 48px); color: #f4efe7; background: #050505; font-family: var(--future); }
+.authPage::before { position: absolute; inset: 0; content: ""; opacity: .38; background: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px), radial-gradient(circle at 50% 28%, rgba(219,157,39,.12), transparent 34%); background-size: 44px 44px, 44px 44px, auto; }
+.authPage::after { display: none; }
+.authCard { position: relative; z-index: 1; width: min(390px, 100%); display: grid; gap: 10px; padding: 0; }
+.authLogo { display: flex; align-items: center; justify-content: center; min-height: 58px; }
+.authLogo .sym-brand { display: inline-flex; align-items: center; justify-content: center; width: min(140px, 42vw); height: 58px; }
+.authLogo .sym-brand-logo { width: 100%; height: 100%; }
+.authContent { display: grid; gap: 9px; }
+.authCard small { color: #e1aa36; letter-spacing: .16em; font: 600 .62rem/1.3 var(--telemetry); }
+.authCard h1 { margin: 2px 0 0; color: #f4efe7; font-family: var(--serif); font-size: clamp(36px, 8vw, 58px); font-weight: 400; line-height: .9; letter-spacing: -.055em; }
+.authCard h1 i { color: #e1aa36; font-style: normal; }
+.authCard p { margin: 0; color: #b5ada1; font-size: .78rem; line-height: 1.35; }
+.authForm { display: grid; gap: 12px; margin-top: 4px; }
+.authLabel { display: grid; gap: 8px; color: #e1aa36; font: 600 .62rem/1 var(--telemetry); letter-spacing: .12em; }
+.authInput { width: 100%; padding: 7px 0 8px; border: 0; border-bottom: 1px solid rgba(244,239,231,.34); border-radius: 0; outline: none; background: transparent; color: #f4efe7; font: 14px/1.2 var(--telemetry); transition: border-color .2s ease; }
+.authInput:focus { border-bottom-color: #e1aa36; }
+.authInput::placeholder { color: #777066; }
+.authButton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #e1aa36; border-radius: 0; padding: 11px 14px; background: #e1aa36; color: #17120a; font: 700 .64rem/1 var(--telemetry); letter-spacing: .1em; cursor: pointer; }
+.authButton svg { width: 16px; height: 16px; }
+.authButton:hover { background: #f0c35c; border-color: #f0c35c; }
+.authMessage { color: #e1aa36 !important; font: .72rem/1.4 var(--telemetry); }
+.authError { color: #f0a18f !important; font: .72rem/1.4 var(--telemetry); }
+.authFooter { display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 12px; padding-top: 7px; border-top: 1px solid rgba(244,239,231,.16); color: #776f65; font: .2rem/1 var(--telemetry); letter-spacing: .04em; white-space: nowrap; }
+
+@media (max-height: 680px) {
+  .authCard { gap: 6px; }
+  .authLogo { min-height: 42px; }
+  .authLogo .sym-brand { height: 42px; }
+  .authForm { gap: 8px; margin-top: 1px; }
+}
+

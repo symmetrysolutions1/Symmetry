@@ -4,7 +4,7 @@ import { ServerConsole } from "@/components/server-console";
 export const metadata: Metadata = {
   title: "Server · EUDR Console",
   description:
-    "Consola de Symmetry para cargar parcelas, registrar cosechas y preparar evidencia EUDR.",
+    "Symmetry field console for parcel capture, harvest records, and EUDR evidence.",
 };
 
 export default function ServerPage() {

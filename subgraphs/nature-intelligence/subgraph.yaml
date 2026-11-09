@@ -1,0 +1,37 @@
+specVersion: 1.3.0
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: NatureEvidenceRegistry
+    network: sepolia
+    source:
+      # Replace after the Sepolia deployment. Do not submit this placeholder as live evidence.
+      address: "0x0000000000000000000000000000000000000000"
+      abi: NatureEvidenceRegistry
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Territory
+        - Observation
+        - Alert
+        - EvidencePassport
+        - EnsNamespace
+      abis:
+        - name: NatureEvidenceRegistry
+          file: ./abis/NatureEvidenceRegistry.json
+      eventHandlers:
+        - event: TerritoryRegistered(indexed bytes32,indexed bytes32,bytes32,bytes32,string)
+          handler: handleTerritoryRegistered
+        - event: ObservationRecorded(indexed bytes32,indexed bytes32,bytes32,int256,uint16,uint64)
+          handler: handleObservationRecorded
+        - event: AlertCreated(indexed bytes32,indexed bytes32,indexed bytes32,bytes32)
+          handler: handleAlertCreated
+        - event: EvidencePassportAnchored(indexed bytes32,indexed bytes32,indexed bytes32,bytes32,bytes32,bytes32,uint64)
+          handler: handleEvidencePassportAnchored
+        - event: EnsNamespaceLinked(indexed bytes32,indexed bytes32,indexed address)
+          handler: handleEnsNamespaceLinked
+      file: ./src/mapping.ts
