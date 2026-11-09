@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Test} from "../../lib/forge-std/src/Test.sol";
-import {NatureEvidenceRegistry} from "../../contracts/nature/NatureEvidenceRegistry.sol";
+import { Test } from "../../lib/forge-std/src/Test.sol";
+import { NatureEvidenceRegistry } from "../../contracts/nature/NatureEvidenceRegistry.sol";
 
 contract NatureEvidenceRegistryFlowTest is Test {
     NatureEvidenceRegistry internal registry;
@@ -33,10 +33,14 @@ contract NatureEvidenceRegistryFlowTest is Test {
         );
 
         vm.prank(creRelayer);
-        registry.recordObservation(territoryId, observationId, keccak256("copernicus-evidence"), -742, 6180, 1_725_667_200);
+        registry.recordObservation(
+            territoryId, observationId, keccak256("copernicus-evidence"), -742, 6180, 1_725_667_200
+        );
 
         vm.prank(creRelayer);
-        registry.createAlert(territoryId, observationId, keccak256("alert-1"), keccak256("NDVI_DROP"));
+        registry.createAlert(
+            territoryId, observationId, keccak256("alert-1"), keccak256("NDVI_DROP")
+        );
 
         vm.prank(creRelayer);
         registry.anchorPassport(
@@ -65,6 +69,12 @@ contract NatureEvidenceRegistryFlowTest is Test {
     function testOnlyRelayerCanWrite() public {
         vm.expectRevert(NatureEvidenceRegistry.NotAuthorized.selector);
         vm.prank(address(0xBAD));
-        registry.registerTerritory(bytes32(uint256(1)), bytes32(uint256(2)), bytes32(uint256(3)), bytes32(uint256(4)), "x.eth");
+        registry.registerTerritory(
+            bytes32(uint256(1)),
+            bytes32(uint256(2)),
+            bytes32(uint256(3)),
+            bytes32(uint256(4)),
+            "x.eth"
+        );
     }
 }
