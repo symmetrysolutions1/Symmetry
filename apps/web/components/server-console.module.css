@@ -397,8 +397,8 @@
 .scanningMap .compass { bottom: 116px !important; }
 
 /* Keep live map coordinates readable and aligned with the viewport width. */
-.coordinates { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(62px, .7fr); gap: 6px; overflow: hidden; }
-.coordinates span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.coordinates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; overflow: hidden; justify-items: start; }
+.coordinates span { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: left; }
 
 /* Layer cards behave as compact on/off switches. */
 .layers button { display: inline-flex; align-items: center; gap: 7px; font-weight: 400 !important; }
