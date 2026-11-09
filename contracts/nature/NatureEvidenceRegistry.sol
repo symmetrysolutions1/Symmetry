@@ -146,10 +146,7 @@ contract NatureEvidenceRegistry {
         bytes32 observationId,
         bytes32 alertId,
         bytes32 reason
-    )
-        external
-        onlyAuthorized
-    {
+    ) external onlyAuthorized {
         if (alertId == bytes32(0)) revert EmptyId();
         if (!territories[territoryId].registered) revert UnknownTerritory();
         if (!observations[observationId].recorded) revert UnknownObservation();
