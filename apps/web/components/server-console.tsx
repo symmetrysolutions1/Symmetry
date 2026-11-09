@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Brand } from "@/components/brand";
 import { ArrowRight, CheckIcon, CloseIcon } from "@/components/icons";
-import { loadMapLibre } from "@/components/nature-viewers/fire-map";
+import { loadMapLibre, type MapLibreMap } from "@/components/nature-viewers/fire-map";
 import styles from "./server-console.module.css";
 
 type Modal = "survey" | "history" | null;
@@ -24,7 +24,11 @@ type ParcelRecord = {
   producer: string;
   layer?: Layer;
 };
-type MapLibreMap = any;
+type ServerMap = MapLibreMap & {
+  getCenter(): { lat: number; lng: number };
+  zoomIn(options?: { duration?: number }): void;
+  zoomOut(options?: { duration?: number }): void;
+};
 
 const layerLabels: Record<Layer, string> = {
   thermal: "SIEMBRA 1",
@@ -74,18 +78,22 @@ export function ServerConsole() {
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const mapElementRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<MapLibreMap | null>(null);
+  const mapRef = useRef<ServerMap | null>(null);
   const layersStripRef = useRef<HTMLDivElement>(null);
   const layerDragRef = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
   const supabase = useMemo(() => createClient(), []);
   const [authUser, setAuthUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(() => Boolean(supabase));
   const [authUsername, setAuthUsername] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authMessage, setAuthMessage] = useState("");
-  const [authError, setAuthError] = useState("");
+  const [authError, setAuthError] = useState(() =>
+    supabase ? "" : "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+  );
   const [saving, setSaving] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<"offline" | "connecting" | "online" | "degraded">("connecting");
+  const [syncStatus, setSyncStatus] = useState<"offline" | "connecting" | "online" | "degraded">(() =>
+    supabase ? "connecting" : "offline",
+  );
 
   const loadRecords = async (userId: string) => {
     if (!supabase) {
@@ -131,12 +139,7 @@ export function ServerConsole() {
   };
 
   useEffect(() => {
-    if (!supabase) {
-      setAuthError("Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.");
-      setSyncStatus("offline");
-      setAuthLoading(false);
-      return;
-    }
+    if (!supabase) return;
 
     let cancelled = false;
     const restoreSession = async () => {
@@ -180,7 +183,7 @@ export function ServerConsole() {
   useEffect(() => {
     if (!mapElementRef.current || mapRef.current) return;
     let cancelled = false;
-    let instance: MapLibreMap | null = null;
+    let instance: ServerMap | null = null;
     let loaded = false;
     let loadTimer: number | null = null;
 
@@ -263,7 +266,7 @@ export function ServerConsole() {
           maxZoom: 18,
           renderWorldCopies: true,
           attributionControl: false,
-        });
+        }) as ServerMap;
         instance = map;
         map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
         map.on("error", () => {
@@ -273,14 +276,14 @@ export function ServerConsole() {
           if (cancelled) return;
           loaded = true;
           if (loadTimer !== null) window.clearTimeout(loadTimer);
-          const center = (map as any).getCenter();
+          const center = map.getCenter();
           setMapCenter({ lat: center.lat, lon: center.lng });
           setMapReady(true);
           setMapError(false);
         });
         map.on("move", () => {
           if (cancelled) return;
-          const center = (map as any).getCenter();
+          const center = map.getCenter();
           setMapCenter({ lat: center.lat, lon: center.lng });
         });
         mapRef.current = map;
