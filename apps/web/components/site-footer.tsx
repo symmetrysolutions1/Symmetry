@@ -12,8 +12,9 @@ export function SiteFooter() {
           <p>La realidad cambia. La evidencia permanece.</p>
         </div>
         <div className="sym-footer-column">
-          <span>Servicios</span>
-          <Link href="/services">Visión general</Link>
+          <span>Soluciones</span>
+          <Link href="/eudr">Landing EUDR</Link>
+          <Link href="/server">EUDR Server</Link>
           {serviceLinks.map((item) => (
             <Link href={item.href} key={item.href}>
               {item.label}

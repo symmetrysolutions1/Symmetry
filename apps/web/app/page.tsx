@@ -172,7 +172,7 @@ export default function HomePage() {
             territorial para demostrar el origen de productos libres de deforestación.
           </p>
           <div className={styles.heroActions}>
-            <Link href="/services" className={styles.goldButton}>
+            <Link href="/server" className={styles.goldButton}>
               Conocer app <ArrowRight />
             </Link>
           </div>

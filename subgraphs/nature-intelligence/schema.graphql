@@ -1,0 +1,40 @@
+type Territory @entity(immutable: false) {
+  id: Bytes!
+  workspaceId: Bytes!
+  geometryDigest: Bytes!
+  ensNode: Bytes!
+  ensName: String!
+}
+
+type Observation @entity(immutable: false) {
+  id: Bytes!
+  territoryId: Bytes!
+  evidenceDigest: Bytes!
+  ndviBps: BigInt!
+  treeCoverBps: Int!
+  capturedAt: BigInt!
+}
+
+type Alert @entity(immutable: true) {
+  id: Bytes!
+  territoryId: Bytes!
+  observationId: Bytes!
+  reason: Bytes!
+}
+
+type EvidencePassport @entity(immutable: false) {
+  id: Bytes!
+  workspaceId: Bytes!
+  territoryId: Bytes!
+  observationId: Bytes!
+  manifestDigest: Bytes!
+  ensNode: Bytes!
+  anchoredAt: BigInt!
+}
+
+type EnsNamespace @entity(immutable: true) {
+  id: Bytes!
+  workspaceId: Bytes!
+  ensNode: Bytes!
+  resolver: Bytes!
+}
