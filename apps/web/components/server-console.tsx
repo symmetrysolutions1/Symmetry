@@ -200,62 +200,8 @@ export function ServerConsole() {
                 maxzoom: 19,
                 attribution: "Tiles © Esri, Maxar, Earthstar Geographics, and the GIS User Community",
               },
-              "server-polygon": {
-                type: "geojson",
-                data: { type: "FeatureCollection", features: [] },
-              },
-              "server-archives": {
-                type: "geojson",
-                data: { type: "FeatureCollection", features: [] },
-              },
             },
-            layers: [
-              { id: "server-satellite", type: "raster", source: "server-satellite" },
-              {
-                id: "server-polygon-fill",
-                type: "fill",
-                source: "server-polygon",
-                filter: ["==", ["geometry-type"], "Polygon"],
-                paint: { "fill-color": "#c9ff3f", "fill-opacity": 0.16 },
-              },
-              {
-                id: "server-polygon-line",
-                type: "line",
-                source: "server-polygon",
-                paint: { "line-color": "#ff4e20", "line-width": 3, "line-opacity": 0.92 },
-              },
-              {
-                id: "server-polygon-points",
-                type: "circle",
-                source: "server-polygon",
-                filter: ["==", ["geometry-type"], "Point"],
-                paint: {
-                  "circle-color": "#c9ff3f",
-                  "circle-radius": 6,
-                  "circle-stroke-color": "#101411",
-                  "circle-stroke-width": 2,
-                },
-              },
-              {
-                id: "server-archive-fill",
-                type: "fill",
-                source: "server-archives",
-                paint: {
-                  "fill-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"],
-                  "fill-opacity": 0.16,
-                },
-              },
-              {
-                id: "server-archive-line",
-                type: "line",
-                source: "server-archives",
-                paint: {
-                  "line-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"],
-                  "line-width": 2,
-                  "line-opacity": 0.95,
-                },
-              },
-            ],
+            layers: [{ id: "server-satellite", type: "raster", source: "server-satellite" }],
           },
           center: [-74.08, 4.65],
           zoom: 6,
@@ -265,12 +211,24 @@ export function ServerConsole() {
           attributionControl: false,
         }) as ServerMap;
         instance = map;
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
         map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
         map.on("error", () => {
           if (!cancelled) setMapError(true);
         });
         map.once("load", () => {
           if (cancelled) return;
+          try {
+            map.addSource("server-polygon", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+            map.addSource("server-archives", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+            map.addLayer({ id: "server-polygon-fill", type: "fill", source: "server-polygon", filter: ["==", ["geometry-type"], "Polygon"], paint: { "fill-color": "#c9ff3f", "fill-opacity": 0.16 } });
+            map.addLayer({ id: "server-polygon-line", type: "line", source: "server-polygon", paint: { "line-color": "#ff4e20", "line-width": 3, "line-opacity": 0.92 } });
+            map.addLayer({ id: "server-polygon-points", type: "circle", source: "server-polygon", filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": "#c9ff3f", "circle-radius": 6, "circle-stroke-color": "#101411", "circle-stroke-width": 2 } });
+            map.addLayer({ id: "server-archive-fill", type: "fill", source: "server-archives", paint: { "fill-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"], "fill-opacity": 0.16 } });
+            map.addLayer({ id: "server-archive-line", type: "line", source: "server-archives", paint: { "line-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"], "line-width": 2, "line-opacity": 0.95 } });
+          } catch {
+            setMapError(true);
+          }
           loaded = true;
           if (loadTimer !== null) window.clearTimeout(loadTimer);
           const center = map.getCenter();
