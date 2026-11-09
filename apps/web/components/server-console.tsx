@@ -38,9 +38,6 @@ const layerLabels: Record<Layer, string> = {
   radar: "SIEMBRA 5",
 };
 
-const satelliteFallbackUrl =
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=-78,1,-72,8&bboxSR=4326&imageSR=4326&size=1400,900&format=jpg&f=image";
-
 function productPrefix(value: string) {
   const normalized = String(value || "").trim().toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (normalized.includes("cacao")) return "CA";
@@ -660,7 +657,6 @@ export function ServerConsole() {
         <main className={styles.mapViewport}>
           <div className={`${styles.mapCanvas} ${scanStatus === "capturing" ? styles.scanningMap : ""}`}>
             <div ref={mapElementRef} className={styles.satelliteMap} role="application" aria-label="Mapa satelital global de Symmetry" />
-            {!mapReady && <div className={styles.satelliteTexture} style={{ backgroundImage: `linear-gradient(rgba(10, 20, 16, .2), rgba(10, 20, 16, .2)), url("${satelliteFallbackUrl}")` }} aria-label="Vista satelital de respaldo" />}
             {mapError && <div className={styles.mapLoadNotice}>MAP ENGINE OFFLINE / CHECK SATELLITE LINK</div>}
             {scanStatus === "capturing" && <div className={styles.scanGridOverlay} aria-hidden="true" />}
             <div className={styles.satelliteBadge}>{mapError ? "SATELLITE LINK / OFFLINE" : mapReady ? "ESRI WORLD IMAGERY / ONLINE" : "SATELLITE LINK / CONNECTING"}</div>
