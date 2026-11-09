@@ -39,7 +39,7 @@ export type MapLibreMap = {
   getZoom(): number;
   getContainer(): HTMLElement;
   getLayer(id: string): unknown;
-  getSource(id: string): { setTiles?: (tiles: string[]) => void } | undefined;
+  getSource(id: string): { setTiles?: (tiles: string[]) => void; setData?: (data: unknown) => void } | undefined;
   setLayoutProperty(id: string, property: string, value: unknown): void;
   isStyleLoaded(): boolean;
   flyTo(options: { center: [number, number]; zoom: number; duration: number }): void;

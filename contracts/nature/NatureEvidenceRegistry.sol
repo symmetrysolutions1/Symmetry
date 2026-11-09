@@ -47,7 +47,9 @@ contract NatureEvidenceRegistry {
     mapping(bytes32 => Passport) public passports;
 
     event RelayerUpdated(address indexed relayer, bool enabled);
-    event EnsNamespaceLinked(bytes32 indexed workspaceId, bytes32 indexed ensNode, address indexed resolver);
+    event EnsNamespaceLinked(
+        bytes32 indexed workspaceId, bytes32 indexed ensNode, address indexed resolver
+    );
     event TerritoryRegistered(
         bytes32 indexed workspaceId,
         bytes32 indexed territoryId,
@@ -63,7 +65,12 @@ contract NatureEvidenceRegistry {
         uint16 treeCoverBps,
         uint64 capturedAt
     );
-    event AlertCreated(bytes32 indexed territoryId, bytes32 indexed observationId, bytes32 indexed alertId, bytes32 reason);
+    event AlertCreated(
+        bytes32 indexed territoryId,
+        bytes32 indexed observationId,
+        bytes32 indexed alertId,
+        bytes32 reason
+    );
     event EvidencePassportAnchored(
         bytes32 indexed workspaceId,
         bytes32 indexed passportId,
@@ -93,7 +100,10 @@ contract NatureEvidenceRegistry {
         emit RelayerUpdated(relayer, enabled);
     }
 
-    function linkEnsNamespace(bytes32 workspaceId, bytes32 ensNode, address resolver) external onlyAuthorized {
+    function linkEnsNamespace(bytes32 workspaceId, bytes32 ensNode, address resolver)
+        external
+        onlyAuthorized
+    {
         if (workspaceId == bytes32(0) || ensNode == bytes32(0)) revert EmptyId();
         emit EnsNamespaceLinked(workspaceId, ensNode, resolver);
     }
@@ -105,7 +115,9 @@ contract NatureEvidenceRegistry {
         bytes32 ensNode,
         string calldata ensName
     ) external onlyAuthorized {
-        if (workspaceId == bytes32(0) || territoryId == bytes32(0)) revert EmptyId();
+        if (workspaceId == bytes32(0) || territoryId == bytes32(0)) {
+            revert EmptyId();
+        }
         if (territories[territoryId].registered) revert AlreadyRegistered();
         territories[territoryId] = Territory(workspaceId, geometryDigest, ensNode, ensName, true);
         emit TerritoryRegistered(workspaceId, territoryId, geometryDigest, ensNode, ensName);
@@ -122,14 +134,19 @@ contract NatureEvidenceRegistry {
         if (observationId == bytes32(0)) revert EmptyId();
         if (!territories[territoryId].registered) revert UnknownTerritory();
         if (observations[observationId].recorded) revert AlreadyRegistered();
-        observations[observationId] = Observation(territoryId, evidenceDigest, ndviBps, treeCoverBps, capturedAt, true);
-        emit ObservationRecorded(territoryId, observationId, evidenceDigest, ndviBps, treeCoverBps, capturedAt);
+        observations[observationId] =
+            Observation(territoryId, evidenceDigest, ndviBps, treeCoverBps, capturedAt, true);
+        emit ObservationRecorded(
+            territoryId, observationId, evidenceDigest, ndviBps, treeCoverBps, capturedAt
+        );
     }
 
-    function createAlert(bytes32 territoryId, bytes32 observationId, bytes32 alertId, bytes32 reason)
-        external
-        onlyAuthorized
-    {
+    function createAlert(
+        bytes32 territoryId,
+        bytes32 observationId,
+        bytes32 alertId,
+        bytes32 reason
+    ) external onlyAuthorized {
         if (alertId == bytes32(0)) revert EmptyId();
         if (!territories[territoryId].registered) revert UnknownTerritory();
         if (!observations[observationId].recorded) revert UnknownObservation();
@@ -149,7 +166,11 @@ contract NatureEvidenceRegistry {
         if (!observations[observationId].recorded) revert UnknownObservation();
         if (passports[passportId].anchored) revert AlreadyRegistered();
         uint64 anchoredAt = uint64(block.timestamp);
-        passports[passportId] = Passport(workspaceId, territoryId, observationId, manifestDigest, ensNode, anchoredAt, true);
-        emit EvidencePassportAnchored(workspaceId, passportId, territoryId, observationId, manifestDigest, ensNode, anchoredAt);
+        passports[passportId] = Passport(
+            workspaceId, territoryId, observationId, manifestDigest, ensNode, anchoredAt, true
+        );
+        emit EvidencePassportAnchored(
+            workspaceId, passportId, territoryId, observationId, manifestDigest, ensNode, anchoredAt
+        );
     }
 }
