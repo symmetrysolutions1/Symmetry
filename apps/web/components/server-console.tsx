@@ -406,7 +406,7 @@ export function ServerConsole() {
     toggleLayer(layer);
   };
 
-  const requestLocation = () => {
+  const requestLocation = (onReady?: (position: { lat: number; lon: number }) => void) => {
     setLocationStatus("requesting");
     if (!navigator.geolocation) {
       setLocationStatus("denied");
@@ -422,6 +422,7 @@ export function ServerConsole() {
         setAccuracy(Math.round(coords.accuracy));
         setLocationStatus("ready");
         announce("Ubicación GPS enlazada al visor");
+        onReady?.(position);
       },
       () => {
         setLocationStatus("denied");
@@ -429,6 +430,19 @@ export function ServerConsole() {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
     );
+  };
+
+  const centerOnGps = () => {
+    if (!gpsLocation) {
+      requestLocation((position) => {
+        mapRef.current?.flyTo({ center: [position.lon, position.lat], zoom: 15, duration: 900 });
+        announce("Ubicación GPS enlazada y centrada");
+      });
+      return;
+    }
+
+    mapRef.current?.flyTo({ center: [gpsLocation.lon, gpsLocation.lat], zoom: 15, duration: 650 });
+    announce("Mapa centrado en la posición GPS");
   };
 
   const fixPoint = () => {
@@ -654,7 +668,7 @@ export function ServerConsole() {
             {!mapReady && points.length > 1 && <svg className={styles.polygonSvg} viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Captured parcel boundary"><polyline points={points.map((_, index) => `${41 + (index % 4) * 10},${38 + (index % 3) * 13}`).join(" ")} /><polyline className={points.length >= 3 ? styles.polygonClosed : ""} points={points.length >= 3 ? `${points.map((_, index) => `${41 + (index % 4) * 10},${38 + (index % 3) * 13}`).join(" ")} 41,38` : ""} /></svg>}
             {!mapReady && points.map((point, index) => <span className={styles.vertex} key={`${point.lat}-${point.lon}`} style={{ left: `${41 + (index % 4) * 10}%`, top: `${38 + (index % 3) * 13}%` }}>{index + 1}</span>)}
             <div className={styles.zoomControls}><button type="button" aria-label="Zoom in" onClick={() => { mapRef.current?.zoomIn({ duration: 260 }); announce("Zoom +"); }}>＋</button><button type="button" aria-label="Zoom out" onClick={() => { mapRef.current?.zoomOut({ duration: 260 }); announce("Zoom −"); }}>−</button><span /></div>
-            <button className={styles.compass} type="button" aria-label="Center on GPS location" onClick={() => { const target = gpsLocation || userLocation; const center = target ? [target.lon, target.lat] as [number, number] : [-74.08, 4.65] as [number, number]; mapRef.current?.flyTo({ center, zoom: target ? 15 : 6, duration: 650 }); announce(target ? "Centered on GPS position" : "Map centered on Colombia"); }}><span>◉</span></button>
+            <button className={styles.compass} type="button" aria-label="Center on GPS location" onClick={centerOnGps}><span>◉</span></button>
             {scanStatus === "capturing" && <div className={styles.scanDock}><div className={styles.scanDockMeta}><span>POLYGON LAND / DEFINITION</span><strong>{String(points.length).padStart(2, "0")} VERTICES</strong></div><div className={styles.scanDockActions}><button className={styles.fixButton} type="button" onClick={fixPoint}>FIX POINT {points.length + 1}</button><button className={styles.previewButton} type="button" disabled={points.length === 0} onClick={undoLastPoint}>PREVIEW / RETURN</button><button className={styles.closeButton} type="button" disabled={points.length < 3} onClick={closePolygon}>CLOSE POLYGON <ArrowRight /></button></div></div>}
           </div>
 
