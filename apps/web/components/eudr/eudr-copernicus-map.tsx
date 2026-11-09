@@ -24,7 +24,7 @@ type MapLibreNamespace = {
 
 function loadMapLibre(): Promise<MapLibreNamespace> {
   if (typeof window === "undefined") return Promise.reject(new Error("ssr"));
-  const browserWindow = window as Window & { maplibregl?: MapLibreNamespace };
+  const browserWindow = window as unknown as Window & { maplibregl?: MapLibreNamespace };
   if (browserWindow.maplibregl) return Promise.resolve(browserWindow.maplibregl);
   return new Promise((resolve, reject) => {
     if (!document.getElementById("maplibre-css")) {
