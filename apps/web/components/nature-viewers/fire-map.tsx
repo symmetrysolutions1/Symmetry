@@ -7,6 +7,13 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 type Props = { active: boolean };
 
+export type MapLibreMap = {
+  addControl(control: unknown, position?: string): void;
+  once(event: string, listener: () => void): void;
+  flyTo(options: { center: [number, number]; zoom: number; duration: number }): void;
+  remove(): void;
+};
+
 type HotspotResponse = {
   type: string;
   features: Array<{
