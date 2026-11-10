@@ -32,6 +32,7 @@ type MapLibrePopupOptions = {
 };
 export type MapLibreMap = {
   addControl(control: unknown, position?: string): void;
+  resize(): void;
   addSource(id: string, source: unknown): void;
   addLayer(layer: unknown, beforeId?: string): void;
   on(event: "click", listener: (event: MapLibreClickEvent) => void): void;
