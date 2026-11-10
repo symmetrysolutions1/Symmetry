@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Brand } from "@/components/brand";
 import { ArrowRight, CheckIcon, CloseIcon } from "@/components/icons";
-import { loadMapLibre, type MapLibreMap } from "@/components/nature-viewers/fire-map";
+import { loadMapLibre } from "@/components/nature-viewers/fire-map";
 import styles from "./server-console.module.css";
 
 type Modal = "survey" | "history" | null;
@@ -24,11 +24,7 @@ type ParcelRecord = {
   producer: string;
   layer?: Layer;
 };
-type ServerMap = MapLibreMap & {
-  getCenter(): { lat: number; lng: number };
-  zoomIn(options?: { duration?: number }): void;
-  zoomOut(options?: { duration?: number }): void;
-};
+type MapLibreMap = any;
 
 const layerLabels: Record<Layer, string> = {
   thermal: "SIEMBRA 1",
@@ -75,22 +71,18 @@ export function ServerConsole() {
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const mapElementRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<ServerMap | null>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
   const layersStripRef = useRef<HTMLDivElement>(null);
   const layerDragRef = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
   const supabase = useMemo(() => createClient(), []);
   const [authUser, setAuthUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState(() => Boolean(supabase));
+  const [authLoading, setAuthLoading] = useState(true);
   const [authUsername, setAuthUsername] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authMessage, setAuthMessage] = useState("");
-  const [authError, setAuthError] = useState(() =>
-    supabase ? "" : "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
-  );
+  const [authError, setAuthError] = useState("");
   const [saving, setSaving] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<"offline" | "connecting" | "online" | "degraded">(() =>
-    supabase ? "connecting" : "offline",
-  );
+  const [syncStatus, setSyncStatus] = useState<"offline" | "connecting" | "online" | "degraded">("connecting");
 
   const loadRecords = async (userId: string) => {
     if (!supabase) {
@@ -136,7 +128,12 @@ export function ServerConsole() {
   };
 
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase) {
+      setAuthError("Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.");
+      setSyncStatus("offline");
+      setAuthLoading(false);
+      return;
+    }
 
     let cancelled = false;
     const restoreSession = async () => {
@@ -178,9 +175,10 @@ export function ServerConsole() {
   }, [authUser]);
 
   useEffect(() => {
-    if (!mapElementRef.current || mapRef.current) return;
+    if (!authUser || !mapElementRef.current || mapRef.current) return;
     let cancelled = false;
-    let instance: ServerMap | null = null;
+    let instance: MapLibreMap | null = null;
+    let resizeObserver: ResizeObserver | null = null;
     let loaded = false;
     let loadTimer: number | null = null;
 
@@ -200,8 +198,62 @@ export function ServerConsole() {
                 maxzoom: 19,
                 attribution: "Tiles © Esri, Maxar, Earthstar Geographics, and the GIS User Community",
               },
+              "server-polygon": {
+                type: "geojson",
+                data: { type: "FeatureCollection", features: [] },
+              },
+              "server-archives": {
+                type: "geojson",
+                data: { type: "FeatureCollection", features: [] },
+              },
             },
-            layers: [{ id: "server-satellite", type: "raster", source: "server-satellite" }],
+            layers: [
+              { id: "server-satellite", type: "raster", source: "server-satellite" },
+              {
+                id: "server-polygon-fill",
+                type: "fill",
+                source: "server-polygon",
+                filter: ["==", ["geometry-type"], "Polygon"],
+                paint: { "fill-color": "#c9ff3f", "fill-opacity": 0.16 },
+              },
+              {
+                id: "server-polygon-line",
+                type: "line",
+                source: "server-polygon",
+                paint: { "line-color": "#ff4e20", "line-width": 3, "line-opacity": 0.92 },
+              },
+              {
+                id: "server-polygon-points",
+                type: "circle",
+                source: "server-polygon",
+                filter: ["==", ["geometry-type"], "Point"],
+                paint: {
+                  "circle-color": "#c9ff3f",
+                  "circle-radius": 6,
+                  "circle-stroke-color": "#101411",
+                  "circle-stroke-width": 2,
+                },
+              },
+              {
+                id: "server-archive-fill",
+                type: "fill",
+                source: "server-archives",
+                paint: {
+                  "fill-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"],
+                  "fill-opacity": 0.16,
+                },
+              },
+              {
+                id: "server-archive-line",
+                type: "line",
+                source: "server-archives",
+                paint: {
+                  "line-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"],
+                  "line-width": 2,
+                  "line-opacity": 0.95,
+                },
+              },
+            ],
           },
           center: [-74.08, 4.65],
           zoom: 6,
@@ -209,26 +261,16 @@ export function ServerConsole() {
           maxZoom: 18,
           renderWorldCopies: true,
           attributionControl: false,
-        }) as ServerMap;
+        });
         instance = map;
-        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+        resizeObserver = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => map.resize());
+        resizeObserver?.observe(mapElementRef.current);
         map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
         map.on("error", () => {
           if (!cancelled) setMapError(true);
         });
         map.once("load", () => {
           if (cancelled) return;
-          try {
-            map.addSource("server-polygon", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
-            map.addSource("server-archives", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
-            map.addLayer({ id: "server-polygon-fill", type: "fill", source: "server-polygon", filter: ["==", ["geometry-type"], "Polygon"], paint: { "fill-color": "#c9ff3f", "fill-opacity": 0.16 } });
-            map.addLayer({ id: "server-polygon-line", type: "line", source: "server-polygon", paint: { "line-color": "#ff4e20", "line-width": 3, "line-opacity": 0.92 } });
-            map.addLayer({ id: "server-polygon-points", type: "circle", source: "server-polygon", filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": "#c9ff3f", "circle-radius": 6, "circle-stroke-color": "#101411", "circle-stroke-width": 2 } });
-            map.addLayer({ id: "server-archive-fill", type: "fill", source: "server-archives", paint: { "fill-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"], "fill-opacity": 0.16 } });
-            map.addLayer({ id: "server-archive-line", type: "line", source: "server-archives", paint: { "line-color": ["match", ["get", "layer"], "thermal", "#7cdcff", "ice", "#ff4e20", "magnetic", "#c9ff3f", "topo", "#a98cff", "radar", "#ffd166", "#7cdcff"], "line-width": 2, "line-opacity": 0.95 } });
-          } catch {
-            setMapError(true);
-          }
           loaded = true;
           if (loadTimer !== null) window.clearTimeout(loadTimer);
           const center = map.getCenter();
@@ -253,10 +295,11 @@ export function ServerConsole() {
     return () => {
       cancelled = true;
       if (loadTimer !== null) window.clearTimeout(loadTimer);
+      resizeObserver?.disconnect();
       instance?.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [authUser]);
 
   useEffect(() => {
     const source = mapRef.current?.getSource("server-polygon");
@@ -635,7 +678,23 @@ export function ServerConsole() {
       {sidebarOpen && <><button className={styles.sidebarScrim} type="button" aria-label="Close field console menu" onClick={() => setSidebarOpen(false)} /><aside className={styles.sidebar} aria-label="Field console menu">
         <div className={styles.sidebarHeader}><div><small>SYMMETRY / FIELD OPS</small><strong>CONTROL MENU</strong></div><button type="button" aria-label="Close menu" onClick={() => setSidebarOpen(false)}><CloseIcon /></button></div>
         <nav className={styles.sidebarNav}><button type="button" className={styles.sidebarNavActive}>EUDR SERVER <span>LIVE</span></button><button type="button" onClick={() => { setSidebarOpen(false); setHistoryTab("history"); setSelectedRecord(null); setModal("history"); }}>POLYGON HISTORY <span>{records.length}</span></button><button type="button" onClick={() => { setSidebarOpen(false); setHistoryTab("inputs"); setSelectedRecord(null); setModal("history"); }}>PRODUCT INPUTS <span>{records.length}</span></button></nav>
-        <div className={styles.sidebarStatus}><small>ACTIVE LAYERS</small><strong>{activeLayers.length} / 5 SWITCHES ON</strong><span>Move the map under the blue GPS cursor to define each vertex.</span><button type="button" className={styles.sidebarSignOut} onClick={() => void signOut()}>SIGN OUT</button></div>
+        <div className={styles.sidebarBottom}>
+          <div className={styles.systemApps} aria-label="Symmetry services">
+            <button type="button" className={`${styles.systemApp} ${styles.systemAppEudr}`} aria-label="Open EUDR" onClick={() => setSidebarOpen(false)}>
+              <strong>EUDR</strong>
+              <small>LIVE</small>
+            </button>
+            <button type="button" className={`${styles.systemApp} ${styles.systemAppNature}`} aria-label="Nature Intelligence unavailable" disabled>
+              <strong>NATURE</strong>
+              <small>LOCKED</small>
+            </button>
+            <button type="button" className={`${styles.systemApp} ${styles.systemAppOperations}`} aria-label="Operations unavailable" disabled>
+              <strong>OPS</strong>
+              <small>LOCKED</small>
+            </button>
+          </div>
+          <button type="button" className={styles.sidebarSignOut} onClick={() => void signOut()}>SIGN OUT</button>
+        </div>
       </aside></>}
 
       {toast && <div className={styles.toast}><CheckIcon />{toast}</div>}
