@@ -113,6 +113,9 @@
 .page {
   width: 100vw;
   min-height: 100dvh;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
   place-items: stretch;
   background: var(--black);
 }
@@ -396,9 +399,9 @@
 .compass { top: auto !important; right: auto !important; bottom: 12px !important; left: 10px !important; transform: none !important; color: var(--orange); }
 .scanningMap .compass { bottom: 116px !important; }
 
-/* Keep live map coordinates readable and aligned with the viewport width. */
-.coordinates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; overflow: hidden; justify-items: start; }
-.coordinates span { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+/* Keep all live coordinates together against the left edge of the telemetry bar. */
+.coordinates { display: flex; justify-content: flex-start; gap: 12px; overflow: hidden; }
+.coordinates span { flex: 0 0 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: left; }
 
 /* Layer cards behave as compact on/off switches. */
 .layers button { display: inline-flex; align-items: center; gap: 7px; font-weight: 400 !important; }
@@ -426,7 +429,16 @@
 .sidebarStatus small { color: var(--blue); font: 8px var(--telemetry, monospace); letter-spacing: .08em; }
 .sidebarStatus strong { color: #fff; font: 11px var(--telemetry, monospace); }
 .sidebarStatus span { color: #8f9e93; font: 10px/1.4 var(--future, sans-serif); }
-.sidebarSignOut { width: max-content; padding: 7px 9px; color: #dfffa0; border: 1px solid rgba(201,255,63,.42); background: rgba(201,255,63,.08); cursor: pointer; font: 8px var(--telemetry, monospace); letter-spacing: .08em; }
+.sidebarBottom { display: grid; gap: 10px; margin-top: auto; }
+.systemApps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.systemApp { display: grid; align-content: center; justify-items: center; gap: 3px; width: 100%; height: 28px; min-width: 0; padding: 4px; color: #fff; border: 1px solid currentColor; background: transparent; cursor: pointer; font-family: var(--telemetry, monospace); }
+.systemApp strong { color: inherit; font: 700 10px/1 var(--telemetry, monospace); letter-spacing: .04em; }
+.systemApp small { color: inherit; font: 7px/1 var(--telemetry, monospace); letter-spacing: .08em; opacity: .8; }
+.systemAppEudr { color: var(--orange); background: rgba(255,78,32,.15); }
+.systemAppNature { color: #62d84e; background: transparent; }
+.systemAppOperations { color: var(--blue); background: transparent; }
+.systemApp:disabled { opacity: .48; cursor: not-allowed; }
+.sidebarSignOut { width: 100%; min-height: 42px; padding: 0 12px; color: #e1aa36; border: 1px solid rgba(225,170,54,.72); background: rgba(225,170,54,.14); cursor: pointer; font: 8px var(--telemetry, monospace); letter-spacing: .08em; }
 
 
 

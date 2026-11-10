@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { commercialPorts, copernicusServiceCentres, maritimeCorridors, type CommercialPort, type CopernicusServiceCentre } from "@/lib/eudr-maritime";
+import { loadMapLibre } from "@/components/nature-viewers/fire-map";
 import styles from "./eudr-copernicus-map.module.css";
 
 type MapPoint = [number, number];
@@ -21,34 +22,6 @@ type MapLibreNamespace = {
   AttributionControl: new (options: { compact: boolean }) => unknown;
   Marker: new (options: { element: HTMLElement; anchor?: string; offset?: [number, number] }) => MapLibreMarker;
 };
-
-function loadMapLibre(): Promise<MapLibreNamespace> {
-  if (typeof window === "undefined") return Promise.reject(new Error("ssr"));
-  const browserWindow = window as unknown as Window & { maplibregl?: MapLibreNamespace };
-  if (browserWindow.maplibregl) return Promise.resolve(browserWindow.maplibregl);
-  return new Promise((resolve, reject) => {
-    if (!document.getElementById("maplibre-css")) {
-      const link = document.createElement("link");
-      link.id = "maplibre-css";
-      link.rel = "stylesheet";
-      link.href = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css";
-      document.head.appendChild(link);
-    }
-    const existing = document.querySelector("script[data-maplibre]");
-    if (existing) {
-      existing.addEventListener("load", () => browserWindow.maplibregl ? resolve(browserWindow.maplibregl) : reject(new Error("maplibre load failed")));
-      existing.addEventListener("error", () => reject(new Error("maplibre load failed")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";
-    script.async = true;
-    script.dataset.maplibre = "1";
-    script.onload = () => browserWindow.maplibregl ? resolve(browserWindow.maplibregl) : reject(new Error("maplibre load failed"));
-    script.onerror = () => reject(new Error("maplibre load failed"));
-    document.body.appendChild(script);
-  });
-}
 
 function normalize(value: string) {
   return value.trim().toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");

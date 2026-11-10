@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CALI_AOI } from "@/lib/nature-layers";
+import * as maplibreModule from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 type Props = { active: boolean };
 
@@ -30,6 +32,10 @@ type MapLibrePopupOptions = {
 };
 export type MapLibreMap = {
   addControl(control: unknown, position?: string): void;
+  resize(): void;
+  getCenter(): { lat: number; lng: number };
+  zoomIn(options?: { duration?: number }): void;
+  zoomOut(options?: { duration?: number }): void;
   addSource(id: string, source: unknown): void;
   addLayer(layer: unknown, beforeId?: string): void;
   on(event: "click", listener: (event: MapLibreClickEvent) => void): void;
@@ -73,36 +79,7 @@ declare global {
 
 export function loadMapLibre(): Promise<MapLibreNamespace> {
   if (typeof window === "undefined") return Promise.reject(new Error("ssr"));
-  if (window.maplibregl) return Promise.resolve(window.maplibregl);
-  return new Promise((resolve, reject) => {
-    const cssId = "maplibre-css";
-    if (!document.getElementById(cssId)) {
-      const link = document.createElement("link");
-      link.id = cssId;
-      link.rel = "stylesheet";
-      link.href = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css";
-      document.head.appendChild(link);
-    }
-    const existing = document.querySelector("script[data-maplibre]");
-    if (existing) {
-      existing.addEventListener("load", () => {
-        if (window.maplibregl) resolve(window.maplibregl);
-        else reject(new Error("maplibre load failed"));
-      });
-      existing.addEventListener("error", () => reject(new Error("maplibre load failed")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";
-    script.async = true;
-    script.dataset.maplibre = "1";
-    script.onload = () => {
-      if (window.maplibregl) resolve(window.maplibregl);
-      else reject(new Error("maplibre load failed"));
-    };
-    script.onerror = () => reject(new Error("maplibre load failed"));
-    document.body.appendChild(script);
-  });
+  return Promise.resolve((maplibreModule as unknown as { default?: MapLibreNamespace }).default ?? maplibreModule as unknown as MapLibreNamespace);
 }
 
 const HOTSPOT_VISUALS = [
