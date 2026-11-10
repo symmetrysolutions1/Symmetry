@@ -7,13 +7,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 type Props = { active: boolean };
 
-export type MapLibreMap = {
-  addControl(control: unknown, position?: string): void;
-  once(event: string, listener: () => void): void;
-  flyTo(options: { center: [number, number]; zoom: number; duration: number }): void;
-  remove(): void;
-};
-
 type HotspotResponse = {
   type: string;
   features: Array<{
@@ -28,15 +21,61 @@ type HotspotResponse = {
   };
 };
 
+export type MapLibrePoint = { x: number; y: number };
+type MapLibreClickEvent = { point: MapLibrePoint };
+type MapLibrePopupOptions = {
+  closeButton?: boolean;
+  closeOnClick?: boolean;
+  offset?: number;
+  maxWidth?: string;
+  className?: string;
+};
+export type MapLibreMap = {
+  addControl(control: unknown, position?: string): void;
+  addSource(id: string, source: unknown): void;
+  addLayer(layer: unknown, beforeId?: string): void;
+  on(event: "click", listener: (event: MapLibreClickEvent) => void): void;
+  on(event: string, listener: () => void): void;
+  once(event: string, listener: () => void): void;
+  project(coordinates: [number, number]): MapLibrePoint;
+  getZoom(): number;
+  getContainer(): HTMLElement;
+  getLayer(id: string): unknown;
+  getSource(id: string): { setTiles?: (tiles: string[]) => void; setData?: (data: unknown) => void } | undefined;
+  setLayoutProperty(id: string, property: string, value: unknown): void;
+  isStyleLoaded(): boolean;
+  flyTo(options: { center: [number, number]; zoom: number; duration: number }): void;
+  fitBounds(bounds: [[number, number], [number, number]], options: { padding: number; maxZoom: number; duration: number }): void;
+  remove(): void;
+};
+type MapLibrePopup = {
+  setLngLat(coordinates: [number, number]): MapLibrePopup;
+  setDOMContent(content: HTMLElement): MapLibrePopup;
+  addTo(map: MapLibreMap): MapLibrePopup;
+  getElement(): HTMLElement;
+};
+type MapLibreMarker = {
+  setLngLat(coordinates: [number, number]): MapLibreMarker;
+  addTo(map: MapLibreMap): MapLibreMarker;
+  remove(): void;
+};
+export type MapLibreNamespace = {
+  Map: new (options: Record<string, unknown>) => MapLibreMap;
+  NavigationControl: new (options: { showCompass: boolean }) => unknown;
+  AttributionControl: new (options: { compact: boolean }) => unknown;
+  Popup: new (options: MapLibrePopupOptions) => MapLibrePopup;
+  Marker: new (options: { element: HTMLElement; anchor?: string }) => MapLibreMarker;
+};
+
 declare global {
   interface Window {
-    maplibregl?: any;
+    maplibregl?: MapLibreNamespace;
   }
 }
 
-export function loadMapLibre(): Promise<any> {
+export function loadMapLibre(): Promise<MapLibreNamespace> {
   if (typeof window === "undefined") return Promise.reject(new Error("ssr"));
-  return Promise.resolve((maplibreModule as any).default ?? maplibreModule);
+  return Promise.resolve((maplibreModule as unknown as { default?: MapLibreNamespace }).default ?? maplibreModule as unknown as MapLibreNamespace);
 }
 
 const HOTSPOT_VISUALS = [
@@ -278,7 +317,7 @@ function appendPopupRow(list: HTMLElement, label: string, value: string, kind = 
   list.append(row);
 }
 
-function createHotspotPopupContent(feature: any, visual: (typeof HOTSPOT_VISUALS)[number]) {
+function createHotspotPopupContent(feature: HotspotResponse["features"][number], visual: (typeof HOTSPOT_VISUALS)[number]) {
   const properties = feature.properties ?? {};
   const content = document.createElement("article");
   content.className = "ni-hotspot-popup";
@@ -323,7 +362,7 @@ function createHotspotPopupContent(feature: any, visual: (typeof HOTSPOT_VISUALS
 export function FireMapViewer({ active }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const overlayRef = useRef<HTMLCanvasElement | null>(null);
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [layers, setLayers] = useState({ goes: true, viirs: true, modis: true });
   const [riskMode, setRiskMode] = useState(false);
@@ -338,8 +377,12 @@ export function FireMapViewer({ active }: Props) {
   const [latestLstDate, setLatestLstDate] = useState("");
   const hotspotFeaturesRef = useRef(hotspotFeatures);
   const layersRef = useRef(layers);
-  hotspotFeaturesRef.current = hotspotFeatures;
-  layersRef.current = layers;
+  useEffect(() => {
+    hotspotFeaturesRef.current = hotspotFeatures;
+  }, [hotspotFeatures]);
+  useEffect(() => {
+    layersRef.current = layers;
+  }, [layers]);
 
   useEffect(() => {
     if (!active || !containerRef.current || mapRef.current) return;
@@ -433,7 +476,7 @@ export function FireMapViewer({ active }: Props) {
             paint: { "raster-opacity": 0.74, "raster-resampling": "linear", "raster-fade-duration": 0 },
           }, "aoi-fill");
 
-          map.on("click", (event: any) => {
+          map.on("click", (event) => {
             const candidates = hotspotFeaturesRef.current
               .filter((feature) => layersRef.current[String(feature.properties.source ?? "") as keyof typeof layersRef.current] === true)
               .map((feature) => {
@@ -559,7 +602,7 @@ export function FireMapViewer({ active }: Props) {
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.getLayer) return;
+    if (!map) return;
     const sync = () => {
       const thermalSource = map.getSource("land-surface-temperature");
       if (thermalSource?.setTiles) {

@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Brand } from "@/components/brand";
 import { ArrowRight, CheckIcon, CloseIcon } from "@/components/icons";
-import { loadMapLibre } from "@/components/nature-viewers/fire-map";
+import { loadMapLibre, type MapLibreMap } from "@/components/nature-viewers/fire-map";
 import styles from "./server-console.module.css";
 
 type Modal = "survey" | "history" | null;
@@ -24,8 +24,6 @@ type ParcelRecord = {
   producer: string;
   layer?: Layer;
 };
-type MapLibreMap = any;
-
 const layerLabels: Record<Layer, string> = {
   thermal: "SIEMBRA 1",
   ice: "SIEMBRA 2",
@@ -76,13 +74,13 @@ export function ServerConsole() {
   const layerDragRef = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
   const supabase = useMemo(() => createClient(), []);
   const [authUser, setAuthUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(() => Boolean(supabase));
   const [authUsername, setAuthUsername] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authMessage, setAuthMessage] = useState("");
-  const [authError, setAuthError] = useState("");
+  const [authError, setAuthError] = useState(() => supabase ? "" : "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.");
   const [saving, setSaving] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<"offline" | "connecting" | "online" | "degraded">("connecting");
+  const [syncStatus, setSyncStatus] = useState<"offline" | "connecting" | "online" | "degraded">(() => supabase ? "connecting" : "offline");
 
   const loadRecords = async (userId: string) => {
     if (!supabase) {
@@ -129,9 +127,6 @@ export function ServerConsole() {
 
   useEffect(() => {
     if (!supabase) {
-      setAuthError("Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.");
-      setSyncStatus("offline");
-      setAuthLoading(false);
       return;
     }
 
