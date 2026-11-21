@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Brand } from "@/components/brand";
 import { ArrowRight, CheckIcon, CloseIcon } from "@/components/icons";
-import { loadMapLibre } from "@/components/nature-viewers/fire-map";
+import { loadMapLibre, type MapLibreMap } from "@/components/nature-viewers/fire-map";
 import styles from "./server-console.module.css";
 
 type Modal = "survey" | "history" | null;
@@ -41,8 +41,6 @@ type UserProfile = {
   organization: string;
   preferredLanguage: "es" | "en";
 };
-type MapLibreMap = import("maplibre-gl").Map;
-
 const colombiaDepartments = [
   { code: "05", name: "Antioquia" }, { code: "08", name: "Atlántico" }, { code: "11", name: "Bogotá, D.C." },
   { code: "13", name: "Bolívar" }, { code: "15", name: "Boyacá" }, { code: "17", name: "Caldas" },
