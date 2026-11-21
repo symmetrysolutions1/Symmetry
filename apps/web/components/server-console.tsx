@@ -437,38 +437,40 @@ export function ServerConsole() {
     const source = mapRef.current?.getSource("server-polygon") as import("maplibre-gl").GeoJSONSource | undefined;
     if (!source) return;
     if (scanStatus === "idle") {
-      source.setData(JSON.stringify({ type: "FeatureCollection", features: [] }));
+      source.setData({ type: "FeatureCollection", features: [] });
       return;
     }
-    const coordinates = points.map((point) => [point.lon, point.lat]);
-    const features: Array<Record<string, unknown>> = coordinates.map((coordinate, index) => ({
+    const coordinates = points.map((point): [number, number] => [point.lon, point.lat]);
+    const features: GeoJSON.Feature[] = coordinates.map((coordinate, index) => ({
       type: "Feature",
       properties: { vertex: index + 1 },
       geometry: { type: "Point", coordinates: coordinate },
     }));
     if (coordinates.length >= 2) {
-      const lineCoordinates = scanStatus === "closed" && coordinates.length >= 3
-        ? [...coordinates, coordinates[0]]
-        : coordinates;
-      features.unshift({
-        type: "Feature",
-        properties: { closed: scanStatus === "closed" },
-        geometry: {
-          type: scanStatus === "closed" && coordinates.length >= 3 ? "Polygon" : "LineString",
-          coordinates: scanStatus === "closed" && coordinates.length >= 3 ? [lineCoordinates] : lineCoordinates,
-        },
-      });
+      if (scanStatus === "closed" && coordinates.length >= 3) {
+        features.unshift({
+          type: "Feature",
+          properties: { closed: true },
+          geometry: { type: "Polygon", coordinates: [[...coordinates, coordinates[0]]] },
+        });
+      } else {
+        features.unshift({
+          type: "Feature",
+          properties: { closed: false },
+          geometry: { type: "LineString", coordinates },
+        });
+      }
     }
-    source.setData(JSON.stringify({ type: "FeatureCollection", features }));
+    source.setData({ type: "FeatureCollection", features });
   }, [mapReady, points, scanStatus]);
 
   useEffect(() => {
     const source = mapRef.current?.getSource("server-archives") as import("maplibre-gl").GeoJSONSource | undefined;
     if (!source) return;
     const layerKeys = Object.keys(layerLabels) as Layer[];
-    const features = records.flatMap((record, index) => {
+    const features: GeoJSON.Feature[] = records.flatMap((record, index) => {
       const ring = record.points.length >= 3
-        ? [...record.points, record.points[0]].map((point) => [point.lon, point.lat])
+        ? [...record.points, record.points[0]].map((point): [number, number] => [point.lon, point.lat])
         : [];
       const layer = record.layer || layerKeys[index % layerKeys.length];
       if (ring.length === 0 || !activeLayers.includes(layer)) return [];
@@ -478,7 +480,7 @@ export function ServerConsole() {
         geometry: { type: "Polygon", coordinates: [ring] },
       }];
     });
-    source.setData(JSON.stringify({ type: "FeatureCollection", features }));
+    source.setData({ type: "FeatureCollection", features });
   }, [activeLayers, mapReady, records]);
 
   useEffect(() => {
