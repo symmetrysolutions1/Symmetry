@@ -1,28 +1,67 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent, type PointerEvent } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Brand } from "@/components/brand";
 import { ArrowRight, CheckIcon, CloseIcon } from "@/components/icons";
-import { loadMapLibre, type MapLibreMap } from "@/components/nature-viewers/fire-map";
+import { loadMapLibre } from "@/components/nature-viewers/fire-map";
 import styles from "./server-console.module.css";
 
 type Modal = "survey" | "history" | null;
 type HistoryTab = "history" | "inputs" | "market";
 type Layer = "thermal" | "ice" | "magnetic" | "topo" | "radar";
+type ColombiaMunicipality = {
+  departmentCode: string;
+  municipalityCode: string;
+  municipality: string;
+  category: string;
+};
 type ParcelRecord = {
   id: string;
   createdAt: string;
   points: Array<{ lat: number; lon: number }>;
-  location: { lat: number; lon: number } | null;
+  location: { lat?: number; lon?: number; city?: string; region?: string; country?: string; label?: string; farmName?: string; departmentCode?: string; municipalityCode?: string } | null;
+  locationCity: string;
+  locationRegion: string;
+  locationCountry: string;
+  locationLabel: string;
   accuracy: number | null;
   crop: string;
+  farmName: string;
   harvestYear: string;
   volume: string;
   destination: string;
   producer: string;
   layer?: Layer;
+};
+type UserProfile = {
+  fullName: string;
+  contactEmail: string;
+  organization: string;
+  preferredLanguage: "es" | "en";
+};
+type MapLibreMap = import("maplibre-gl").Map;
+
+const colombiaDepartments = [
+  { code: "05", name: "Antioquia" }, { code: "08", name: "Atlántico" }, { code: "11", name: "Bogotá, D.C." },
+  { code: "13", name: "Bolívar" }, { code: "15", name: "Boyacá" }, { code: "17", name: "Caldas" },
+  { code: "18", name: "Caquetá" }, { code: "19", name: "Cauca" }, { code: "20", name: "Cesar" },
+  { code: "23", name: "Córdoba" }, { code: "25", name: "Cundinamarca" }, { code: "27", name: "Chocó" },
+  { code: "41", name: "Huila" }, { code: "44", name: "La Guajira" }, { code: "47", name: "Magdalena" },
+  { code: "50", name: "Meta" }, { code: "52", name: "Nariño" }, { code: "54", name: "Norte de Santander" },
+  { code: "63", name: "Quindío" }, { code: "66", name: "Risaralda" }, { code: "68", name: "Santander" },
+  { code: "70", name: "Sucre" }, { code: "73", name: "Tolima" }, { code: "76", name: "Valle del Cauca" },
+  { code: "81", name: "Arauca" }, { code: "85", name: "Casanare" }, { code: "86", name: "Putumayo" },
+  { code: "88", name: "Archipiélago de San Andrés, Providencia y Santa Catalina" }, { code: "91", name: "Amazonas" },
+  { code: "94", name: "Guainía" }, { code: "95", name: "Guaviare" }, { code: "97", name: "Vaupés" }, { code: "99", name: "Vichada" },
+];
+
+const emptyProfile: UserProfile = {
+  fullName: "",
+  contactEmail: "",
+  organization: "",
+  preferredLanguage: "es",
 };
 const layerLabels: Record<Layer, string> = {
   thermal: "SIEMBRA 1",
@@ -62,10 +101,15 @@ export function ServerConsole() {
   const [historyTab, setHistoryTab] = useState<HistoryTab>("history");
   const [records, setRecords] = useState<ParcelRecord[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<ParcelRecord | null>(null);
-  const passportGridRef = useRef<HTMLDivElement>(null);
-  const [passportGridHeight, setPassportGridHeight] = useState(0);
   const [mapCenter, setMapCenter] = useState({ lat: 4.65, lon: -74.08 });
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [profile, setProfile] = useState<UserProfile>(emptyProfile);
+  const [savedProfile, setSavedProfile] = useState<UserProfile>(emptyProfile);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileMessage, setProfileMessage] = useState("");
+  const [profileError, setProfileError] = useState("");
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const mapElementRef = useRef<HTMLDivElement>(null);
@@ -74,15 +118,58 @@ export function ServerConsole() {
   const layerDragRef = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
   const supabase = useMemo(() => createClient(), []);
   const [authUser, setAuthUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState(() => Boolean(supabase));
+  const [authLoading, setAuthLoading] = useState(Boolean(supabase));
   const [authUsername, setAuthUsername] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authMessage, setAuthMessage] = useState("");
   const [authError, setAuthError] = useState(() => supabase ? "" : "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.");
   const [saving, setSaving] = useState(false);
   const [syncStatus, setSyncStatus] = useState<"offline" | "connecting" | "online" | "degraded">(() => supabase ? "connecting" : "offline");
+  const [surveyStep, setSurveyStep] = useState<1 | 2>(1);
+  const [colombiaMunicipalities, setColombiaMunicipalities] = useState<ColombiaMunicipality[]>([]);
+  const [municipalitiesLoading, setMunicipalitiesLoading] = useState(true);
+  const [municipalitiesError, setMunicipalitiesError] = useState("");
+  const [selectedDepartmentCode, setSelectedDepartmentCode] = useState("");
+  const [selectedMunicipalityCode, setSelectedMunicipalityCode] = useState("");
+  const municipalitiesForDepartment = useMemo(() => colombiaMunicipalities
+    .filter((municipality) => municipality.departmentCode === selectedDepartmentCode)
+    .sort((a, b) => a.municipality.localeCompare(b.municipality, "es")), [colombiaMunicipalities, selectedDepartmentCode]);
 
-  const loadRecords = async (userId: string) => {
+  useEffect(() => {
+    let active = true;
+    const params = new URLSearchParams({
+      "$select": "cod_dpto,cod_mpio,nom_mpio,tipo_municipio",
+      "$limit": "5000",
+      "$order": "cod_dpto,nom_mpio",
+    });
+    fetch(`https://www.datos.gov.co/resource/gdxc-w37w.json?${params}`, { cache: "force-cache" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("DIVIPOLA request failed");
+        return await response.json() as Array<Record<string, unknown>>;
+      })
+      .then((rows) => {
+        if (!active) return;
+        const normalized = rows.flatMap((row) => {
+          const departmentCode = String(row.cod_dpto ?? "").trim().padStart(2, "0");
+          const municipalityCode = String(row.cod_mpio ?? "").trim().padStart(5, "0");
+          const municipality = String(row.nom_mpio ?? "").trim();
+          if (!departmentCode || !municipalityCode || !municipality) return [];
+          return [{ departmentCode, municipalityCode, municipality, category: String(row.tipo_municipio ?? "Municipio").trim() }];
+        });
+        if (normalized.length === 0) throw new Error("DIVIPOLA returned no municipalities");
+        setColombiaMunicipalities(normalized);
+        setMunicipalitiesError("");
+      })
+      .catch(() => {
+        if (active) setMunicipalitiesError("No cargó el catálogo DIVIPOLA. Puedes escribir el municipio manualmente.");
+      })
+      .finally(() => {
+        if (active) setMunicipalitiesLoading(false);
+      });
+    return () => { active = false; };
+  }, []);
+
+  const loadRecords = useCallback(async (userId: string) => {
     if (!supabase) {
       setSyncStatus("offline");
       return;
@@ -100,30 +187,43 @@ export function ServerConsole() {
       return;
     }
 
-    const normalized = (data ?? []).map((row) => ({
-      id: String(row.id),
-      createdAt: String(row.created_at),
-      points: Array.isArray(row.points) ? row.points as Array<{ lat: number; lon: number }> : [],
-      location: row.location && typeof row.location === "object" ? row.location as { lat: number; lon: number } : null,
-      accuracy: typeof row.accuracy_m === "number" ? row.accuracy_m : null,
-      crop: String(row.crop ?? ""),
-      harvestYear: row.harvest_year == null ? "" : String(row.harvest_year),
-      volume: String(row.volume ?? ""),
-      destination: String(row.destination ?? ""),
-      producer: String(row.producer ?? ""),
-      layer: row.layer as Layer | undefined,
-    })) as ParcelRecord[];
+    const normalized = (data ?? []).map((row) => {
+      const location = row.location && typeof row.location === "object"
+        ? row.location as ParcelRecord["location"]
+        : null;
+      return {
+        id: String(row.id),
+        createdAt: String(row.created_at),
+        points: Array.isArray(row.points) ? row.points as Array<{ lat: number; lon: number }> : [],
+        location,
+        locationCity: String(location?.city ?? ""),
+        locationRegion: String(location?.region ?? ""),
+        locationCountry: String(location?.country ?? ""),
+        locationLabel: String(location?.label ?? ""),
+        farmName: String(location?.farmName ?? ""),
+        accuracy: typeof row.accuracy_m === "number" ? row.accuracy_m : null,
+        crop: String(row.crop ?? ""),
+        harvestYear: row.harvest_year == null ? "" : String(row.harvest_year),
+        volume: String(row.volume ?? ""),
+        destination: String(row.destination ?? ""),
+        producer: String(row.producer ?? ""),
+        layer: row.layer as Layer | undefined,
+      };
+    }) as ParcelRecord[];
 
     setRecords(normalized);
     setSyncStatus("online");
     const latest = normalized[0];
     if (!latest) return;
     setPoints(latest.points);
-    setUserLocation(latest.location);
-    setGpsLocation(latest.location);
+    const latestCoordinates = latest.location && typeof latest.location.lat === "number" && typeof latest.location.lon === "number"
+      ? { lat: latest.location.lat, lon: latest.location.lon }
+      : null;
+    setUserLocation(latestCoordinates);
+    setGpsLocation(latestCoordinates);
     setAccuracy(latest.accuracy);
     setScanStatus("idle");
-  };
+  }, [supabase]);
 
   useEffect(() => {
     if (!supabase) {
@@ -135,6 +235,8 @@ export function ServerConsole() {
       const { data } = await supabase.auth.getUser();
       if (cancelled) return;
       setAuthUser(data.user ?? null);
+      setProfileLoading(Boolean(data.user));
+      setProfileError("");
       setAuthLoading(false);
       if (data.user) void loadRecords(data.user.id);
     };
@@ -143,11 +245,15 @@ export function ServerConsole() {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (cancelled) return;
       setAuthUser(session?.user ?? null);
+      setProfileLoading(Boolean(session?.user));
+      setProfileError("");
       setAuthLoading(false);
       if (session?.user) window.setTimeout(() => void loadRecords(session.user.id), 0);
       else {
         setRecords([]);
         setSyncStatus("offline");
+        setProfile(emptyProfile);
+        setSavedProfile(emptyProfile);
       }
     });
 
@@ -155,7 +261,40 @@ export function ServerConsole() {
       cancelled = true;
       listener.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [loadRecords, supabase]);
+
+  useEffect(() => {
+    if (!authUser || !supabase) {
+      return;
+    }
+
+    let cancelled = false;
+    void supabase
+      .from("user_profiles")
+      .select("full_name, contact_email, organization, preferred_language")
+      .eq("user_id", authUser.id)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          setProfileError("No fue posible cargar tu perfil.");
+          setProfileLoading(false);
+          return;
+        }
+        const nextProfile = data ? {
+          fullName: String(data.full_name ?? ""),
+          contactEmail: String(data.contact_email ?? ""),
+          organization: String(data.organization ?? ""),
+          preferredLanguage: data.preferred_language === "en" ? "en" : "es",
+        } as UserProfile : emptyProfile;
+        setProfile(nextProfile);
+        setSavedProfile(nextProfile);
+        setProfileError("");
+        setProfileLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [authUser, supabase]);
 
   useEffect(() => {
     if (authUser) return;
@@ -297,10 +436,10 @@ export function ServerConsole() {
   }, [authUser]);
 
   useEffect(() => {
-    const source = mapRef.current?.getSource("server-polygon");
-    if (!source?.setData) return;
+    const source = mapRef.current?.getSource("server-polygon") as import("maplibre-gl").GeoJSONSource | undefined;
+    if (!source) return;
     if (scanStatus === "idle") {
-      source.setData({ type: "FeatureCollection", features: [] });
+      source.setData(JSON.stringify({ type: "FeatureCollection", features: [] }));
       return;
     }
     const coordinates = points.map((point) => [point.lon, point.lat]);
@@ -322,12 +461,12 @@ export function ServerConsole() {
         },
       });
     }
-    source.setData({ type: "FeatureCollection", features });
+    source.setData(JSON.stringify({ type: "FeatureCollection", features }));
   }, [mapReady, points, scanStatus]);
 
   useEffect(() => {
-    const source = mapRef.current?.getSource("server-archives");
-    if (!source?.setData) return;
+    const source = mapRef.current?.getSource("server-archives") as import("maplibre-gl").GeoJSONSource | undefined;
+    if (!source) return;
     const layerKeys = Object.keys(layerLabels) as Layer[];
     const features = records.flatMap((record, index) => {
       const ring = record.points.length >= 3
@@ -341,19 +480,8 @@ export function ServerConsole() {
         geometry: { type: "Polygon", coordinates: [ring] },
       }];
     });
-    source.setData({ type: "FeatureCollection", features });
+    source.setData(JSON.stringify({ type: "FeatureCollection", features }));
   }, [activeLayers, mapReady, records]);
-
-  useEffect(() => {
-    const element = passportGridRef.current;
-    if (!element) return;
-    const measure = () => setPassportGridHeight(element.getBoundingClientRect().height);
-    measure();
-    if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [selectedRecord, historyTab]);
 
   useEffect(() => {
     if (!mapReady || !userLocation) return;
@@ -468,6 +596,9 @@ export function ServerConsole() {
       announce("Fija mínimo 3 vértices para cerrar el polígono");
       return;
     }
+    setSurveyStep(1);
+    setSelectedDepartmentCode("");
+    setSelectedMunicipalityCode("");
     setScanStatus("closed");
     setModal("survey");
   };
@@ -537,22 +668,102 @@ export function ServerConsole() {
     announce("Sesión cerrada");
   };
 
+  const saveProfile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!supabase || !authUser) return;
+    setProfileSaving(true);
+    setProfileMessage("");
+    setProfileError("");
+    const formData = new FormData(event.currentTarget);
+    const nextProfile: UserProfile = {
+      fullName: String(formData.get("fullName") || "").trim(),
+      contactEmail: String(formData.get("contactEmail") || "").trim().toLowerCase(),
+      organization: String(formData.get("organization") || "").trim(),
+      preferredLanguage: formData.get("preferredLanguage") === "en" ? "en" : "es",
+    };
+    const { error } = await supabase.from("user_profiles").upsert({
+      user_id: authUser.id,
+      full_name: nextProfile.fullName,
+      contact_email: nextProfile.contactEmail,
+      organization: nextProfile.organization || null,
+      preferred_language: nextProfile.preferredLanguage,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id" });
+    setProfileSaving(false);
+    if (error) {
+      setProfileError("No fue posible guardar el perfil. Revisa los datos e inténtalo de nuevo.");
+      return;
+    }
+    setProfile(nextProfile);
+    setSavedProfile(nextProfile);
+    setProfileMessage("Cambios guardados.");
+  };
+
+  const closeProfile = () => {
+    setProfile(savedProfile);
+    setProfileError("");
+    setProfileMessage("");
+    setProfileOpen(false);
+  };
+
   const saveSurvey = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (surveyStep === 1) {
+      const form = event.currentTarget;
+      if (form.reportValidity()) {
+        setSurveyStep(2);
+        form.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return;
+    }
     if (!supabase || !authUser) {
       announce("Inicia sesión antes de guardar una parcela");
       return;
     }
 
-    setSaving(true);
     const formData = new FormData(event.currentTarget);
+    const departmentCode = String(formData.get("locationDepartmentCode") || "");
+    const department = colombiaDepartments.find((item) => item.code === departmentCode);
+    const municipalityCode = String(formData.get("locationMunicipalityCode") || "");
+    const municipality = colombiaMunicipalities.find((item) => item.municipalityCode === municipalityCode);
+    const manualCity = municipality?.municipality || String(formData.get("locationCityManual") || "").trim();
+    const manualRegion = department?.name || "";
+    const manualCountry = formData.get("locationCountry") === "CO" ? "Colombia" : "";
+    const farmName = String(formData.get("farmName") || "").trim();
+    if (!manualCity || !manualRegion || !manualCountry || !farmName) {
+      announce("Completa finca, país, departamento y municipio antes de guardar");
+      return;
+    }
+
+    setSaving(true);
+    const vertexCenter = points.length > 0 ? {
+      lat: points.reduce((sum, point) => sum + point.lat, 0) / points.length,
+      lon: points.reduce((sum, point) => sum + point.lon, 0) / points.length,
+    } : null;
+    const parcelLocation = gpsLocation || userLocation || vertexCenter;
+    const locationLabel = [manualCity, manualRegion, manualCountry].filter(Boolean).join(", ");
+    const location: ParcelRecord["location"] = {
+      ...(parcelLocation ?? {}),
+      city: manualCity,
+      region: manualRegion,
+      country: manualCountry,
+      label: locationLabel,
+      farmName,
+      departmentCode,
+      municipalityCode,
+    };
     const record: ParcelRecord = {
       id: productPrefix(String(formData.get("crop") || "NA")) + "-" + Date.now().toString(36).toUpperCase(),
       createdAt: new Date().toISOString(),
       points,
-      location: gpsLocation || userLocation,
+      location,
+      locationCity: manualCity,
+      locationRegion: manualRegion,
+      locationCountry: manualCountry,
+      locationLabel: location.label ?? "",
       accuracy,
       crop: String(formData.get("crop") || ""),
+      farmName,
       harvestYear: String(formData.get("harvestYear") || ""),
       volume: String(formData.get("volume") || ""),
       destination: String(formData.get("destination") || ""),
@@ -592,11 +803,19 @@ export function ServerConsole() {
     setRecords((current) => [record, ...current]);
     setModal(null);
     setScanStatus("closed");
-    announce("Terreno " + record.id + " guardado para " + (authUser.email ?? "tu cuenta"));
+    announce("Terreno " + record.id + " guardado para " + (authUser.email ?? "tu cuenta") + (record.locationCity ? " · ubicación verificada" : " · ubicación administrativa pendiente"));
   };
 
   const latitude = mapCenter.lat;
   const longitude = mapCenter.lon;
+  const surveyVertexCenter = points.length > 0 ? {
+    lat: points.reduce((sum, point) => sum + point.lat, 0) / points.length,
+    lon: points.reduce((sum, point) => sum + point.lon, 0) / points.length,
+  } : null;
+  const surveyPosition = gpsLocation || userLocation || surveyVertexCenter;
+  const surveyPositionLabel = surveyPosition
+    ? `${Math.abs(surveyPosition.lat).toFixed(5)}° ${surveyPosition.lat >= 0 ? "N" : "S"} · ${Math.abs(surveyPosition.lon).toFixed(5)}° ${surveyPosition.lon >= 0 ? "E" : "W"}`
+    : "La posición se tomará del polígono guardado.";
   const latitudeLabel = `${Math.abs(latitude).toFixed(4)}° ${latitude >= 0 ? "N" : "S"}`;
   const longitudeLabel = `${Math.abs(longitude).toFixed(4)}° ${longitude >= 0 ? "E" : "W"}`;
   const productTypes = Array.from(new Set(records.map((record) => record.crop).filter(Boolean)));
@@ -611,7 +830,7 @@ export function ServerConsole() {
             <small>SYMMETRY / EUDR SERVER</small>
             <h1>Verificando <i>tu acceso.</i></h1>
             <p>Conectando tu espacio privado de trazabilidad.</p>
-            <div className={styles.authFooter}><span>SUPABASE AUTH</span><span>{syncStatus.toUpperCase()}</span></div>
+            <div className={styles.authFooter}><span>AUTH</span><span>{syncStatus.toUpperCase()}</span></div>
           </div>
         </section>
       </div>
@@ -634,7 +853,7 @@ export function ServerConsole() {
             </form>
             {authMessage && <p className={styles.authMessage}>{authMessage}</p>}
             {authError && <p className={styles.authError}>{authError}</p>}
-            <div className={styles.authFooter}><span>ACCESO PRIVADO</span><span>AUTH / SUPABASE</span></div>
+            <div className={styles.authFooter}><span>ACCESO PRIVADO</span><span>AUTH</span></div>
           </div>
         </section>
       </div>
@@ -671,7 +890,7 @@ export function ServerConsole() {
       </section>
 
       {sidebarOpen && <><button className={styles.sidebarScrim} type="button" aria-label="Close field console menu" onClick={() => setSidebarOpen(false)} /><aside className={styles.sidebar} aria-label="Field console menu">
-        <div className={styles.sidebarHeader}><div><small>SYMMETRY / FIELD OPS</small><strong>CONTROL MENU</strong></div><button type="button" aria-label="Close menu" onClick={() => setSidebarOpen(false)}><CloseIcon /></button></div>
+        <div className={styles.sidebarHeader}><div className={styles.sidebarHeaderContent}><small>SYMMETRY / FIELD OPS</small><strong>CONTROL MENU</strong><button className={styles.profileToggle} type="button" aria-haspopup="dialog" onClick={() => { setProfileOpen(true); setProfileMessage(""); setProfileError(""); }}><span>MI PERFIL</span><span>↗</span></button></div><button type="button" aria-label="Close menu" onClick={() => setSidebarOpen(false)}><CloseIcon /></button></div>
         <nav className={styles.sidebarNav}><button type="button" className={styles.sidebarNavActive}>EUDR SERVER <span>LIVE</span></button><button type="button" onClick={() => { setSidebarOpen(false); setHistoryTab("history"); setSelectedRecord(null); setModal("history"); }}>POLYGON HISTORY <span>{records.length}</span></button><button type="button" onClick={() => { setSidebarOpen(false); setHistoryTab("inputs"); setSelectedRecord(null); setModal("history"); }}>PRODUCT INPUTS <span>{records.length}</span></button></nav>
         <div className={styles.sidebarBottom}>
           <div className={styles.systemApps} aria-label="Symmetry services">
@@ -690,19 +909,46 @@ export function ServerConsole() {
           </div>
           <button type="button" className={styles.sidebarSignOut} onClick={() => void signOut()}>SIGN OUT</button>
         </div>
-      </aside></>}
+      </aside>{profileOpen && <div className={styles.profileModalBackdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeProfile(); }}>
+        <section className={styles.profileModal} role="dialog" aria-modal="true" aria-labelledby="profile-title">
+          <div className={styles.profileModalHeader}><div><small>ACCOUNT / FIELD OPS</small><h2 id="profile-title">Perfil de <i>usuario.</i></h2></div><button type="button" aria-label="Cerrar perfil" onClick={closeProfile}><CloseIcon /></button></div>
+          <form className={styles.profileForm} onSubmit={saveProfile}>
+            <p>Datos de contacto asociados a esta cuenta. El usuario de acceso no cambia.</p>
+            <label>Nombre completo<input name="fullName" autoComplete="name" required maxLength={120} value={profile.fullName} onChange={(event) => setProfile((current) => ({ ...current, fullName: event.target.value }))} disabled={profileLoading || profileSaving} /></label>
+            <label>Correo de contacto<input name="contactEmail" type="email" autoComplete="email" required maxLength={254} value={profile.contactEmail} onChange={(event) => setProfile((current) => ({ ...current, contactEmail: event.target.value }))} disabled={profileLoading || profileSaving} /></label>
+            <label>Empresa / cooperativa<input name="organization" autoComplete="organization" maxLength={160} value={profile.organization} onChange={(event) => setProfile((current) => ({ ...current, organization: event.target.value }))} disabled={profileLoading || profileSaving} /></label>
+            <label>Idioma preferido<select name="preferredLanguage" value={profile.preferredLanguage} onChange={(event) => setProfile((current) => ({ ...current, preferredLanguage: event.target.value === "en" ? "en" : "es" }))} disabled={profileLoading || profileSaving}><option value="es">Español</option><option value="en">English</option></select></label>
+            {profileError && <p className={styles.profileError} role="alert">{profileError}</p>}
+            {profileMessage && <p className={styles.profileMessage} role="status">{profileMessage}</p>}
+            <button className={styles.profileSave} type="submit" disabled={profileLoading || profileSaving}>{profileLoading ? "CARGANDO…" : profileSaving ? "GUARDANDO…" : "GUARDAR CAMBIOS"}</button>
+          </form>
+        </section>
+      </div>}</>}
 
       {toast && <div className={styles.toast}><CheckIcon />{toast}</div>}
 
       {modal && <div className={styles.modalBackdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setModal(null); }}>
-        {modal === "survey" && <form className={styles.modal} onSubmit={saveSurvey}>
-          <div className={styles.modalHeader}><div><small>POLYGON CLOSED / EUDR</small><h2>Harvest <i>survey.</i></h2></div><button type="button" onClick={() => setModal(null)} aria-label="Close"><CloseIcon /></button></div>
-          <p>Completa la información mínima para conectar la parcela con producción y exportación.</p>
-          <label>Crop / product<input name="crop" required placeholder="Cacao" /></label>
-          <div className={styles.formRow}><label>Harvest year<input name="harvestYear" required type="number" placeholder="2026" /></label><label>Volume<input name="volume" required placeholder="2.4 t" /></label></div>
-          <label>Export destination<input name="destination" required placeholder="European Union" /></label>
-          <label>Producer / cooperative<input name="producer" required placeholder="Association name" /></label>
-          <div className={styles.modalActions}><button className={styles.cancelButton} type="button" onClick={() => setModal(null)}>SAVE LATER</button><button className={styles.saveButton} type="submit" disabled={saving}>{saving ? "SAVING..." : "SAVE SURVEY"} <ArrowRight /></button></div>
+        {modal === "survey" && <form className={`${styles.modal} ${styles.surveyModal}`} onSubmit={saveSurvey}>
+          <div className={styles.modalHeader}><div><small>POLYGON CLOSED / SHEET {surveyStep} OF 2</small><h2>{surveyStep === 1 ? <>Harvest <i>details.</i></> : <>Farm <i>location.</i></>}</h2></div><button type="button" onClick={() => setModal(null)} aria-label="Close"><CloseIcon /></button></div>
+          <p>{surveyStep === 1 ? "Completa los datos de producción y exportación." : "Indica dónde está la finca. La posición GPS viene del polígono que acabas de dibujar."}</p>
+          <div className={styles.surveyStep} hidden={surveyStep !== 1}>
+            <label>Crop / product<input name="crop" required={surveyStep === 1} placeholder="Cacao" /></label>
+            <div className={styles.formRow}><label>Harvest year<input name="harvestYear" required={surveyStep === 1} type="number" placeholder="2026" /></label><label>Volume<input name="volume" required={surveyStep === 1} placeholder="2.4 t" /></label></div>
+            <label>Export destination<input name="destination" required={surveyStep === 1} placeholder="European Union" /></label>
+            <label>Producer / cooperative<input name="producer" required={surveyStep === 1} placeholder="Association name" /></label>
+            <div className={styles.modalActions}><button className={styles.cancelButton} type="button" onClick={() => setModal(null)}>SAVE LATER</button><button className={styles.saveButton} type="submit">ACCEPT / CONTINUE <ArrowRight /></button></div>
+          </div>
+          <div className={styles.surveyStep} hidden={surveyStep !== 2}>
+            <label>Farm / estate name<input name="farmName" required={surveyStep === 2} placeholder="Finca El Roble" /></label>
+            <div className={styles.locationPosition}><small>GPS / POLYGON POSITION</small><strong>{surveyPositionLabel}</strong></div>
+            <label>Country<select name="locationCountry" defaultValue="CO" required={surveyStep === 2}><option value="CO">Colombia</option></select></label>
+            <label>Department<select name="locationDepartmentCode" value={selectedDepartmentCode} required={surveyStep === 2} onChange={(event) => { setSelectedDepartmentCode(event.target.value); setSelectedMunicipalityCode(""); }}><option value="">Choose a department</option>{colombiaDepartments.map((department) => <option value={department.code} key={department.code}>{department.name}</option>)}</select></label>
+            {municipalitiesError
+              ? <label>City / municipality<input name="locationCityManual" required={surveyStep === 2} placeholder="Write the municipality name" /></label>
+              : <label>City / municipality<select name="locationMunicipalityCode" value={selectedMunicipalityCode} required={surveyStep === 2} disabled={municipalitiesLoading || !selectedDepartmentCode} onChange={(event) => setSelectedMunicipalityCode(event.target.value)}><option value="">{municipalitiesLoading ? "Loading municipalities…" : selectedDepartmentCode ? "Choose a municipality" : "Choose a department first"}</option>{municipalitiesForDepartment.map((item) => <option value={item.municipalityCode} key={item.municipalityCode}>{item.municipality}{item.category && item.category.toLocaleLowerCase() !== "municipio" ? ` · ${item.category}` : ""}</option>)}</select></label>}
+            {municipalitiesError && <p className={styles.locationListError} role="status">{municipalitiesError}</p>}
+            <div className={styles.modalActions}><button className={styles.cancelButton} type="button" onClick={(event) => { setSurveyStep(1); event.currentTarget.form?.scrollTo({ top: 0, behavior: "smooth" }); }}>BACK TO HARVEST</button><button className={styles.saveButton} type="submit" disabled={saving}>{saving ? "SAVING..." : "SUBMIT / SAVE PARCEL"} <ArrowRight /></button></div>
+          </div>
         </form>}
 
         {modal === "history" && <section className={`${styles.modal} ${styles.historyModal}`} aria-label="Polygon records">
@@ -713,11 +959,11 @@ export function ServerConsole() {
             <button className={historyTab === "inputs" ? styles.historyPillActive : styles.historyPill} type="button" onClick={() => { setHistoryTab("inputs"); setSelectedRecord(null); }}>ENTRADAS</button>
             <button className={historyTab === "market" ? styles.historyPillActive : styles.historyPill} type="button" onClick={() => { setHistoryTab("market"); setSelectedRecord(null); }}>MERCADO</button>
           </div>
-          {historyTab === "history" && <div className={styles.historyList}>{records.length === 0 ? <div className={styles.historyEmpty}>Aún no hay polígonos guardados.<br /><span>Cierra un polígono para crear el primer registro.</span></div> : records.slice().reverse().map((record) => <button className={styles.historyCard} type="button" key={record.id} onClick={() => setSelectedRecord(record)}><div><strong>{record.id}</strong><small>{record.crop || "PRODUCTO PENDIENTE"} · {record.points?.length || 0} VÉRTICES</small></div><b>{record.destination || "MERCADO PENDIENTE"}</b><time>{new Date(record.createdAt).toLocaleDateString("es-CO")}</time></button>)}</div>}
+          {historyTab === "history" && <div className={styles.historyList}>{records.length === 0 ? <div className={styles.historyEmpty}>Aún no hay polígonos guardados.<br /><span>Cierra un polígono para crear el primer registro.</span></div> : records.map((record) => <button className={styles.historyCard} type="button" key={record.id} onClick={() => setSelectedRecord(record)}><div><strong>{record.id}</strong><small>{record.crop || "PRODUCTO PENDIENTE"} · {record.points?.length || 0} VÉRTICES</small></div><b>{record.destination || "MERCADO PENDIENTE"}</b><time>{new Date(record.createdAt).toLocaleDateString("es-CO")}</time></button>)}</div>}
           {historyTab === "history" && selectedRecord && <div className={styles.passportOverlay}><div className={styles.passportCard}>
-            <div className={styles.passportHeader}><div><small>LOT PASSPORT / EUDR</small><h3>{selectedRecord.id}</h3></div><button type="button" aria-label="Close lot passport" onClick={() => setSelectedRecord(null)}><CloseIcon /></button></div>
-            <div className={styles.passportGrid} ref={passportGridRef} style={{ display: passportGridHeight ? "grid" : undefined, gridTemplateColumns: passportGridHeight ? "repeat(2, minmax(0, 1fr))" : undefined, gridTemplateRows: passportGridHeight ? "repeat(3, minmax(0, 1fr))" : undefined, height: passportGridHeight ? `${passportGridHeight}px` : undefined } as CSSProperties}><div><small>PRODUCT</small><strong>{(selectedRecord.crop || "—").toLocaleUpperCase()}</strong></div><div><small>HARVEST YEAR</small><strong>{selectedRecord.harvestYear || "—"}</strong></div><div><small>VOLUME</small><strong>{selectedRecord.volume || "—"}</strong></div><div><small>TARGET MARKET</small><strong>{selectedRecord.destination || "—"}</strong></div><div><small>PRODUCER</small><strong>{selectedRecord.producer || "—"}</strong></div><div><small>VERTICES</small><strong>{selectedRecord.points?.length || 0}</strong></div></div>
-            <div className={styles.passportGeo}><small>GEOGRAPHIC FIX</small><strong>{selectedRecord.location ? `${Math.abs(selectedRecord.location.lat).toFixed(5)}° ${selectedRecord.location.lat >= 0 ? "N" : "S"} · ${Math.abs(selectedRecord.location.lon).toFixed(5)}° ${selectedRecord.location.lon >= 0 ? "E" : "W"}` : "GPS DATA PENDING"}</strong><span>{selectedRecord.accuracy ? `GPS ACCURACY ±${selectedRecord.accuracy}M` : "VERTEX CENTER CAPTURE"}</span></div>
+            <div className={styles.passportHeader}><div><small>LOAD PASSPORT / EUDR</small><h3>{selectedRecord.id}</h3><p className={styles.passportLocationSubtitle}>{[[selectedRecord.farmName ? `FINCA ${selectedRecord.farmName.toLocaleUpperCase()}` : "", selectedRecord.crop ? selectedRecord.crop.toLocaleUpperCase() : ""].filter(Boolean).join(" | "), [selectedRecord.locationCity?.toLocaleUpperCase(), selectedRecord.locationRegion?.toLocaleUpperCase(), selectedRecord.locationCountry?.toLocaleUpperCase()].filter(Boolean).join(" · ")].filter(Boolean).join(" | ") || selectedRecord.locationLabel?.toLocaleUpperCase() || "UBICACIÓN POR RESOLVER"}</p></div><button type="button" aria-label="Close lot passport" onClick={() => setSelectedRecord(null)}><CloseIcon /></button></div>
+            <div className={styles.passportGrid}><div><small>PRODUCT</small><strong>{(selectedRecord.crop || "—").toLocaleUpperCase()}</strong></div><div><small>HARVEST YEAR</small><strong>{selectedRecord.harvestYear || "—"}</strong></div><div><small>VOLUME</small><strong>{selectedRecord.volume || "—"}</strong></div><div><small>TARGET MARKET</small><strong>{selectedRecord.destination || "—"}</strong></div><div><small>PRODUCER</small><strong>{selectedRecord.producer || "—"}</strong></div><div><small>VERTICES</small><strong>{selectedRecord.points?.length || 0}</strong></div></div>
+            <div className={styles.passportGeo}><small>GEOGRAPHIC FIX</small><strong>{selectedRecord.location && typeof selectedRecord.location.lat === "number" && typeof selectedRecord.location.lon === "number" ? <><b>{Math.abs(selectedRecord.location.lat).toFixed(5)}° {selectedRecord.location.lat >= 0 ? "N" : "S"}</b> · <b>{Math.abs(selectedRecord.location.lon).toFixed(5)}° {selectedRecord.location.lon >= 0 ? "E" : "W"}</b></> : "GPS DATA PENDING"}</strong><span>{selectedRecord.accuracy ? `GPS ACCURACY ±${selectedRecord.accuracy}M` : "VERTEX CENTER CAPTURE"}</span></div>
             <div className={styles.passportVertices}><small>POLYGON VECTOR / VERTICES</small><div>{(selectedRecord.points || []).map((point, index) => <span key={`${point.lat}-${point.lon}`}>{String(index + 1).padStart(2, "0")} · {point.lat.toFixed(5)}, {point.lon.toFixed(5)}</span>)}</div></div>
             <time className={styles.passportDate}>RECORDED {new Date(selectedRecord.createdAt).toLocaleString("es-CO")}</time>
           </div></div>}
