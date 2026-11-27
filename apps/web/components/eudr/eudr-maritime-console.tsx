@@ -95,22 +95,39 @@ export function EudrMaritimeConsole() {
         <div className={styles.heroCopy}>
           <div className={styles.kicker}><span /> EUDR · DEL ORIGEN AL PUERTO</div>
           <h1>
-            <span>Infraestructura</span>
-            <span>de trazabilidad</span>
-            <span>para productos</span>
-            <span>libres de</span>
-            <span>deforestación.</span>
+            <span className={styles.heroTitleLine}>Convertimos</span>
+            <span className={styles.heroTitleLine}>la información</span>
+            <span className={styles.heroTitleLine}>
+              <strong className={styles.heroAccent}>Geoespacial</strong> en
+            </span>
+            <em className={styles.heroTitleLine}>Trazabilidad</em>
+            <em className={styles.heroTitleLine}>Verificable</em>
+            <strong className={`${styles.heroTitleLine} ${styles.heroAccent}`}>para el EUDR</strong>
           </h1>
           <p className={styles.lede}>
-            Seguimos cada lote desde la parcela y sus proveedores hasta el puerto de salida y el de llegada. Así, el recorrido también deja un rastro que se puede revisar.
+            Integramos georreferenciación satelital con evidencia territorial para demostrar el origen de productos libres de deforestación.
           </p>
         </div>
+      </section>
+
+      <section className={styles.viewerSection} aria-label="Mapa visor EUDR">
         <div className={styles.heroViewer}>
           <EudrCopernicusMap />
           <div className={styles.viewerCaption}>
             <span className={styles.modeBadge}>CENTROS REGIONALES COPERNICUS</span>
             <span>Acceso y mirrors Copernicus.</span>
           </div>
+        </div>
+      </section>
+
+      <section className={styles.companySection} aria-labelledby="company-heading">
+        <div className={styles.companyIntro}>
+          <p className={styles.sectionLabel}>Nosotros · Lo que hacemos</p>
+          <p id="company-heading">
+            Symmetry Enterprises construye infraestructura de confianza para demostrar el
+            origen, la integridad y la evolución de productos, la protección de la
+            deforestación en los territorios y la automatización de operaciones empresariales.
+          </p>
         </div>
       </section>
 
@@ -125,10 +142,16 @@ export function EudrMaritimeConsole() {
         <div className={styles.routeGrid}>
           {featureCards.map((feature) => (
             <button className={`${styles.routeCard} ${styles[`routeCard${feature.id[0].toUpperCase()}${feature.id.slice(1)}`]}`} key={feature.id} type="button" onClick={() => { setActiveFeature(feature); setMarketTab("categories"); }}>
-              <div className={styles.routeCardTop}><span>{feature.index} · {feature.eyebrow}</span><span>ABRIR</span></div>
-              <h3>{feature.title}</h3>
-              <p>{feature.summary}</p>
-              <small>Ver información completa <ArrowRight /></small>
+              <span className={styles.routeCardIndex}>{feature.index}</span>
+              <div className={styles.routeCardBody}>
+                <span className={styles.routeCardTop}>{feature.eyebrow}</span>
+                <h3>{feature.title}</h3>
+                <p>{feature.summary}</p>
+              </div>
+              <div className={styles.routeCardMeta}>
+                <small>Ver información completa <ArrowRight /></small>
+              </div>
+              <span className={styles.routeCardOpen}>ABRIR</span>
             </button>
           ))}
         </div>
