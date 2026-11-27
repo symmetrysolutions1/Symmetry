@@ -8,8 +8,8 @@ import {
   ArrowRight,
   CloseIcon,
   GlobeIcon,
-  LayersIcon,
   LeafIcon,
+  LayersIcon,
   MenuIcon,
   ShieldIcon,
   WorkflowIcon,
@@ -24,7 +24,7 @@ const capabilities = [
     description:
       "Debida diligencia, evidencia geoespacial y cumplimiento para exportar productos libres de deforestación.",
     href: "/eudr",
-    accent: "#56c596",
+    accent: "#ff7a3d",
   },
   {
     icon: GlobeIcon,
@@ -33,7 +33,7 @@ const capabilities = [
     description:
       "Nature Intelligence conecta territorio, clima, biodiversidad y decisiones de alto impacto.",
     href: "/nature-intelligence",
-    accent: "#d7ff5f",
+    accent: "#56c596",
   },
   {
     icon: WorkflowIcon,
@@ -42,7 +42,7 @@ const capabilities = [
     description:
       "Reglas, permisos y procesos empresariales que dejan una historia comprobable.",
     href: "/enterprise",
-    accent: "#ffb547",
+    accent: "#79a7ff",
   },
   {
     icon: ShieldIcon,
@@ -51,7 +51,7 @@ const capabilities = [
     description:
       "Del origen del producto o activo a su certificación, transferencia y auditoría.",
     href: "/trust-layer",
-    accent: "#79a7ff",
+    accent: "#f0c84b",
   },
 ] as const;
 
@@ -68,6 +68,33 @@ const partners = [
   "Institución",
   "Aliado tecnológico",
   "Cooperación",
+] as const;
+
+const companyBands = [
+  {
+    icon: LeafIcon,
+    number: "01",
+    title: "Nature Intelligence para clima, biodiversidad y diplomacia",
+    description:
+      "Una capa de operación territorial para gobiernos, naciones participantes en las COP y empresas comprometidas con objetivos ambientales.",
+    tone: styles.introBandNature,
+  },
+  {
+    icon: GlobeIcon,
+    number: "02",
+    title: "EUDR y trazabilidad para productos libres de deforestación",
+    description:
+      "Acompañamos a exportadores hacia la Unión Europea con georreferenciación, evidencia satelital, debida diligencia y cumplimiento verificable.",
+    tone: styles.introBandEudr,
+  },
+  {
+    icon: LayersIcon,
+    number: "03",
+    title: "Enterprise & Blockchain Operations",
+    description:
+      "Automatizamos procesos, certificamos o tokenizamos activos y construimos trazabilidad operativa para el onboarding empresarial hacia blockchain.",
+    tone: styles.introBandEnterprise,
+  },
 ] as const;
 
 export default function HomePage() {
@@ -156,20 +183,20 @@ export default function HomePage() {
             </p>
           </div>
           <h1>
-            <span className={styles.heroLine}>Convertimos</span>
-            <span className={styles.heroLine}>la información</span>
+            <span className={styles.heroLine}>Desarrollamos</span>
+            <span className={styles.heroLine}><em>infra</em>estructura</span>
             <span className={styles.heroLine}>
-              <strong className={styles.heroAccent}>Geoespacial</strong> en
+              <em className={styles.heroAccent}>Blockchain</em>
             </span>
-            <em className={styles.heroLine}>Trazabilidad</em>
-            <em className={styles.heroLine}>Verificable</em>
-            <strong className={`${styles.heroLine} ${styles.heroAccent}`}>
-              para el EUDR
-            </strong>
+            <span className={styles.heroLine}>para su uso</span>
+            <span className={styles.heroLine}>
+              en la <strong className={styles.heroAccent}>vida real</strong>
+            </span>
           </h1>
           <p>
-            Integramos georreferenciación de parcelas, información satelital y evidencia
-            territorial para demostrar el origen de productos libres de deforestación.
+            Unimos datos geoespaciales, impacto territorial, blockchain y automatización para que
+            cada operación pueda ser verificable. Así poder tomar mejores decisiones con confianza
+            en el mundo real.
           </p>
           <div className={styles.heroActions}>
             <Link href="/server" className={styles.goldButton}>
@@ -180,10 +207,10 @@ export default function HomePage() {
 
         <div className={styles.heroArt} data-reveal>
           <Image
-            src="/brand/symmetry-enterprises-overview-v2.png"
-            alt="Ecosistema de trazabilidad de Symmetry Enterprises en el bosque"
-            width={1448}
-            height={1086}
+            src="/brand/symmetry-enterprises-ecosystem.jpg"
+            alt="Ecosistema de Symmetry Enterprises para trazabilidad, automatización y confianza"
+            width={3072}
+            height={2048}
             priority
             sizes="(max-width: 620px) calc(100vw - 44px), (max-width: 960px) 80vw, (max-width: 1440px) 58vw, 860px"
           />
@@ -198,74 +225,21 @@ export default function HomePage() {
         <div className={styles.aboutIntro} data-reveal>
           <p className={styles.sectionLabel}>Nosotros · Lo que hacemos</p>
           <p>
-            Symmetry Enterprises construye infraestructura de confianza para demostrar el
-            origen, la integridad y la evolución de productos, la protección de la
-            deforestación en los territorios y la automatización de operaciones empresariales.
+            En Symmetry conectamos el mundo real con trazabilidad verificable. Infraestructura
+            digital que integra territorios, cadenas de suministro, información satelital y
+            operaciones empresariales para tener datos y procesos verificables.
           </p>
         </div>
-
-        <article className={styles.storyRow} data-reveal>
-          <div className={styles.storyImage}>
-            <Image
-              src="/brand/symmetry-enterprises-overview-v2.png"
-              alt="Trazabilidad EUDR y verificación territorial"
-              width={980}
-              height={801}
-              style={{ objectPosition: "78% center" }}
-            />
-          </div>
-          <div className={styles.storyCopy}>
-            <span>01</span>
-            <LeafIcon className={styles.storyIcon} />
-            <h2>Nature Intelligence para clima, biodiversidad y diplomacia</h2>
-            <p>
-              Una capa de operación territorial para gobiernos, naciones participantes en
-              las COP y empresas comprometidas con objetivos ambientales.
-            </p>
-          </div>
-        </article>
-
-        <article className={`${styles.storyRow} ${styles.storyRowReverse}`} data-reveal>
-          <div className={styles.storyImage}>
-            <Image
-              src="/brand/symmetry-enterprises-overview-v2.png"
-              alt="Nature Intelligence y monitoreo del territorio"
-              width={980}
-              height={801}
-              style={{ objectPosition: "50% center" }}
-            />
-          </div>
-          <div className={styles.storyCopy}>
-            <span>02</span>
-            <GlobeIcon className={styles.storyIcon} />
-            <h2>EUDR y trazabilidad para productos libres de deforestación</h2>
-            <p>
-              Acompañamos a exportadores hacia la Unión Europea con georreferenciación,
-              evidencia satelital, debida diligencia y cumplimiento verificable.
-            </p>
-          </div>
-        </article>
-
-        <article className={styles.storyRow} data-reveal>
-          <div className={styles.storyImage}>
-            <Image
-              src="/brand/symmetry-enterprises-overview-v2.png"
-              alt="Automatización y operaciones empresariales mediante blockchain"
-              width={980}
-              height={801}
-              style={{ objectPosition: "20% center" }}
-            />
-          </div>
-          <div className={styles.storyCopy}>
-            <span>03</span>
-            <LayersIcon className={styles.storyIcon} />
-            <h2>Enterprise & Blockchain Operations</h2>
-            <p>
-              Automatizamos procesos, certificamos o tokenizamos activos y construimos
-              trazabilidad operativa para el onboarding empresarial hacia blockchain.
-            </p>
-          </div>
-        </article>
+        <div className={styles.introBands}>
+          {companyBands.map(({ icon: Icon, ...band }) => (
+            <article className={`${styles.introBand} ${band.tone}`} key={band.number} data-reveal>
+              <span>{band.number}</span>
+              <Icon className={styles.introBandIcon} />
+              <h2>{band.title}</h2>
+              <p>{band.description}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className={styles.solutions} id="capacidades">
@@ -313,7 +287,7 @@ export default function HomePage() {
       <section className={styles.tokenSection} id="confianza">
         <div className={styles.tokenArtwork} data-reveal>
           <Image
-            src="/brand/symmetry-blockchain-v2.png"
+            src="/brand/symmetry-blockchain-architecture.jpg"
             alt="Infraestructura blockchain de Symmetry Enterprises"
             fill
             sizes="(max-width: 960px) 50vw, 50vw"
@@ -381,7 +355,7 @@ export default function HomePage() {
       <section className={styles.videoCta}>
         <div className={styles.videoVisual}>
           <Image
-            src="/brand/symmetry-build-cta-v2.png"
+            src="/brand/symmetry-partners-cta.jpg"
             alt="Automatización, verificación, trazabilidad y cumplimiento con Symmetry Enterprises"
             fill
             sizes="(max-width: 700px) 58vw, 55vw"
